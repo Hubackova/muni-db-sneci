@@ -1,0 +1,18 @@
+.main-wrapper {
+  margin: 0 auto 20px;
+  display: flex;
+  gap: 20px;
+
+  .form-wrapper {
+    border: 1px solid lightblue;
+    border-radius: 24px;
+    padding: 16px;
+    height: max-content;
+  }
+
+  .right-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}

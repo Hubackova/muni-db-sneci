@@ -1,0 +1,79 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &.locality {
+    max-width: 600px;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .submit-btn {
+    height: 40px;
+  }
+
+  .input:disabled,
+  .select--is-disabled {
+    background-color: rgb(235, 235, 235);
+    border-radius: 4px;
+  }
+  .select--is-disabled * {
+    color: rgb(97, 97, 97);
+    border-color: rgb(97, 97, 97);
+    background-color: rgb(235, 235, 235);
+  }
+  .side-panel {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    z-index: 9;
+
+    .body {
+      padding: 20px;
+      max-height: 100vh;
+      width: 360px;
+      background: white;
+      border-left: 1px solid grey;
+      border-bottom: 1px solid grey;
+      position: relative;
+
+      .items {
+        min-height: 0;
+        max-height: 86vh;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        margin-bottom: 50px;
+      }
+      .item {
+        padding: 8px;
+        text-align: left;
+        cursor: pointer;
+        color: rgb(97, 97, 97);
+        &:hover {
+          color: black;
+        }
+      }
+      .cancel-btn {
+        position: absolute;
+        bottom: 30px;
+      }
+    }
+  }
+
+  @media (min-width: 756px) {
+    .row {
+      flex-direction: row;
+
+      > div {
+        width: 50%;
+      }
+    }
+  }
+}
