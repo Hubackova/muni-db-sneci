@@ -3,8 +3,70 @@
   flex-direction: column;
   gap: 20px;
 
+  .select.short {
+    min-width: 116px !important;
+    max-width: 116px !important;
+  }
+
   &.locality {
     max-width: 600px;
+  }
+
+  &.species-table {
+    overflow: auto;
+    margin-left: 28px;
+    height: 100%;
+
+    .input {
+      max-width: 178px;
+      padding: 2px 2px;
+    }
+
+    .container.narrow {
+      max-width: 111px !important;
+      .input {
+        max-width: 108px !important;
+      }
+    }
+
+    .select {
+      min-width: 182px;
+      width: 182px;
+    }
+
+    @media (min-width: 1024px) {
+      min-width: calc(100vw - 700px);
+    }
+  }
+
+  &.new-species {
+    .row {
+      align-items: flex-end;
+
+      .select {
+        max-width: 38px;
+      }
+
+      .container.narrow {
+        max-width: 108px;
+      }
+
+      .container {
+        width: 200px;
+      }
+    }
+    padding-bottom: 10px;
+  }
+
+  &.compact {
+    .row {
+      gap: 3px;
+    }
+
+    .submit-btn {
+      align-self: flex-end;
+      min-width: 120px;
+    }
   }
 
   .row {
@@ -26,12 +88,13 @@
     border-color: rgb(97, 97, 97);
     background-color: rgb(235, 235, 235);
   }
+
   .side-panel {
     position: fixed;
     right: 0;
     bottom: 0;
     top: 0;
-    z-index: 9;
+    z-index: 99993;
 
     .body {
       padding: 20px;
@@ -51,6 +114,7 @@
         flex-wrap: wrap;
         margin-bottom: 50px;
       }
+
       .item {
         padding: 8px;
         text-align: left;
@@ -71,8 +135,12 @@
     .row {
       flex-direction: row;
 
-      > div {
+      > div:not(.textarea) {
         width: 50%;
+      }
+
+      > div.double {
+        width: 100%;
       }
     }
   }

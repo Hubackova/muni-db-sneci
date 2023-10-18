@@ -11,18 +11,20 @@ import {
   useTable,
 } from "react-table";
 import { toast } from "react-toastify";
+import { useAppStateContext } from "../../AppStateContext";
 import { ReactComponent as ExportIcon } from "../../images/export.svg";
 import { EditableCell } from "../Cell";
 import ConfirmModal from "../ConfirmModal";
 import { GlobalFilter, Multi, multiSelectFilter } from "../Filter";
+
 import IndeterminateCheckbox from "../IndeterminateCheckbox";
 
-const SpeciesTable: React.FC<any> = ({ species }) => {
+const SpeciesTable: React.FC<any> = ({ species, compact = false }) => {
   const db = getDatabase();
   const [showModal, setShowModal] = useState(null);
   const [showEditModal, setShowEditModal] = useState(null);
   const [last, setLast] = useState(false);
-
+  const { currentLocality } = useAppStateContext();
   const removeItem = (id: string) => {
     setShowModal(id);
   };
@@ -31,7 +33,7 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
     return nextProps.value === prevProps.value;
   };
   const handleRevert = () => {
-    update(ref(db, "locations/" + last.rowKey), {
+    update(ref(db, last.dbName + last.rowKey), {
       [last.cellId]: last.initialValue,
     });
     last.setValue &&
@@ -39,32 +41,32 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
     setLast(false);
   };
 
-  const DefaultCell = React.memo<React.FC<any>>(
-    ({ value, row, cell }) => (
+  const DefaultCell = React.memo<React.FC<any>>(({ value, row, cell }) => {
+    return (
       <EditableCell
         initialValue={value}
         row={row}
         cell={cell}
-        dbName="locations/"
+        dbName={`localities/${currentLocality || row.original.key}/species/`}
         saveLast={setLast}
+        updatekey={row.original.speciesKey}
       />
-    ),
-    customComparator
-  );
+    );
+  }, customComparator);
 
   const columns = React.useMemo(
     () => [
-      {
-        Header: "Site ID",
-        accessor: "siteId",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
       {
         Header: "Species Name",
         accessor: "speciesName",
         Filter: Multi,
         filter: multiSelectFilter,
+        Cell: React.memo<React.FC<any>>(
+          ({ row: { original } }) => (
+            <input defaultValue={[original.speciesName] || ""} disabled></input>
+          ),
+          customComparator
+        ),
       },
       {
         Header: "Specification",
@@ -73,7 +75,7 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
         filter: multiSelectFilter,
       },
       {
-        Header: "Live individual",
+        Header: "Live ind.",
         accessor: "live",
         Filter: Multi,
         filter: multiSelectFilter,
@@ -84,12 +86,27 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
         Filter: Multi,
         filter: multiSelectFilter,
       },
-
+      {
+        Header: "Undefined",
+        accessor: "undefined",
+        Filter: Multi,
+        filter: multiSelectFilter,
+      },
       {
         Header: "All shells",
         accessor: "all",
         Filter: Multi,
         filter: multiSelectFilter,
+        Cell: React.memo<React.FC<any>>(
+          ({ row: { original } }) => (
+            <input
+              defaultValue={[original.all] || ""}
+              readOnly
+              className="narrow"
+            ></input>
+          ),
+          customComparator
+        ),
       },
       {
         Header: "Lot number",
@@ -113,9 +130,32 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
     []
   );
 
+  const fullColumns = React.useMemo(
+    () => [
+      {
+        Header: "Site ID",
+        accessor: "siteId",
+        Cell: React.memo<React.FC<any>>(
+          ({ row: { original } }) => (
+            <input
+              defaultValue={[original.siteId] || ""}
+              disabled
+              className="narrow"
+            ></input>
+          ),
+          customComparator
+        ),
+        Filter: Multi,
+        filter: multiSelectFilter,
+      },
+      ...columns,
+    ],
+    [columns]
+  );
+
   const tableInstance = useTable(
     {
-      columns,
+      columns: compact ? columns : fullColumns,
       data: species,
       defaultColumn: { Cell: DefaultCell, Filter: () => {} },
       autoResetFilters: false,
@@ -133,14 +173,18 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
           // to render a checkbox
           Header: ({ getToggleAllRowsSelectedProps }) => (
             <div>
-              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+              {!compact && (
+                <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+              )}
             </div>
           ),
           // The cell can use the individual row's getToggleRowSelectedProps method
           // to the render a checkbox
           Cell: ({ row }) => (
             <div>
-              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+              {!compact && (
+                <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+              )}
             </div>
           ),
         },
@@ -162,14 +206,14 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
 
   return (
     <div>
-      <div className="table-container">
+      <div className={compact ? "table-container compact" : "table-container"}>
         {showModal && (
           <ConfirmModal
             title="Do you want to continue?"
             onConfirm={() => {
               setShowModal(null);
-              remove(ref(db, "locations/" + showModal));
-              toast.success("Program was removed successfully");
+              remove(ref(db, showModal));
+              toast.success("Species was removed successfully");
             }}
             onHide={() => setShowModal(null)}
           />
@@ -205,16 +249,28 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
           <tbody {...getTableBodyProps()}>
             {rows.map((row) => {
               prepareRow(row);
+
               return (
-                <tr {...row.getRowProps()} key={row.original.key}>
+                <tr
+                  {...row.getRowProps()}
+                  key={row.original.key + row.original.speciesKey}
+                >
                   <td role="cell" className="remove">
-                    <button onClick={() => removeItem(row.original.key)}>
+                    <button
+                      onClick={() =>
+                        removeItem(
+                          `localities/${
+                            currentLocality || row.original.key
+                          }/species/${row.original.speciesKey}`
+                        )
+                      }
+                    >
                       X
                     </button>
                   </td>
                   {row.cells.map((cell) => {
                     return (
-                      <>
+                      <React.Fragment key={cell.column.id}>
                         {showEditModal?.row.id === cell.row.id &&
                           showEditModal.id === cell.column.id && (
                             <ConfirmModal
@@ -226,8 +282,9 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
                                 update(
                                   ref(
                                     db,
-                                    "locations/" +
-                                      showEditModal.row.original.key
+                                    `localities/${
+                                      currentLocality || row.original.key
+                                    }/species/` + row.original.speciesKey
                                   ),
                                   {
                                     [showEditModal.id]: showEditModal.newValue,
@@ -249,7 +306,7 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
                         >
                           {cell.render("Cell")}
                         </td>
-                      </>
+                      </React.Fragment>
                     );
                   })}
                 </tr>
@@ -258,29 +315,31 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
           </tbody>
         </table>
       </div>
-      <div className="controls">
-        <GlobalFilter
-          preGlobalFilteredRows={preGlobalFilteredRows}
-          globalFilter={state.globalFilter}
-          setGlobalFilter={setGlobalFilter}
-        />
-        <div className="download">
-          <CSVLink
-            data={selectedFlatRows.map((i) => i.values)}
-            filename="pcr-programs.csv"
-          >
-            <div className="export">
-              <ExportIcon />
-              export CSV
-            </div>
-          </CSVLink>
+      {!compact && (
+        <div className="controls">
+          <GlobalFilter
+            preGlobalFilteredRows={preGlobalFilteredRows}
+            globalFilter={state.globalFilter}
+            setGlobalFilter={setGlobalFilter}
+          />
+          <div className="download">
+            <CSVLink
+              data={selectedFlatRows.map((i) => i.values)}
+              filename="pcr-programs.csv"
+            >
+              <div className="export">
+                <ExportIcon />
+                export CSV
+              </div>
+            </CSVLink>
+          </div>
+          {last?.rowKey && last.cellId !== "localityCode" && (
+            <button className="revert" onClick={handleRevert}>
+              Back
+            </button>
+          )}
         </div>
-        {last?.rowKey && last.cellId !== "localityCode" && (
-          <button className="revert" onClick={handleRevert}>
-            Back
-          </button>
-        )}
-      </div>
+      )}
     </div>
   );
 };

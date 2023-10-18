@@ -22,7 +22,12 @@ const LocalitiesAndSpecies: React.FC = () => {
               items.push({
                 ...childItem,
                 ...speciesData,
-                key: childItem.siteId + speciesData.speciesName,
+                all:
+                  parseInt(speciesData.empty || 0) +
+                  parseInt(speciesData.live || 0) +
+                  parseInt(speciesData.undefined || 0),
+                key: childItem.key + speciesData.speciesKey,
+                siteKey: childItem.key,
               });
             });
         }
@@ -31,7 +36,7 @@ const LocalitiesAndSpecies: React.FC = () => {
     });
   }, [db]);
   if (!localities.length) return <div>no data</div>;
-  console.log(localities);
+
   return <LocalitiesAndSpeciesTable localities={localities} />;
 };
 

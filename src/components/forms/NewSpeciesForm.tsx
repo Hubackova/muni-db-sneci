@@ -1,23 +1,26 @@
 // @ts-nocheck
 import { getDatabase } from "firebase/database";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { backup } from "../../content/all";
-import { writeSpeciesData } from "../../firebase/firebase";
+import { backup } from "../../content/speciesNames";
+import { writeSpeciesNameData } from "../../firebase/firebase";
+import SelectInput from "../SelectInput";
 import TextInput from "../TextInput";
 import "./NewSampleForm.scss";
 
-const NewSpeciesForm: React.FC = () => {
+const NewSpeciesForm: React.FC = ({ speciesNames }) => {
   const db = getDatabase();
 
   const addItem = (data: any) => {
-    writeSpeciesData(data);
-    toast.success("Locality was added successfully");
+    if (speciesNames.includes(data.speciesName))
+      return toast.error("Species already exists");
+    writeSpeciesNameData(data);
+    toast.success("Species was added successfully");
   };
 
   const addItemsBackup = () => {
-    backup.forEach((i: any) => writePrimersData(i));
+    backup.forEach((i: any) => writeSpeciesNameData(i));
     toast.success("ok");
   };
 
@@ -26,61 +29,101 @@ const NewSpeciesForm: React.FC = () => {
     formState: { errors },
     handleSubmit,
     getValues,
+    control,
+    setValue,
   } = useForm<PrimersType>();
 
-  const siteIds = [1, 2, 3]; /* primers.map((i) => i.name); */
+  const speciesNamesOptions = speciesNames
+    .map((i: any) => ({
+      value: i,
+      label: i,
+    }))
+    .sort(function (a, b) {
+      if (a.label < b.label) {
+        return -1;
+      }
+      if (a.label > b.label) {
+        return 1;
+      }
+      return 0;
+    });
 
   return (
-    <form className="form" onSubmit={handleSubmit(addItem)}>
+    <form className="form compact new-species" onSubmit={handleSubmit(addItem)}>
       <h5>Add new species:</h5>
       <div className="row">
+        <SelectInput
+          options={speciesNamesOptions}
+          onChange={(e: any) => {
+            setValue("speciesName", e?.value);
+            setValue("speciesAndAuthor", e?.value);
+          }}
+          className="onlyArrow"
+        />
         <TextInput
           label="Species name"
           name="speciesName"
-          error={errors.siteId?.message}
+          error={errors.speciesName?.message}
           register={register}
+          onBlur={(e: any) => {
+            setValue("speciesAndAuthor", e?.target.value);
+          }}
           required="This field is required"
-          validate={() =>
-            !siteIds.includes(getValues("siteId")) || "Duplicate site ID"
-          }
-        />
-        <TextInput
-          label="Abbreviation"
-          name="abbreviation"
-          error={errors.fieldCode?.message}
-          register={register}
+          className
         />
 
         <TextInput
-          label="Group"
-          name="group"
-          error={errors.latitude?.message}
+          label="Abbreviation"
+          name="abbreviation"
+          error={errors.abbreviation?.message}
           register={register}
+          className="narrow"
+        />
+        <Controller
+          render={({ field: { onChange, value } }) => {
+            return (
+              <SelectInput
+                options={[
+                  { value: "terrestrial", label: "terrestrial" },
+                  { value: "aquatic", label: "aquatic" },
+                ]}
+                value={value ? { value, label: value } : null}
+                onChange={(e: any) => {
+                  onChange(e?.value);
+                }}
+                label="Group"
+                error={errors.group?.message}
+                isSearchable
+              />
+            );
+          }}
+          control={control}
+          name="group"
         />
         <TextInput
           label="Species and author"
           name="speciesAndAuthor"
-          error={errors.longitude?.message}
+          error={errors.speciesAndAuthor?.message}
           register={register}
         />
         <TextInput
           label="Note"
           name="note"
-          error={errors.country?.message}
+          error={errors.note?.message}
           register={register}
         />
+        <button className="submit-btn" type="submit">
+          Save
+        </button>
       </div>
 
-      <button className="submit-btn" type="submit">
-        Save
-      </button>
       {/*       <button
-          className="submit-btn"
-          type="button"
-          onClick={() => addItemsBackup()}
-        >
-          Backup
-        </button> */}
+        className="submit-btn"
+        type="button"
+        onClick={() => addItemsBackup()}
+      >
+        Backup
+      </button> */}
     </form>
   );
 };

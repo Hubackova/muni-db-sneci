@@ -2,14 +2,21 @@
 }
 
 .table-container {
-  height: 80vh;
   overflow: auto;
-  max-width: calc(100vw);
+  /*   max-width: calc(100vw); */
+
+  &:not(.compact) {
+    height: 80vh;
+
+    &.table {
+      height: 80vh;
+    }
+  }
 }
 
 .table {
   max-width: 100%;
-  height: 80vh;
+
   display: block;
   white-space: nowrap;
 

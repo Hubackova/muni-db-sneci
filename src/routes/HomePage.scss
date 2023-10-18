@@ -8,11 +8,9 @@
     border-radius: 24px;
     padding: 16px;
     height: max-content;
+    width: fit-content;
   }
-
-  .right-side {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
+}
+.bottom {
+  margin-bottom: 20px;
 }

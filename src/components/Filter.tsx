@@ -175,166 +175,153 @@ export function Multi({
               : "Sort A -> Z"}
           </div>
 
-          {(isValidDate || !Number.isNaN(allMin)) && (
-            <div
-              onClick={() => setFilterBy(!filterBy)}
-              className="filter-link"
-              style={{ fontWeight: 500 }}
-            >
-              Filter by condition
-            </div>
-          )}
-          {filterBy && (
-            <>
-              {!Number.isNaN(allMin) && (
-                <>
-                  <div className="normal">By number</div>
-                  <input
-                    value={min}
-                    type="number"
-                    placeholder={`Min (${allMin})`}
-                    onBlur={(e) => {
-                      const val = e.target.value;
-                      const onlyNumbers = options.filter(
-                        (element) =>
-                          typeof parseFloat(element) === "number" &&
-                          element >= parseFloat(val) &&
-                          element <= parseFloat(max)
-                      );
-
-                      setFilter(val ? onlyNumbers : []);
-                    }}
-                    onChange={(e) => {
-                      setMin(e.target.value);
-                    }}
-                    style={{
-                      width: "70px",
-                      marginRight: "0.5rem",
-                    }}
-                  />
-                  to
-                  <input
-                    value={max}
-                    type="number"
-                    placeholder={`Max (${allMax})`}
-                    onBlur={(e) => {
-                      const val = e.target.value;
-                      const onlyNumbers = options.filter(
-                        (element) =>
-                          typeof parseFloat(element) === "number" &&
-                          element <= parseFloat(val) &&
-                          element >= parseFloat(min)
-                      );
-
-                      setFilter(val ? onlyNumbers : []);
-                    }}
-                    onChange={(e) => {
-                      setMax(e.target.value);
-                    }}
-                    style={{
-                      width: "80px",
-                      marginLeft: "0.5rem",
-                    }}
-                  />
-                </>
-              )}
-              {isValidDate && (
-                <>
-                  <div className="normal">By year</div>
-                  {years.map((i, index) => {
-                    const isChecked =
-                      filterValue?.length &&
-                      filterValue.some(
-                        (val) => moment(val).format("YYYY") === i
-                      );
-                    const selected = options.filter(
-                      (opt) => moment(opt).format("YYYY") === i
+          <>
+            {!Number.isNaN(allMin) && (
+              <>
+                <div className="normal">Filter by number</div>
+                <input
+                  value={min}
+                  type="number"
+                  placeholder={`Min (${allMin})`}
+                  onBlur={(e) => {
+                    const val = e.target.value;
+                    const onlyNumbers = options.filter(
+                      (element) =>
+                        typeof parseFloat(element) === "number" &&
+                        element >= parseFloat(val) &&
+                        element <= parseFloat(max)
                     );
-                    return (
-                      <div
-                        key={index}
-                        className="filter-link"
-                        onClick={() => {
-                          isChecked
-                            ? setFilter(arrayRemoveArr(filterValue, selected))
-                            : setFilter(
-                                filterValue?.length
-                                  ? [...filterValue, ...selected]
-                                  : selected
-                              );
-                        }}
-                      >
-                        <>
-                          {isChecked ? "✅" : "⬜"} {i}
-                        </>
-                      </div>
-                    );
-                  })}
 
-                  <div className="normal">By month</div>
-                  {months.map((i, index) => {
-                    const isChecked =
-                      filterValue?.length &&
-                      filterValue.some((val) => moment(val).format("MM") === i);
-                    const selected = options.filter(
-                      (opt) => moment(opt).format("MM") === i
+                    setFilter(val ? onlyNumbers : []);
+                  }}
+                  onChange={(e) => {
+                    setMin(e.target.value);
+                  }}
+                  style={{
+                    width: "70px",
+                    marginRight: "0.5rem",
+                  }}
+                />
+                to
+                <input
+                  value={max}
+                  type="number"
+                  placeholder={`Max (${allMax})`}
+                  onBlur={(e) => {
+                    const val = e.target.value;
+                    const onlyNumbers = options.filter(
+                      (element) =>
+                        typeof parseFloat(element) === "number" &&
+                        element <= parseFloat(val) &&
+                        element >= parseFloat(min)
                     );
-                    return (
-                      <div
-                        key={index}
-                        className="filter-link"
-                        onClick={() => {
-                          isChecked
-                            ? setFilter(arrayRemoveArr(filterValue, selected))
-                            : setFilter(
-                                filterValue?.length
-                                  ? [...filterValue, ...selected]
-                                  : selected
-                              );
-                        }}
-                      >
-                        <>
-                          {isChecked ? "✅" : "⬜"} {i}
-                        </>
-                      </div>
+
+                    setFilter(val ? onlyNumbers : []);
+                  }}
+                  onChange={(e) => {
+                    setMax(e.target.value);
+                  }}
+                  style={{
+                    width: "80px",
+                    marginLeft: "0.5rem",
+                  }}
+                />
+              </>
+            )}
+            {isValidDate && (
+              <>
+                <div className="normal">Date from</div>
+                <input
+                  type="date"
+                  value={minDate}
+                  onChange={(e) => {
+                    setMinDate(e.target.value);
+                    const val = e.target.value;
+                    let dates = options.filter(
+                      (element) =>
+                        moment(element).isSameOrAfter(moment(val)) &&
+                        moment(element).isSameOrBefore(moment(maxDate))
                     );
-                  })}
-                  <div className="normal">From</div>
-                  <input
-                    type="date"
-                    value={minDate}
-                    onChange={(e) => {
-                      setMinDate(e.target.value);
-                      const val = e.target.value;
-                      let dates = options.filter(
-                        (element) =>
-                          moment(element).isSameOrAfter(moment(val)) &&
-                          moment(element).isSameOrBefore(moment(maxDate))
-                      );
 
-                      setFilter(val ? dates : []);
-                    }}
-                  />
-                  <div className="normal">To</div>
-                  <input
-                    type="date"
-                    value={maxDate}
-                    onChange={(e) => {
-                      setMaxDate(e.target.value);
-                      const val = e.target.value;
-                      let dates = options.filter(
-                        (element) =>
-                          moment(element).isSameOrBefore(moment(val)) &&
-                          moment(element).isSameOrAfter(moment(minDate))
-                      );
+                    setFilter(val ? dates : []);
+                  }}
+                />
+                <div className="normal">Date to</div>
+                <input
+                  type="date"
+                  value={maxDate}
+                  onChange={(e) => {
+                    setMaxDate(e.target.value);
+                    const val = e.target.value;
+                    let dates = options.filter(
+                      (element) =>
+                        moment(element).isSameOrBefore(moment(val)) &&
+                        moment(element).isSameOrAfter(moment(minDate))
+                    );
 
-                      setFilter(val ? dates : []);
-                    }}
-                  />
-                </>
-              )}
-            </>
-          )}
+                    setFilter(val ? dates : []);
+                  }}
+                />
+                <div className="normal">Filter by year</div>
+                {years.map((i, index) => {
+                  const isChecked =
+                    filterValue?.length &&
+                    filterValue.some((val) => moment(val).format("YYYY") === i);
+                  const selected = options.filter(
+                    (opt) => moment(opt).format("YYYY") === i
+                  );
+                  return (
+                    <div
+                      key={index}
+                      className="filter-link"
+                      onClick={() => {
+                        isChecked
+                          ? setFilter(arrayRemoveArr(filterValue, selected))
+                          : setFilter(
+                              filterValue?.length
+                                ? [...filterValue, ...selected]
+                                : selected
+                            );
+                      }}
+                    >
+                      <>
+                        {isChecked ? "✅" : "⬜"} {i}
+                      </>
+                    </div>
+                  );
+                })}
+
+                <div className="normal">Filter by month</div>
+                {months.map((i, index) => {
+                  const isChecked =
+                    filterValue?.length &&
+                    filterValue.some((val) => moment(val).format("MM") === i);
+                  const selected = options.filter(
+                    (opt) => moment(opt).format("MM") === i
+                  );
+                  return (
+                    <div
+                      key={index}
+                      className="filter-link"
+                      onClick={() => {
+                        isChecked
+                          ? setFilter(arrayRemoveArr(filterValue, selected))
+                          : setFilter(
+                              filterValue?.length
+                                ? [...filterValue, ...selected]
+                                : selected
+                            );
+                      }}
+                    >
+                      <>
+                        {isChecked ? "✅" : "⬜"} {i}
+                      </>
+                    </div>
+                  );
+                })}
+              </>
+            )}
+          </>
 
           <hr />
           <div

@@ -2,7 +2,7 @@
 
 import { initializeApp } from "firebase/app";
 import { child, getDatabase, push, ref, set } from "firebase/database";
-import { DnaExtractionsType } from "../types";
+import { removeUndefinedKeys } from "../helpers/utils";
 // TODO: Add SDKs for Firebase products that you want to use
 
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -36,30 +36,31 @@ initializeApp(firebaseConfig);
 const db = getDatabase();
 const localities = ref(db, "localities/");
 const species = ref(db, "species/");
-function writeLocalityData(extractionItem: DnaExtractionsType) {
+function writeLocalityData(data: any) {
   const db = getDatabase();
   const newKey = push(child(ref(db), "localities")).key;
-  set(ref(db, "localities/" + newKey), extractionItem);
-  sessionStorage.setItem("activeLoc", newKey as string);
+  set(ref(db, "localities/" + newKey), { ...data, key: newKey });
+  return newKey;
 }
-function writeSpeciesData(extractionItem: DnaExtractionsType) {
+function writeSpeciesNameData(data: any) {
   const db = getDatabase();
-  const newKey = push(child(ref(db), "species")).key;
-  set(ref(db, "species/" + newKey), extractionItem);
+  const key = push(child(ref(db), "species")).key;
+  set(ref(db, "species/" + key), { ...data, key: key });
 }
-function writeSpeciesToLocalityData(extractionItem: DnaExtractionsType) {
+function writeSpeciesToLocalityData(data: any, locKey: string) {
   const db = getDatabase();
-  console.log("writeSpeciesToLocalityData", extractionItem);
-  let locKey = sessionStorage.getItem("activeLoc");
-  console.log(locKey);
-  const newKey = push(child(ref(db), "localities/" + locKey + "/species")).key;
-  console.log(newKey);
-  set(ref(db, "localities/" + locKey + "/species/" + newKey), extractionItem);
+  const newSpeciesKey = push(child(ref(db), "species")).key;
+  const cleanData = removeUndefinedKeys(data);
+  console.log(cleanData);
+  set(ref(db, "localities/" + locKey + "/species/" + newSpeciesKey), {
+    ...cleanData,
+    speciesKey: newSpeciesKey,
+  });
 }
 export {
   localities,
   species,
   writeLocalityData,
-  writeSpeciesData,
+  writeSpeciesNameData,
   writeSpeciesToLocalityData,
 };

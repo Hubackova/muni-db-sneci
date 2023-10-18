@@ -13,7 +13,7 @@ function SelectInput(
   ref: React.Ref<any>
 ) {
   return (
-    <div className="select">
+    <div className={cx("select", props.className)}>
       {label && <label className="label">{label}</label>}
       <ReactSelect
         {...props}

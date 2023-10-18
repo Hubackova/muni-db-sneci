@@ -15,12 +15,9 @@ type InputProps = {
   className?: string;
   validate?: any;
   maxLength?: any;
-  step?: any;
-  readOnly?: boolean;
-  min?: any;
 };
 
-const TextInput = ({
+const Textarea = ({
   disabled = false,
   label,
   name,
@@ -30,22 +27,14 @@ const TextInput = ({
   error,
   onBlur,
   maxLength,
-  type = "text",
-  step,
-  readOnly,
   className,
-  min,
 }: InputProps) => (
-  <div className={cx("container", className)}>
+  <div className={cx("container double", className)}>
     <label className="label">{label}</label>
 
-    <input
+    <textarea
       className="input"
-      type={type}
-      step={step}
       disabled={disabled}
-      readOnly={readOnly}
-      min={min}
       {...register(name, {
         required,
         maxLength,
@@ -58,4 +47,4 @@ const TextInput = ({
   </div>
 );
 
-export default React.memo(TextInput);
+export default React.memo(Textarea);

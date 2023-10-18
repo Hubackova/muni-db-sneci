@@ -7,6 +7,7 @@ import "./Table.scss";
 
 const SpeciesNames: React.FC = () => {
   const [species, setSpecies] = useState<any[]>([]);
+  const [localities, setLocalities] = useState<any[]>([]);
   const db = getDatabase();
 
   useEffect(() => {
@@ -20,8 +21,37 @@ const SpeciesNames: React.FC = () => {
       setSpecies(items);
     });
   }, [db]);
-  if (!species.length) return <div>no data</div>;
-  return <SpeciesNamesTable species={species} />;
+
+  useEffect(() => {
+    onValue(ref(db, "localities/"), (snapshot) => {
+      const items: any = [];
+      snapshot.forEach((child) => {
+        let childItem = child.val();
+        childItem.key = child.key;
+        if (childItem.species) {
+          const speciesValues = Object.values(childItem.species);
+          if (speciesValues.length)
+            speciesValues.forEach((speciesData) => {
+              items.push({
+                ...childItem,
+                ...speciesData,
+                all:
+                  parseInt(speciesData.empty || 0) +
+                  parseInt(speciesData.undefined || 0) +
+                  parseInt(speciesData.live || 0),
+                key: childItem.key + speciesData.speciesKey,
+                siteKey: childItem.key,
+              });
+            });
+        }
+      });
+      setLocalities(items);
+    });
+  }, [db]);
+
+  if (!species.length || !localities.length) return <div>no data</div>;
+
+  return <SpeciesNamesTable species={species} localities={localities} />;
 };
 
 export default SpeciesNames;

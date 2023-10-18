@@ -20,7 +20,7 @@ const Localities: React.FC = () => {
       setLocalities(items);
     });
   }, [db]);
-  console.log(localities);
+
   if (!localities.length) return <div>no data</div>;
   return <LocalitiesTable localities={localities} />;
 };

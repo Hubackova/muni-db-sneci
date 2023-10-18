@@ -63,11 +63,12 @@ export const DateCell: React.FC<any> = ({
         initialValue,
         setValue,
         callback: () => {
-          update(ref(db, "extractions/" + row.original.key), {
+          const key = row.original.updatekey || row.original.key;
+          update(ref(db, "localities/" + key), {
             [cell.column.id]: e.target.value,
           });
           saveLast({
-            rowKey: row.original.key,
+            rowKey: key, //check
             cellId: cell.column.id,
             initialValue,
           });
@@ -114,39 +115,78 @@ export const EditableCell: React.FC<any> = ({
   cell,
   disabled = false,
   maxChars = 22,
-  dbName = "extractions/",
+  dbName = "localities/",
   saveLast = () => {},
+  updatekey,
+  fieldCodes = [],
   ...props
 }) => {
   const db = getDatabase();
   const [showEditModal, setShowEditModal] = useState(null);
   const [value, setValue] = useState(initialValue);
+
+  const isNumber = [
+    "all",
+    "live",
+    "empty",
+    "undefined",
+    "lot",
+    "vouchers",
+    "latitude",
+    "longitude",
+    "mapGrid",
+    "waterPH",
+    "waterConductivity",
+    "elevation",
+    "plotSize",
+    "sampleSize",
+    "habitatSize",
+    "distanceForest",
+    "releveNumber",
+  ].includes(cell.column.id);
   const onChange = (e: any) => {
-    setValue(e.target.value);
+    setValue(isNumber ? parseInt(e.target.value) : e.target.value);
   };
+
   const onBlur = (e: any) => {
     if (
       (initialValue?.toString() || "") !== (e.target.value?.toString() || "")
     ) {
+      if (
+        e.target.value &&
+        !!fieldCodes.length &&
+        fieldCodes.includes(e.target.value)
+      ) {
+        const errValue = e.target.value;
+        setValue(initialValue);
+        return toast.error("Duplicate Field code - " + errValue);
+      }
+
       setShowEditModal({
         row,
-        newValue: e.target.value,
+        newValue: isNumber ? parseInt(e.target.value) : e.target.value,
         id: cell.column.id,
         initialValue,
         setValue,
         callback: () => {
-          update(ref(db, dbName + row.original.key), {
-            [cell.column.id]: e.target.value,
+          const key = updatekey || row.original.key;
+          update(ref(db, dbName + key), {
+            [cell.column.id]: isNumber
+              ? parseInt(e.target.value)
+              : e.target.value,
           });
+
           saveLast({
-            rowKey: row.original.key,
+            rowKey: key,
             cellId: cell.column.id,
             initialValue,
+            dbName,
           });
         },
       });
     }
   };
+
   const inputRef = React.useRef();
   const isOverflow = useIsOverflow(inputRef);
 
@@ -156,25 +196,21 @@ export const EditableCell: React.FC<any> = ({
   if (!cell) return;
 
   const isNarrow = [
-    "isolateCodeGroup",
-    "ngul",
-    "isolateCode",
-    "kit",
-    "status",
-    "marker",
-    "anneal",
-    "annealing",
-    "extension",
-    "latitude",
+    "abbreviation",
+    "all",
+    "live",
+    "empty",
+    "undefined",
+    "lot",
+    "vouchers",
+    "specification",
+    "fieldCode",
+    "siteId",
   ].includes(cell.column.id);
-  const isWide = ["localityName", "note"].includes(cell.column.id);
+  const isSemiNarrow = ["latitude", "longitude"].includes(cell.column.id);
+  const isWide = ["note"].includes(cell.column.id);
   const isSemiWide = ["sequence"].includes(cell.column.id);
-  const isSemiNarrow = [
-    "initialDenaturation",
-    "finalExtension",
-    "numberCycles",
-    "end",
-  ].includes(cell.column.id);
+
   return (
     <>
       {showEditModal?.row.id === cell.row.id &&
@@ -201,6 +237,7 @@ export const EditableCell: React.FC<any> = ({
         onChange={onChange}
         onBlur={onBlur}
         disabled={disabled}
+        type={isNumber ? "number" : "text"}
         className={
           isNarrow
             ? "narrow"
@@ -223,7 +260,7 @@ export const EditableNoConfirmCell: React.FC<any> = ({
   row,
   cell,
   disabled = false,
-  dbName = "extractions/",
+  dbName = "localities/",
   saveLast = () => {},
   maxChars = 22,
   ...props
@@ -237,11 +274,12 @@ export const EditableNoConfirmCell: React.FC<any> = ({
     if (
       (initialValue?.toString() || "") !== (e.target.value?.toString() || "")
     ) {
-      update(ref(db, dbName + row.original.key), {
+      const key = row.original.updatekey || row.original.key;
+      update(ref(db, dbName + key), {
         [cell.column.id]: e.target.value,
       });
       saveLast({
-        rowKey: row.original.key,
+        rowKey: key,
         cellId: cell.column.id,
         initialValue,
       });
@@ -283,6 +321,7 @@ export const SelectCell: React.FC<any> = ({
   options,
   saveLast = () => {},
   initialKey,
+  dbName = "localities/",
 }) => {
   const db = getDatabase();
   const { original } = row;
@@ -302,11 +341,12 @@ export const SelectCell: React.FC<any> = ({
         initialValue,
         setValue,
         callback: () => {
-          update(ref(db, "extractions/" + row.original.key), {
+          const key = row.original.updatekey || row.original.key;
+          update(ref(db, dbName + key), {
             [cell.column.id]: value.value,
           });
           saveLast({
-            rowKey: row.original.key,
+            rowKey: key,
             cellId: cell.column.id,
             initialValue: initialKey || initialValue,
             setValue: () =>
@@ -360,7 +400,7 @@ export const CreatableSelectCell: React.FC<any> = ({
   row,
   cell,
   options,
-  dbName = "extractions/",
+  dbName = "localities/",
   saveLast = () => {},
   maxChars = 22,
 }) => {
@@ -382,11 +422,12 @@ export const CreatableSelectCell: React.FC<any> = ({
         initialValue,
         setValue,
         callback: () => {
-          update(ref(db, dbName + row.original.key), {
+          const key = row.original.updatekey || row.original.key;
+          update(ref(db, dbName + key), {
             [cell.column.id]: value.value,
           });
           saveLast({
-            rowKey: row.original.key,
+            rowKey: key,
             cellId: cell.column.id,
             initialValue,
           });

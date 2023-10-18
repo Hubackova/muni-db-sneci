@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { getDatabase, ref, remove, update } from "firebase/database";
+import { getDatabase, ref, update } from "firebase/database";
 import React, { useState } from "react";
 import { CSVLink } from "react-csv";
 import {
@@ -12,20 +12,16 @@ import {
 } from "react-table";
 import { toast } from "react-toastify";
 import { ReactComponent as ExportIcon } from "../../images/export.svg";
-import { EditableCell } from "../Cell";
+import { EditableCell, SelectCell } from "../Cell";
 import ConfirmModal from "../ConfirmModal";
 import { GlobalFilter, Multi, multiSelectFilter } from "../Filter";
 import IndeterminateCheckbox from "../IndeterminateCheckbox";
 
-const SpeciesNamesTable: React.FC<any> = ({ species }) => {
+const SpeciesNamesTable: React.FC<any> = ({ species, localities }) => {
   const db = getDatabase();
   const [showModal, setShowModal] = useState(null);
   const [showEditModal, setShowEditModal] = useState(null);
   const [last, setLast] = useState(false);
-
-  const removeItem = (id: string) => {
-    setShowModal(id);
-  };
 
   const customComparator = (prevProps, nextProps) => {
     return nextProps.value === prevProps.value;
@@ -59,6 +55,89 @@ const SpeciesNamesTable: React.FC<any> = ({ species }) => {
         accessor: "speciesName",
         Filter: Multi,
         filter: multiSelectFilter,
+        Cell: React.memo<React.FC<any>>(
+          ({ value: initialValue, row, cell }) => {
+            const [showEditModal, setShowEditModal] = useState(null);
+            const [value, setValue] = React.useState(initialValue);
+            const onChange = (e: any) => {
+              setValue(e.target.value);
+            };
+            const onBlur = (e: any) => {
+              if (
+                (initialValue?.toString() || "") !==
+                (e.target.value?.toString() || "")
+              ) {
+                if (!e.target.value)
+                  return toast.error("Species name cannot be empty");
+                if (species.find((i) => i.speciesName === e.target.value))
+                  return toast.error("Species name already exists");
+                const localitiesWithSpecies = localities.filter(
+                  (i) => i.speciesName === initialValue
+                );
+                if (localitiesWithSpecies.length) {
+                  localitiesWithSpecies.forEach((locality) => {
+                    const speciesKey = Object.keys(locality.species).find(
+                      (key) =>
+                        locality.species[key].speciesName === initialValue
+                    );
+                    if (speciesKey) {
+                      update(
+                        ref(
+                          db,
+                          "localities/" +
+                            locality.siteKey +
+                            "/species/" +
+                            speciesKey
+                        ),
+                        {
+                          speciesName: e.target.value,
+                        }
+                      );
+                    }
+                  });
+                }
+
+                setShowEditModal({
+                  row,
+                  newValue: e.target.value,
+                  id: cell.column.id,
+                  initialValue,
+                  setValue,
+                  callback: () => {
+                    update(ref(db, "species/" + row.original.key), {
+                      [cell.column.id]: e.target.value,
+                    });
+                  },
+                });
+              }
+            };
+            return (
+              <>
+                <input value={value} onChange={onChange} onBlur={onBlur} />
+                {showEditModal?.row.id === cell.row.id &&
+                  showEditModal.id === cell.column.id && (
+                    <ConfirmModal
+                      title={`Do you want to change value from ${
+                        showEditModal.initialValue || "<empty>"
+                      } to ${
+                        showEditModal.newValue
+                      } ? (the species name will be modified in all locations, the change is irreversible using the Back button!)`}
+                      onConfirm={async () => {
+                        await showEditModal.callback();
+                        setShowEditModal(null);
+                        toast.success("Field was edited successfully");
+                      }}
+                      onCancel={() => {
+                        showEditModal.setValue(showEditModal.initialValue);
+                      }}
+                      onHide={() => setShowEditModal(null)}
+                    />
+                  )}
+              </>
+            );
+          },
+          customComparator
+        ),
       },
       {
         Header: "Abbreviation",
@@ -71,6 +150,21 @@ const SpeciesNamesTable: React.FC<any> = ({ species }) => {
         accessor: "group",
         Filter: Multi,
         filter: multiSelectFilter,
+        Cell: ({ value, row, cell }) => {
+          return (
+            <SelectCell
+              initialValue={value}
+              row={row}
+              cell={cell}
+              options={[
+                { label: "aqutic", value: "aquatic" },
+                { label: "terrestrial", value: "terrestrial" },
+              ]}
+              saveLast={setLast}
+              dbName="species/"
+            />
+          );
+        },
       },
       {
         Header: "Species and author",
@@ -138,22 +232,10 @@ const SpeciesNamesTable: React.FC<any> = ({ species }) => {
   return (
     <div>
       <div className="table-container">
-        {showModal && (
-          <ConfirmModal
-            title="Do you want to continue?"
-            onConfirm={() => {
-              setShowModal(null);
-              remove(ref(db, "locations/" + showModal));
-              toast.success("Program was removed successfully");
-            }}
-            onHide={() => setShowModal(null)}
-          />
-        )}
-        <table className="table pcr" {...getTableProps()}>
+        <table className="table" {...getTableProps()}>
           <thead>
             {headerGroups.map((headerGroup, index) => (
               <tr {...headerGroup.getHeaderGroupProps()} key={index}>
-                <th></th>
                 {headerGroup.headers.map((column) => (
                   <th key={column.id}>
                     <span
@@ -182,11 +264,11 @@ const SpeciesNamesTable: React.FC<any> = ({ species }) => {
               prepareRow(row);
               return (
                 <tr {...row.getRowProps()} key={row.original.key}>
-                  <td role="cell" className="remove">
+                  {/*                   <td role="cell" className="remove">
                     <button onClick={() => removeItem(row.original.key)}>
                       X
                     </button>
-                  </td>
+                  </td> */}
                   {row.cells.map((cell) => {
                     return (
                       <>
@@ -201,8 +283,7 @@ const SpeciesNamesTable: React.FC<any> = ({ species }) => {
                                 update(
                                   ref(
                                     db,
-                                    "locations/" +
-                                      showEditModal.row.original.key
+                                    "species/" + showEditModal.row.original.key
                                   ),
                                   {
                                     [showEditModal.id]: showEditModal.newValue,

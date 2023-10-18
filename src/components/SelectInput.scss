@@ -9,6 +9,17 @@
   .select-input {
     text-align: left;
 
+    &.onlyArrow {
+      max-width: 38px;
+      .select__menu {
+        min-width: max-content;
+      }
+      .select__value-container,
+      .select__indicator-separator {
+        display: none;
+      }
+    }
+
     &.narrow {
       * {
         min-height: 0;

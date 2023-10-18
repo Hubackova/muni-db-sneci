@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.scss";
+import { AppStateProvider } from "./AppStateContext";
 import TopBar from "./components/TopBar";
 import routes from "./routes";
 import Error404 from "./routes/Error404";
@@ -14,7 +15,7 @@ import SpeciesNames from "./routes/SpeciesNames";
 
 const App: React.FC = () => {
   return (
-    <div>
+    <AppStateProvider>
       <TopBar />
       <ToastContainer />
       <div className="app-container">
@@ -30,7 +31,7 @@ const App: React.FC = () => {
           <Route element={<Error404 returnUrl={routes.home} />} />
         </Routes>
       </div>
-    </div>
+    </AppStateProvider>
   );
 };
 

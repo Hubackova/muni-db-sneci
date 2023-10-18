@@ -20,6 +20,10 @@ const Species: React.FC = () => {
           speciesValues.forEach((species) => {
             items.push({
               ...species,
+              all:
+                parseInt(species.empty || 0) +
+                parseInt(species.live || 0) +
+                parseInt(species.undefined || 0),
               siteId: childItem.siteId,
             });
           });
