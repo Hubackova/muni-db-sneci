@@ -122,6 +122,10 @@
         max-width: 135px;
       }
 
+      &.hyper-wide {
+        min-width: 800px;
+      }
+
       &.wide {
         min-width: 300px;
       }
@@ -140,6 +144,11 @@
       height: 20px;
     }
   }
+
+  input[type="date"] {
+    width: 98%;
+  }
+
   .sample-list {
     display: flex;
     gap: 4px;
@@ -260,4 +269,11 @@ form {
     flex-direction: row;
     align-items: center;
   }
+}
+
+.plus {
+  cursor: pointer;
+  color: darkcyan;
+  font-size: 20px;
+  padding: 0 10px;
 }

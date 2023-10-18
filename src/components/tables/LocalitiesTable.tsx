@@ -3,6 +3,7 @@
 import { getDatabase, ref, remove, update } from "firebase/database";
 import React, { useState } from "react";
 import { CSVLink } from "react-csv";
+import { useNavigate } from "react-router-dom";
 import {
   useFilters,
   useGlobalFilter,
@@ -11,6 +12,7 @@ import {
   useTable,
 } from "react-table";
 import { toast } from "react-toastify";
+import { useAppStateContext } from "../../AppStateContext";
 import { dataTypeOptions, samplingOptions } from "../../helpers/options";
 import { ReactComponent as ExportIcon } from "../../images/export.svg";
 import {
@@ -29,6 +31,8 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
   const [showEditModal, setShowEditModal] = useState(null);
   const [last, setLast] = useState(false);
   const fieldCodes = localities.map((i) => i.fieldCode);
+  const navigate = useNavigate();
+  const { setCurrentLocality } = useAppStateContext();
 
   const getOptions = React.useCallback(
     (key: string) =>
@@ -91,6 +95,26 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
         accessor: "siteId",
         Filter: Multi,
         filter: multiSelectFilter,
+        Cell: React.memo<React.FC<any>>(({ value, row, cell }) => (
+          <div>
+            <span
+              className="plus"
+              onClick={() => {
+                setCurrentLocality(row.original.key);
+                navigate("/");
+              }}
+            >
+              <b>+</b>{" "}
+            </span>
+            <EditableCell
+              initialValue={value}
+              row={row}
+              cell={cell}
+              dbName="localities/"
+              saveLast={setLast}
+            />
+          </div>
+        )),
         /*         Cell: React.memo<React.FC<any>>(
           ({ row: { original } }) => (
             <input
@@ -114,6 +138,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
             cell={cell}
             saveLast={setLast}
             fieldCodes={fieldCodes}
+            dbName="localities/"
           />
         )),
       },

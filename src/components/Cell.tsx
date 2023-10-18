@@ -210,6 +210,7 @@ export const EditableCell: React.FC<any> = ({
   const isSemiNarrow = ["latitude", "longitude"].includes(cell.column.id);
   const isWide = ["note"].includes(cell.column.id);
   const isSemiWide = ["sequence"].includes(cell.column.id);
+  const isHyperWide = ["siteDescription"].includes(cell.column.id);
 
   return (
     <>
@@ -247,6 +248,8 @@ export const EditableCell: React.FC<any> = ({
             ? "semi-wide"
             : isSemiNarrow
             ? "semi-narrow"
+            : isHyperWide
+            ? "hyper-wide"
             : ""
         }
         {...props}
