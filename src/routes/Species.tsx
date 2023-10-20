@@ -7,7 +7,20 @@ import "./Table.scss";
 
 const Species: React.FC = () => {
   const [species, setSpecies] = useState<any[]>([]);
+  const [speciesNames, setSpeciesNames] = useState<any[]>([]);
   const db = getDatabase();
+
+  useEffect(() => {
+    onValue(ref(db, "species/"), (snapshot) => {
+      const items: any = [];
+      snapshot.forEach((child) => {
+        let childItem = child.val();
+        childItem.key = child.key;
+        items.push(childItem);
+      });
+      setSpeciesNames(items);
+    });
+  }, [db]);
 
   useEffect(() => {
     onValue(ref(db, "localities/"), (snapshot) => {
@@ -18,6 +31,7 @@ const Species: React.FC = () => {
         if (childItem.species) {
           const speciesValues = Object.values(childItem.species);
           speciesValues.forEach((species) => {
+            console.log(species);
             items.push({
               ...species,
               all:
@@ -25,6 +39,10 @@ const Species: React.FC = () => {
                 parseInt(species.live || 0) +
                 parseInt(species.undefined || 0),
               siteId: childItem.siteId,
+              siteKey: childItem.key,
+              speciesNameKey: species.speciesNameKey,
+              speciesKey: species.speciesKey,
+              key: species.speciesNameKey,
             });
           });
         }
@@ -32,9 +50,9 @@ const Species: React.FC = () => {
       setSpecies(items);
     });
   }, [db]);
-  if (!species.length) return <div>no data</div>;
+  if (!species.length || !speciesNames.length) return <div>no data</div>;
 
-  return <SpeciesTable species={species} />;
+  return <SpeciesTable species={species} speciesNames={speciesNames} />;
 };
 
 export default Species;

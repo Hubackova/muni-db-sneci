@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useAppStateContext } from "../../AppStateContext";
 import { backup } from "../../content/species";
 import { writeSpeciesToLocalityData } from "../../firebase/firebase";
+import { getValueFromOptions } from "../../helpers/utils";
 import SelectInput from "../SelectInput";
 import TextInput from "../TextInput";
 import { specificationOptions } from "../tables/LocalitiesAndSpeciesTable";
@@ -18,7 +19,11 @@ const SpeciesAtLocalityForm: React.FC = ({
   const { currentLocality } = useAppStateContext();
 
   const addItem = (data: any) => {
-    writeSpeciesToLocalityData(data, currentLocality);
+    const { all, ...withoutAllData } = data;
+    withoutAllData.empty = parseInt(withoutAllData.empty || 0);
+    withoutAllData.live = parseInt(withoutAllData.live || 0);
+    withoutAllData.undefined = parseInt(withoutAllData.undefined || 0);
+    writeSpeciesToLocalityData(withoutAllData, currentLocality);
     toast.success("Species was added successfully");
   };
 
@@ -41,12 +46,14 @@ const SpeciesAtLocalityForm: React.FC = ({
   const field2Value = watch("empty");
   const field3Value = watch("undefined");
   const sum =
-    parseInt(field1Value) + parseInt(field2Value) + parseInt(field3Value);
+    parseInt(field1Value || 0) +
+    parseInt(field2Value || 0) +
+    parseInt(field3Value || 0);
 
   const speciesNamesOptions = speciesNames
     .map((i: any) => ({
-      value: i,
-      label: i,
+      value: i.key,
+      label: i.speciesName,
     }))
     .sort(function (a, b) {
       if (a.label < b.label) {
@@ -72,21 +79,23 @@ const SpeciesAtLocalityForm: React.FC = ({
       <div className="row">
         <Controller
           render={({ field: { onChange, value } }) => {
+            const item = getValueFromOptions(value, speciesNamesOptionsAll);
             return (
               <SelectInput
                 options={speciesNamesOptionsAll}
-                value={value ? { value, label: value } : null}
+                value={value ? { value, label: item?.label || "" } : null}
                 onChange={(e: any) => {
                   onChange(e?.value);
                 }}
                 label={withLabels && "Species name"}
                 error={errors.speciesName?.message}
                 isSearchable
+                className=""
               />
             );
           }}
           control={control}
-          name="speciesName"
+          name="speciesNameKey"
           required="This field is required"
         />
         <Controller
@@ -144,7 +153,6 @@ const SpeciesAtLocalityForm: React.FC = ({
         <TextInput
           label={withLabels && "All"}
           name="all"
-          error={errors.country?.message}
           register={register}
           readOnly={true}
           className="narrow"
@@ -155,7 +163,7 @@ const SpeciesAtLocalityForm: React.FC = ({
         <TextInput
           label={withLabels && "Lot number:"}
           name="lot"
-          error={errors.country?.message}
+          error={errors.lot?.message}
           register={register}
           type="number"
           min={0}
@@ -165,7 +173,7 @@ const SpeciesAtLocalityForm: React.FC = ({
         <TextInput
           label={withLabels && "Vouchers"}
           name="vouchers"
-          error={errors.country?.message}
+          error={errors.vouchers?.message}
           register={register}
           type="number"
           min={0}
@@ -175,7 +183,7 @@ const SpeciesAtLocalityForm: React.FC = ({
         <TextInput
           label={withLabels && "Note (species)"}
           name="noteSpecies"
-          error={errors.country?.message}
+          error={errors.noteSpecies?.message}
           register={register}
         />
       </div>

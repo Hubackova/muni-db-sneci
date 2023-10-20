@@ -34,7 +34,7 @@ const HomePage: React.FC = () => {
       snapshot.forEach((child) => {
         let childItem = child.val();
         childItem.key = child.key;
-        items.push(childItem.speciesName);
+        items.push(childItem);
       });
       setSpeciesNames(items);
     });
@@ -65,7 +65,7 @@ const HomePage: React.FC = () => {
           <NewLocalityForm localities={localities} />
         </div>
         {currentLocality ? (
-          <div>
+          <div className="table-wrapper">
             {localities && currentLocality && !!species.length && (
               <>
                 <h5>
@@ -73,7 +73,11 @@ const HomePage: React.FC = () => {
                   {getLocalityName(localities, currentLocality)}
                 </h5>
                 <br />
-                <SpeciesTable species={speciesData} compact />
+                <SpeciesTable
+                  species={speciesData}
+                  speciesNames={speciesNames}
+                  compact
+                />
               </>
             )}
             {!species.length && (

@@ -69,7 +69,6 @@ const NewSpeciesForm: React.FC = ({ speciesNames }) => {
             setValue("speciesAndAuthor", e?.target.value);
           }}
           required="This field is required"
-          className
         />
 
         <TextInput

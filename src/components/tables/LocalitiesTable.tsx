@@ -104,7 +104,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
                 navigate("/");
               }}
             >
-              <b>+</b>{" "}
+              <b title="Add species">+</b>
             </span>
             <EditableCell
               initialValue={value}
@@ -115,16 +115,6 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
             />
           </div>
         )),
-        /*         Cell: React.memo<React.FC<any>>(
-          ({ row: { original } }) => (
-            <input
-              defaultValue={[original.siteId] || ""}
-              disabled
-              className="narrow"
-            ></input>
-          ),
-          customComparator
-        ), */
       },
       {
         Header: "Field code",
@@ -166,6 +156,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
         Filter: Multi,
         filter: multiSelectFilter,
         Cell: ({ value, row, cell }) => {
+          console.log(row);
           return (
             <CreatableSelectCell
               initialValue={value}
@@ -173,6 +164,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
               cell={cell}
               options={getOptions("country")}
               saveLast={setLast}
+              updatekey={row.original.key}
             />
           );
         },
@@ -183,12 +175,6 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
         Filter: Multi,
         filter: multiSelectFilter,
       },
-      /*       { TODO: kontrola jestli neco 
-        Header: "Final Extension",
-        accessor: "finalExtension",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      }, */
       {
         Header: "Settlement",
         accessor: "settlement",
@@ -243,6 +229,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
               cell={cell}
               options={getOptions("collector")}
               saveLast={setLast}
+              updatekey={row.original.key}
             />
           );
         },
@@ -284,6 +271,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
               cell={cell}
               options={samplingOptions}
               saveLast={setLast}
+              updatekey={row.original.key}
             />
           );
         },
@@ -325,6 +313,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
               cell={cell}
               options={dataTypeOptions}
               saveLast={setLast}
+              updatekey={row.original.key}
             />
           );
         },
@@ -401,7 +390,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
             onConfirm={() => {
               setShowModal(null);
               remove(ref(db, "localities/" + showModal));
-              toast.success("Program was removed successfully");
+              toast.success("Locality was removed successfully");
             }}
             onHide={() => setShowModal(null)}
           />

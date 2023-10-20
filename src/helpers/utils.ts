@@ -11,3 +11,6 @@ export function removeUndefinedKeys(obj: any) {
   });
   return obj;
 }
+
+export const getValueFromOptions = (value: any, options: any) =>
+  options.find((i: any) => i.value === value);

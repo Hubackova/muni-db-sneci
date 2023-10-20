@@ -12,6 +12,7 @@ import {
 } from "react-table";
 import { useAppStateContext } from "../../AppStateContext";
 import { dataTypeOptions, samplingOptions } from "../../helpers/options";
+import { getValueFromOptions } from "../../helpers/utils";
 import { ReactComponent as ExportIcon } from "../../images/export.svg";
 import {
   CreatableSelectCell,
@@ -23,15 +24,18 @@ import { GlobalFilter, Multi, multiSelectFilter } from "../Filter";
 import IndeterminateCheckbox from "../IndeterminateCheckbox";
 
 export const specificationOptions = [
-  { value: "sp", label: "sp." },
-  { value: "cf", label: "cf." },
-  { value: "juv", label: "juv." },
-  { value: "spjuv", label: "sp. juv." },
-  { value: "sstr", label: "s. str." },
-  { value: "slat", label: "s. lat." },
+  { value: "sp.", label: "sp." },
+  { value: "cf.", label: "cf." },
+  { value: "juv.", label: "juv." },
+  { value: "sp. juv.", label: "sp. juv." },
+  { value: "s. str.", label: "s. str." },
+  { value: "s. lat.", label: "s. lat." },
 ];
 
-const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
+const LocalitiesAndSpeciesTable: React.FC<any> = ({
+  localities,
+  speciesNames,
+}) => {
   const db = getDatabase();
   const { currentLocality } = useAppStateContext();
   /*   const [showModal, setShowModal] = useState(null); */
@@ -80,6 +84,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
     "lot",
     "vouchers",
     "noteSpecies",
+    "speciesNameKey",
   ];
 
   const handleRevert = () => {
@@ -110,7 +115,30 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
       />
     );
   }, customComparator);
+
   const fieldCodes = localities.map((i) => i.fieldCode);
+
+  const speciesNamesOptions = speciesNames
+    .map((i: any) => ({
+      value: i.key,
+      label: i.speciesName,
+    }))
+    .sort(function (a, b) {
+      if (a.label < b.label) {
+        return -1;
+      }
+      if (a.label > b.label) {
+        return 1;
+      }
+      return 0;
+    });
+
+  const speciesNamesOptionsAll = [
+    { value: "add", label: "to be added" },
+    { value: "0", label: "0" },
+    ...speciesNamesOptions,
+  ];
+
   const columns = React.useMemo(
     () => [
       {
@@ -131,15 +159,27 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
       },
       {
         Header: "Species Name",
-        accessor: "speciesName",
+        accessor: "speciesNameKey",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: React.memo<React.FC<any>>(
-          ({ row: { original } }) => (
-            <input defaultValue={[original.speciesName] || ""} disabled></input>
-          ),
-          customComparator
-        ),
+        Cell: ({ value, row, cell }) => {
+          const item = getValueFromOptions(
+            row.original.speciesNameKey,
+            speciesNamesOptionsAll
+          );
+          return (
+            <SelectCell
+              backValue={value}
+              initialValue={item?.label || ""}
+              row={row}
+              cell={cell}
+              options={speciesNamesOptionsAll}
+              saveLast={setLast}
+              dbName={`localities/${row.original.siteKey}/species/`}
+              updatekey={row.original.speciesKey}
+            />
+          );
+        },
       },
       {
         Header: "Specification",
@@ -154,7 +194,8 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
               cell={cell}
               options={specificationOptions}
               saveLast={setLast}
-              dbName={`localities/${row.original.siteId}/species/`}
+              dbName={`localities/${row.original.siteKey}/species/`}
+              updatekey={row.original.speciesKey}
             />
           );
         },
@@ -186,7 +227,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
         Cell: React.memo<React.FC<any>>(({ row: { original } }) => {
           return (
             <input
-              defaultValue={[original.all] || ""}
+              value={[original.all] || ""}
               readOnly
               className="narrow"
             ></input>
@@ -267,12 +308,6 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
         Filter: Multi,
         filter: multiSelectFilter,
       },
-      /*       { TODO: kontrola jestli neco chybi
-        Header: "Final Extension",
-        accessor: "finalExtension",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      }, */
       {
         Header: "Settlement",
         accessor: "settlement",
@@ -522,10 +557,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
             {rows.map((row) => {
               prepareRow(row);
               return (
-                <tr
-                  {...row.getRowProps()}
-                  key={row.original.siteId + row.original.speciesName}
-                >
+                <tr {...row.getRowProps()} key={row.original.key}>
                   {/*                   <td role="cell" className="remove">
                     <button onClick={() => removeItem(row.original.key)}>
                       X
@@ -535,7 +567,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
                     return (
                       <>
                         <td
-                          key={row.id + cell.column.id}
+                          key={row.original.key + cell.column.id}
                           {...cell.getCellProps()}
                         >
                           {cell.render("Cell")}

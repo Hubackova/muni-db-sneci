@@ -212,7 +212,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
           error={errors.mapGrid?.message}
           register={register}
           type="number"
-        />{" "}
+        />
         <TextInput
           label="Elevation (m a.s.l.)"
           name="elevation"
@@ -267,7 +267,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
           error={errors.plotSize?.message}
           register={register}
           type="number"
-        />{" "}
+        />
         <TextInput
           label="Sample size (L)"
           name="sampleSize"
@@ -283,7 +283,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
           error={errors.habitatSize?.message}
           register={register}
           type="number"
-        />{" "}
+        />
         <TextInput
           label="Distance forest (m)"
           name="distanceForest"

@@ -12,19 +12,25 @@ import {
 } from "react-table";
 import { toast } from "react-toastify";
 import { useAppStateContext } from "../../AppStateContext";
+import { getValueFromOptions } from "../../helpers/utils";
 import { ReactComponent as ExportIcon } from "../../images/export.svg";
-import { EditableCell } from "../Cell";
+import { EditableCell, SelectCell } from "../Cell";
 import ConfirmModal from "../ConfirmModal";
 import { GlobalFilter, Multi, multiSelectFilter } from "../Filter";
-
 import IndeterminateCheckbox from "../IndeterminateCheckbox";
+import { specificationOptions } from "../tables/LocalitiesAndSpeciesTable";
 
-const SpeciesTable: React.FC<any> = ({ species, compact = false }) => {
+const SpeciesTable: React.FC<any> = ({
+  species,
+  speciesNames,
+  compact = false,
+}) => {
   const db = getDatabase();
   const [showModal, setShowModal] = useState(null);
   const [showEditModal, setShowEditModal] = useState(null);
   const [last, setLast] = useState(false);
   const { currentLocality } = useAppStateContext();
+
   const removeItem = (id: string) => {
     setShowModal(id);
   };
@@ -32,6 +38,7 @@ const SpeciesTable: React.FC<any> = ({ species, compact = false }) => {
   const customComparator = (prevProps, nextProps) => {
     return nextProps.value === prevProps.value;
   };
+
   const handleRevert = () => {
     update(ref(db, last.dbName + last.rowKey), {
       [last.cellId]: last.initialValue,
@@ -47,32 +54,85 @@ const SpeciesTable: React.FC<any> = ({ species, compact = false }) => {
         initialValue={value}
         row={row}
         cell={cell}
-        dbName={`localities/${currentLocality || row.original.key}/species/`}
+        dbName={`localities/${
+          currentLocality || row.original.siteKey
+        }/species/`}
         saveLast={setLast}
         updatekey={row.original.speciesKey}
       />
     );
   }, customComparator);
 
+  const speciesNamesOptions = speciesNames
+    .map((i: any) => ({
+      value: i.key,
+      label: i.speciesName,
+    }))
+    .sort(function (a, b) {
+      if (a.label < b.label) {
+        return -1;
+      }
+      if (a.label > b.label) {
+        return 1;
+      }
+      return 0;
+    });
+
+  const speciesNamesOptionsAll = [
+    { value: "add", label: "to be added" },
+    { value: "0", label: "0" },
+    ...speciesNamesOptions,
+  ];
+
   const columns = React.useMemo(
     () => [
       {
         Header: "Species Name",
-        accessor: "speciesName",
+        accessor: "speciesNameKey",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: React.memo<React.FC<any>>(
-          ({ row: { original } }) => (
-            <input defaultValue={[original.speciesName] || ""} disabled></input>
-          ),
-          customComparator
-        ),
+        Cell: ({ value, row, cell }) => {
+          const item = getValueFromOptions(
+            row.original.speciesNameKey,
+            speciesNamesOptionsAll
+          );
+          return (
+            <SelectCell
+              backValue={value}
+              initialValue={item?.label || ""}
+              row={row}
+              cell={cell}
+              options={speciesNamesOptionsAll}
+              saveLast={setLast}
+              dbName={`localities/${
+                currentLocality || row.original.siteKey
+              }/species/`}
+              updatekey={row.original.speciesKey}
+              className="speciesNameKey"
+            />
+          );
+        },
       },
       {
         Header: "Specification",
         accessor: "specification",
         Filter: Multi,
         filter: multiSelectFilter,
+        Cell: ({ value, row, cell }) => {
+          return (
+            <SelectCell
+              initialValue={value}
+              row={row}
+              cell={cell}
+              options={specificationOptions}
+              saveLast={setLast}
+              dbName={`localities/${
+                currentLocality || row.original.siteKey
+              }/species/`}
+              updatekey={row.original.speciesKey}
+            />
+          );
+        },
       },
       {
         Header: "Live ind.",
@@ -100,7 +160,7 @@ const SpeciesTable: React.FC<any> = ({ species, compact = false }) => {
         Cell: React.memo<React.FC<any>>(
           ({ row: { original } }) => (
             <input
-              defaultValue={[original.all] || ""}
+              value={[original.all] || ""}
               readOnly
               className="narrow"
             ></input>
@@ -260,7 +320,7 @@ const SpeciesTable: React.FC<any> = ({ species, compact = false }) => {
                       onClick={() =>
                         removeItem(
                           `localities/${
-                            currentLocality || row.original.key
+                            currentLocality || row.original.siteKey
                           }/species/${row.original.speciesKey}`
                         )
                       }

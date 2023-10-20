@@ -323,8 +323,9 @@ export const SelectCell: React.FC<any> = ({
   cell,
   options,
   saveLast = () => {},
-  initialKey,
   dbName = "localities/",
+  updatekey,
+  backValue = "",
 }) => {
   const db = getDatabase();
   const { original } = row;
@@ -344,14 +345,14 @@ export const SelectCell: React.FC<any> = ({
         initialValue,
         setValue,
         callback: () => {
-          const key = row.original.updatekey || row.original.key;
-          update(ref(db, dbName + key), {
+          update(ref(db, dbName + updatekey), {
             [cell.column.id]: value.value,
           });
           saveLast({
-            rowKey: key,
+            rowKey: updatekey,
             cellId: cell.column.id,
-            initialValue: initialKey || initialValue,
+            initialValue: backValue || initialValue,
+            dbName,
             setValue: () =>
               setValue({ value: initialValue, label: initialValue }),
           });
@@ -362,6 +363,8 @@ export const SelectCell: React.FC<any> = ({
 
   const inputRef = React.useRef();
   const isOverflow = useIsOverflow(inputRef);
+
+  const isWide = ["speciesNameKey"].includes(cell.column.id);
 
   return (
     <>
@@ -390,7 +393,7 @@ export const SelectCell: React.FC<any> = ({
         value={value}
         onChange={onChange}
         isSearchable
-        className="narrow"
+        className={isWide ? "custom wide" : "custom"}
         title={isOverflow ? value : ""}
         ref={inputRef}
       />
@@ -406,6 +409,8 @@ export const CreatableSelectCell: React.FC<any> = ({
   dbName = "localities/",
   saveLast = () => {},
   maxChars = 22,
+  updatekey,
+  backValue = "",
 }) => {
   const db = getDatabase();
   const { original } = row;
@@ -425,14 +430,16 @@ export const CreatableSelectCell: React.FC<any> = ({
         initialValue,
         setValue,
         callback: () => {
-          const key = row.original.updatekey || row.original.key;
-          update(ref(db, dbName + key), {
+          update(ref(db, dbName + updatekey), {
             [cell.column.id]: value.value,
           });
           saveLast({
-            rowKey: key,
+            rowKey: updatekey,
             cellId: cell.column.id,
-            initialValue,
+            initialValue: backValue || initialValue,
+            dbName,
+            setValue: () =>
+              setValue({ value: initialValue, label: initialValue }),
           });
         },
       });
@@ -469,7 +476,7 @@ export const CreatableSelectCell: React.FC<any> = ({
         value={value}
         onChange={onChange}
         isSearchable
-        className="narrow"
+        className="custom"
         title={isOverflow ? value : ""}
       />
     </>

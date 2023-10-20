@@ -20,10 +20,15 @@
       }
     }
 
-    &.narrow {
+    &.custom {
       * {
         min-height: 0;
       }
+
+      &.wide {
+        min-width: 190px;
+      }
+
       div > div {
         padding-top: 0;
         padding-bottom: 0;
