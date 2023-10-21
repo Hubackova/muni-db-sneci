@@ -1,21 +1,22 @@
 // @ts-nocheck
-import { getDatabase } from "firebase/database";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { useAppStateContext } from "../../AppStateContext";
 import { backup } from "../../content/speciesNames";
 import { writeSpeciesNameData } from "../../firebase/firebase";
 import SelectInput from "../SelectInput";
 import TextInput from "../TextInput";
 import "./NewSampleForm.scss";
-
 const NewSpeciesForm: React.FC = ({ speciesNames }) => {
-  const db = getDatabase();
-
+  const { setCurrentLocality } = useAppStateContext();
+  const speciesNamesValues = speciesNames.map((i: any) => i.speciesName);
   const addItem = (data: any) => {
-    if (speciesNames.includes(data.speciesName))
+    if (speciesNamesValues.includes(data.speciesName))
       return toast.error("Species already exists");
-    writeSpeciesNameData(data);
+    const checkedData = { ...data, group: data.group || "" };
+    writeSpeciesNameData(checkedData);
+    setCurrentLocality("");
     toast.success("Species was added successfully");
   };
 
@@ -28,15 +29,14 @@ const NewSpeciesForm: React.FC = ({ speciesNames }) => {
     register,
     formState: { errors },
     handleSubmit,
-    getValues,
     control,
     setValue,
   } = useForm<PrimersType>();
 
   const speciesNamesOptions = speciesNames
     .map((i: any) => ({
-      value: i,
-      label: i,
+      value: i.speciesName,
+      label: i.speciesName,
     }))
     .sort(function (a, b) {
       if (a.label < b.label) {
