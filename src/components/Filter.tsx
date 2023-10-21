@@ -6,6 +6,16 @@ import { useAsyncDebounce } from "react-table";
 import { ReactComponent as FilterIcon } from "../images/filter.svg";
 import "./Filter.scss";
 
+function debounce(func, timeout = 3000) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(this, args);
+    }, timeout);
+  };
+}
+
 function useOutsideAlerter(ref, opened, setOpened) {
   useEffect(() => {
     /**
@@ -71,7 +81,6 @@ export function Multi({
   const [min, setMin] = useState("");
   const [maxDate, setMaxDate] = useState(now);
   const [minDate, setMinDate] = useState(now);
-  const [filterBy, setFilterBy] = useState(false);
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, opened, setOpened);
 
@@ -183,7 +192,7 @@ export function Multi({
                   value={min}
                   type="number"
                   placeholder={`Min (${allMin})`}
-                  onBlur={(e) => {
+                  /*                   onBlur={(e) => {
                     const val = e.target.value;
                     const onlyNumbers = options.filter(
                       (element) =>
@@ -193,9 +202,24 @@ export function Multi({
                     );
 
                     setFilter(val ? onlyNumbers : []);
-                  }}
+                  }} */
                   onChange={(e) => {
                     setMin(e.target.value);
+
+                    const filter = () => {
+                      const val = e.target.value;
+                      const onlyNumbers = options.filter(
+                        (element) =>
+                          typeof parseFloat(element) === "number" &&
+                          element >= parseFloat(val) &&
+                          element <= parseFloat(max)
+                      );
+
+                      return setFilter(val ? onlyNumbers : []);
+                    };
+
+                    const processChange = debounce(() => filter());
+                    processChange();
                   }}
                   style={{
                     width: "70px",
@@ -207,7 +231,7 @@ export function Multi({
                   value={max}
                   type="number"
                   placeholder={`Max (${allMax})`}
-                  onBlur={(e) => {
+                  /*                   onBlur={(e) => {
                     const val = e.target.value;
                     const onlyNumbers = options.filter(
                       (element) =>
@@ -217,9 +241,22 @@ export function Multi({
                     );
 
                     setFilter(val ? onlyNumbers : []);
-                  }}
+                  }} */
                   onChange={(e) => {
                     setMax(e.target.value);
+                    const filter = () => {
+                      const val = e.target.value;
+                      const onlyNumbers = options.filter(
+                        (element) =>
+                          typeof parseFloat(element) === "number" &&
+                          element <= parseFloat(val) &&
+                          element >= parseFloat(min)
+                      );
+                      return setFilter(val ? onlyNumbers : []);
+                    };
+
+                    const processChange = debounce(() => filter());
+                    processChange();
                   }}
                   style={{
                     width: "80px",
