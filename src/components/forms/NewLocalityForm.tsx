@@ -1,5 +1,4 @@
 // @ts-nocheck
-import { getDatabase } from "firebase/database";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -16,7 +15,6 @@ import "./NewSampleForm.scss";
 const NewLocalityForm: React.FC = ({ localities }) => {
   const { setCurrentLocality } = useAppStateContext();
   const [showModalCode, setShowModalCode] = useState(false);
-  const db = getDatabase();
 
   const getOptions = React.useCallback(
     (key: string) =>
@@ -44,15 +42,8 @@ const NewLocalityForm: React.FC = ({ localities }) => {
   );
 
   const addItem = (data: any) => {
-    if (
-      !data.collector ||
-      !data.country ||
-      !data.samplingMethod ||
-      !data.dataType
-    )
-      return toast.error(
-        "Collector, samplingMethod, dataType and country should be added"
-      );
+    data.longitude = parseFloat(data.longitude || 0);
+    data.latitude = parseFloat(data.latitude || 0);
     const localityKey = writeLocalityData(data);
     toast.success("New locality was added successfully");
     setCurrentLocality(localityKey);
@@ -73,8 +64,6 @@ const NewLocalityForm: React.FC = ({ localities }) => {
 
   const siteIds = localities.map((locality) => locality.siteId);
   const fieldCodes = localities.map((locality) => locality.fieldCode);
-
-  console.log(errors);
 
   return (
     <form className="form locality" onSubmit={handleSubmit(addItem)}>
@@ -376,7 +365,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
       <button className="submit-btn" type="submit">
         Save
       </button>
-      {/*       <button
+      {/* <button
         className="submit-btn"
         type="button"
         onClick={() => addItemsBackup()}

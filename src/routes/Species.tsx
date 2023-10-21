@@ -31,7 +31,6 @@ const Species: React.FC = () => {
         if (childItem.species) {
           const speciesValues = Object.values(childItem.species);
           speciesValues.forEach((species) => {
-            console.log(species);
             items.push({
               ...species,
               all:
@@ -43,6 +42,9 @@ const Species: React.FC = () => {
               speciesNameKey: species.speciesNameKey,
               speciesKey: species.speciesKey,
               key: species.speciesNameKey,
+              speciesNamesKeysinLocality: speciesValues.map(
+                (i) => i.speciesNameKey
+              ),
             });
           });
         }

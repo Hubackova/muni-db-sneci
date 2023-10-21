@@ -19,7 +19,6 @@ import IndeterminateCheckbox from "../IndeterminateCheckbox";
 
 const SpeciesNamesTable: React.FC<any> = ({ species, localities }) => {
   const db = getDatabase();
-  const [showModal, setShowModal] = useState(null);
   const [showEditModal, setShowEditModal] = useState(null);
   const [last, setLast] = useState(false);
 
@@ -323,7 +322,7 @@ const SpeciesNamesTable: React.FC<any> = ({ species, localities }) => {
         <div className="download">
           <CSVLink
             data={selectedFlatRows.map((i) => i.values)}
-            filename="pcr-programs.csv"
+            filename="species-names.csv"
           >
             <div className="export">
               <ExportIcon />

@@ -167,13 +167,20 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
             row.original.speciesNameKey,
             speciesNamesOptionsAll
           );
+          const filteredOptions = speciesNamesOptionsAll.filter(
+            (i) =>
+              (row.original.speciesNamesKeysinLocality &&
+                !row.original.speciesNamesKeysinLocality.includes(i.value)) ||
+              i.value === "add" ||
+              i.value === "0"
+          );
           return (
             <SelectCell
               backValue={value}
               initialValue={item?.label || ""}
               row={row}
               cell={cell}
-              options={speciesNamesOptionsAll}
+              options={filteredOptions}
               saveLast={setLast}
               dbName={`localities/${row.original.siteKey}/species/`}
               updatekey={row.original.speciesKey}
@@ -298,6 +305,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
               cell={cell}
               options={getOptions("country")}
               saveLast={setLast}
+              updatekey={row.original.siteKey}
             />
           );
         },
@@ -362,6 +370,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
               cell={cell}
               options={getOptions("collector")}
               saveLast={setLast}
+              updatekey={row.original.siteKey}
             />
           );
         },
@@ -403,6 +412,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
               cell={cell}
               options={samplingOptions}
               saveLast={setLast}
+              updatekey={row.original.siteKey}
             />
           );
         },
@@ -444,6 +454,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
               cell={cell}
               options={dataTypeOptions}
               saveLast={setLast}
+              updatekey={row.original.siteKey}
             />
           );
         },
@@ -589,8 +600,17 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
         />
         <div className="download">
           <CSVLink
-            data={selectedFlatRows.map((i) => i.values)}
-            filename="pcr-programs.csv"
+            data={selectedFlatRows.map((i) => {
+              const item = {
+                ...i.values,
+                speciesName: speciesNamesOptionsAll.find(
+                  (j) => j.value === i.values.speciesNameKey
+                )?.label,
+              };
+              const { speciesNameKey, ...data } = item;
+              return data;
+            })}
+            filename="localities-species.csv"
           >
             <div className="export">
               <ExportIcon />

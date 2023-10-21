@@ -145,7 +145,7 @@ export const EditableCell: React.FC<any> = ({
     "releveNumber",
   ].includes(cell.column.id);
   const onChange = (e: any) => {
-    setValue(isNumber ? parseInt(e.target.value) : e.target.value);
+    setValue(isNumber ? parseFloat(e.target.value) : e.target.value);
   };
 
   const onBlur = (e: any) => {
@@ -164,7 +164,7 @@ export const EditableCell: React.FC<any> = ({
 
       setShowEditModal({
         row,
-        newValue: isNumber ? parseInt(e.target.value) : e.target.value,
+        newValue: isNumber ? parseFloat(e.target.value) : e.target.value,
         id: cell.column.id,
         initialValue,
         setValue,
@@ -172,7 +172,7 @@ export const EditableCell: React.FC<any> = ({
           const key = updatekey || row.original.key;
           update(ref(db, dbName + key), {
             [cell.column.id]: isNumber
-              ? parseInt(e.target.value)
+              ? parseFloat(e.target.value)
               : e.target.value,
           });
 

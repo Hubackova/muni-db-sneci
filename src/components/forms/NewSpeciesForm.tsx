@@ -116,7 +116,7 @@ const NewSpeciesForm: React.FC = ({ speciesNames }) => {
         </button>
       </div>
 
-      {/*       <button
+      {/* <button
         className="submit-btn"
         type="button"
         onClick={() => addItemsBackup()}

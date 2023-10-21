@@ -51,7 +51,6 @@ function writeSpeciesToLocalityData(data: any, locKey: string) {
   const db = getDatabase();
   const newSpeciesKey = push(child(ref(db), "species")).key;
   const cleanData = removeUndefinedKeys(data);
-  console.log(cleanData);
   set(ref(db, "localities/" + locKey + "/species/" + newSpeciesKey), {
     ...cleanData,
     speciesKey: newSpeciesKey,

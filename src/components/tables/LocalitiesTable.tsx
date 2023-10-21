@@ -156,7 +156,6 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
         Filter: Multi,
         filter: multiSelectFilter,
         Cell: ({ value, row, cell }) => {
-          console.log(row);
           return (
             <CreatableSelectCell
               initialValue={value}
@@ -488,7 +487,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
         <div className="download">
           <CSVLink
             data={selectedFlatRows.map((i) => i.values)}
-            filename="pcr-programs.csv"
+            filename="localities.csv"
           >
             <div className="export">
               <ExportIcon />

@@ -12,7 +12,6 @@ import { specificationOptions } from "../tables/LocalitiesAndSpeciesTable";
 import "./NewSampleForm.scss";
 
 const SpeciesAtLocalityForm: React.FC = ({
-  compact = false,
   withLabels = true,
   speciesNames,
 }) => {
@@ -28,7 +27,9 @@ const SpeciesAtLocalityForm: React.FC = ({
   };
 
   const addItemsBackup = () => {
-    backup.forEach((i: any) => writeSpeciesToLocalityData(i, 3));
+    backup.forEach((i: any) =>
+      writeSpeciesToLocalityData(i, "-NhGkOVVUqS3U3kicx2t")
+    );
     toast.success("ok");
   };
 
@@ -36,7 +37,6 @@ const SpeciesAtLocalityForm: React.FC = ({
     register,
     formState: { errors },
     handleSubmit,
-    getValues,
     watch,
     setValue,
     control,
@@ -181,6 +181,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           step="1"
         />
         <TextInput
+          className="double"
           label={withLabels && "Note (species)"}
           name="noteSpecies"
           error={errors.noteSpecies?.message}
@@ -191,7 +192,7 @@ const SpeciesAtLocalityForm: React.FC = ({
       <button className="submit-btn" type="submit">
         Save
       </button>
-      {/*       <button
+      {/* <button
         className="submit-btn"
         type="button"
         onClick={() => addItemsBackup()}

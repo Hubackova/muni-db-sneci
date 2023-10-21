@@ -38,13 +38,13 @@
       &:nth-of-type(3) {
         left: 40px;
         position: sticky;
-        z-index: 99991;
+        z-index: 1001;
         background-color: white;
       }
     }
     tr > th {
       &:nth-of-type(3) {
-        z-index: 99999;
+        z-index: 1009;
       }
     }
   }
@@ -57,7 +57,7 @@
     background-color: white;
     position: sticky;
     top: 0px;
-    z-index: 99992;
+    z-index: 1002;
   }
 
   tbody {
@@ -73,25 +73,25 @@
       left: 0px;
       position: sticky;
       width: 20px;
-      z-index: 99991;
+      z-index: 1001;
       background-color: white;
     }
 
     &:nth-of-type(2) {
       left: 20px;
       position: sticky;
-      z-index: 99991;
+      z-index: 1001;
       background-color: white;
     }
   }
 
   tr > th {
     &:nth-of-type(1) {
-      z-index: 99999;
+      z-index: 1009;
     }
 
     &:nth-of-type(2) {
-      z-index: 99999;
+      z-index: 1009;
     }
   }
 
@@ -99,7 +99,7 @@
     position: sticky;
     background-color: white;
     top: 0;
-    z-index: 99998;
+    z-index: 1008;
   }
 
   td {

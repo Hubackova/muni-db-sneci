@@ -44,6 +44,9 @@ const LocalitiesAndSpecies: React.FC = () => {
                 siteKey: childItem.key,
                 speciesNameKey: speciesData.speciesNameKey,
                 speciesKey: speciesData.speciesKey,
+                speciesNamesKeysinLocality: speciesValues.map(
+                  (i) => i.speciesNameKey
+                ),
               });
             });
         }

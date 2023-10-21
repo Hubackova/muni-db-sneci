@@ -96,13 +96,23 @@ const SpeciesTable: React.FC<any> = ({
             row.original.speciesNameKey,
             speciesNamesOptionsAll
           );
+
+          const filteredOptions = speciesNamesOptionsAll.filter(
+            (i) =>
+              !(
+                row.original.speciesNamesKeysinLocality?.length &&
+                row.original.speciesNamesKeysinLocality.includes(i.value)
+              ) ||
+              i.value === "add" ||
+              i.value === "0"
+          );
           return (
             <SelectCell
               backValue={value}
               initialValue={item?.label || ""}
               row={row}
               cell={cell}
-              options={speciesNamesOptionsAll}
+              options={filteredOptions}
               saveLast={setLast}
               dbName={`localities/${
                 currentLocality || row.original.siteKey
@@ -384,8 +394,17 @@ const SpeciesTable: React.FC<any> = ({
           />
           <div className="download">
             <CSVLink
-              data={selectedFlatRows.map((i) => i.values)}
-              filename="pcr-programs.csv"
+              data={selectedFlatRows.map((i) => {
+                const item = {
+                  ...i.values,
+                  speciesName: speciesNamesOptionsAll.find(
+                    (j) => j.value === i.values.speciesNameKey
+                  )?.label,
+                };
+                const { speciesNameKey, ...data } = item;
+                return data;
+              })}
+              filename="species.csv"
             >
               <div className="export">
                 <ExportIcon />

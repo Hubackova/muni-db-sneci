@@ -22,7 +22,13 @@ const HomePage: React.FC = () => {
       snapshot.forEach((child) => {
         let childItem = child.val();
         childItem.key = child.key;
-        items.push(childItem);
+        console.log(childItem);
+        items.push({
+          ...childItem,
+          speciesNamesKeysinLocality: childItem.species?.length
+            ? childItem.species.map((i) => i.speciesNameKey)
+            : [],
+        });
       });
       setLocalities(items);
     });
@@ -57,6 +63,16 @@ const HomePage: React.FC = () => {
   }));
 
   if (!localities) return <div>Loading...</div>;
+  const currentLocalityItem = localities.find((i) => i.key === currentLocality);
+  let currentLocalitySpecies = [];
+  if (currentLocalityItem && currentLocalityItem.species) {
+    currentLocalitySpecies = Object.values(currentLocalityItem.species).map(
+      (i) => i.speciesNameKey
+    );
+  }
+  const filteredSpeciesNames = speciesNames.filter(
+    (i) => !currentLocalitySpecies.includes(i.key)
+  );
 
   return (
     <>
@@ -87,9 +103,8 @@ const HomePage: React.FC = () => {
               </h5>
             )}
             <SpeciesAtLocalityForm
-              compact
               withLabels={!species.length}
-              speciesNames={speciesNames}
+              speciesNames={filteredSpeciesNames}
             />
           </div>
         ) : (

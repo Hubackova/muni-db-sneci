@@ -23,15 +23,22 @@
     }
 
     .container.narrow {
-      max-width: 111px !important;
+      max-width: 112px !important;
+      margin: 0 1px;
+
       .input {
         max-width: 108px !important;
       }
     }
 
+    .input {
+      min-height: 26px;
+    }
+
     .select {
-      min-width: 182px;
-      width: 182px;
+      min-width: 190px;
+      width: 190px;
+      max-width: 190px;
     }
 
     @media (min-width: 1024px) {
