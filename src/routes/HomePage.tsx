@@ -80,7 +80,7 @@ const HomePage: React.FC = () => {
         <div className="form-wrapper">
           <NewLocalityForm localities={localities} />
         </div>
-        {currentLocality ? (
+        {currentLocality && (
           <div className="table-wrapper">
             {localities && currentLocality && !!species.length && (
               <>
@@ -107,8 +107,6 @@ const HomePage: React.FC = () => {
               speciesNames={filteredSpeciesNames}
             />
           </div>
-        ) : (
-          <div></div>
         )}
       </div>
       <div className="bottom">

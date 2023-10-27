@@ -171,8 +171,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
             (i) =>
               (row.original.speciesNamesKeysinLocality &&
                 !row.original.speciesNamesKeysinLocality.includes(i.value)) ||
-              i.value === "add" ||
-              i.value === "0"
+              i.value === "add"
           );
           return (
             <SelectCell
@@ -236,7 +235,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
             <input
               value={[original.all] || ""}
               readOnly
-              className="narrow"
+              className="ultra-narrow"
             ></input>
           );
         }, customComparator),

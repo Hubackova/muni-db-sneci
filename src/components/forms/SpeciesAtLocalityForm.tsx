@@ -124,7 +124,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           register={register}
           onBlur={() => setValue("all", sum)}
           type="number"
-          className="narrow"
+          className="ultra-narrow"
           min={0}
           step="1"
         />
@@ -135,7 +135,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           register={register}
           onBlur={() => setValue("all", sum)}
           type="number"
-          className="narrow"
+          className="ultra-narrow"
           min={0}
           step="1"
         />
@@ -146,7 +146,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           register={register}
           onBlur={() => setValue("all", sum)}
           type="number"
-          className="narrow"
+          className="ultra-narrow"
           min={0}
           step="1"
         />
@@ -155,7 +155,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           name="all"
           register={register}
           readOnly={true}
-          className="narrow"
+          className="ultra-narrow"
           type="number"
           min={0}
           step="1"
