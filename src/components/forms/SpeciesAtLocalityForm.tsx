@@ -118,7 +118,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           name="specification"
         />
         <TextInput
-          label={withLabels && "Live individuals"}
+          label={withLabels && "Live"}
           name="live"
           error={errors.latitude?.message}
           register={register}
