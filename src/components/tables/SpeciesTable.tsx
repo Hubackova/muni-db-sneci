@@ -12,14 +12,12 @@ import {
 } from "react-table";
 import { toast } from "react-toastify";
 import { useAppStateContext } from "../../AppStateContext";
-import { getValueFromOptions } from "../../helpers/utils";
+import { getOptions, getValueFromOptions } from "../../helpers/utils";
 import { ReactComponent as ExportIcon } from "../../images/export.svg";
-import { EditableCell, SelectCell } from "../Cell";
+import { CreatableSelectCell, EditableCell, SelectCell } from "../Cell";
 import ConfirmModal from "../ConfirmModal";
 import { GlobalFilter, Multi, multiSelectFilter } from "../Filter";
 import IndeterminateCheckbox from "../IndeterminateCheckbox";
-import { specificationOptions } from "../tables/LocalitiesAndSpeciesTable";
-
 const SpeciesTable: React.FC<any> = ({
   species,
   speciesNames,
@@ -127,16 +125,16 @@ const SpeciesTable: React.FC<any> = ({
         filter: multiSelectFilter,
         Cell: ({ value, row, cell }) => {
           return (
-            <SelectCell
+            <CreatableSelectCell
               initialValue={value}
               row={row}
               cell={cell}
-              options={specificationOptions}
+              options={getOptions(species, "specification")}
               saveLast={setLast}
+              updatekey={row.original.speciesKey}
               dbName={`localities/${
                 currentLocality || row.original.siteKey
               }/species/`}
-              updatekey={row.original.speciesKey}
             />
           );
         },

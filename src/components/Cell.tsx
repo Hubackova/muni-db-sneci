@@ -198,6 +198,9 @@ export const EditableCell: React.FC<any> = ({
   const isUltraNarrow = ["lot", "all", "live", "empty", "undefined"].includes(
     cell.column.id
   );
+
+  const minIszero = ["live", "empty", "undefined"].includes(cell.column.id);
+
   const isNarrow = [
     "abbreviation",
     "vouchers",
@@ -236,6 +239,7 @@ export const EditableCell: React.FC<any> = ({
         onChange={onChange}
         onBlur={onBlur}
         disabled={disabled}
+        min={minIszero ? 0 : null}
         type={isNumber ? "number" : "text"}
         className={
           isUltraNarrow

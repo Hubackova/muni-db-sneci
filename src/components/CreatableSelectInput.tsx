@@ -32,6 +32,8 @@ function CreatableSelectInput(
         })}
         classNamePrefix="select"
         menuPlacement="auto"
+        menuPortalTarget={document.body}
+        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
       />
       {!!error && <div className="error-message">{error}</div>}
     </div>

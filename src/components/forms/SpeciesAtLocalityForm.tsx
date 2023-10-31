@@ -6,23 +6,31 @@ import { useAppStateContext } from "../../AppStateContext";
 import { backup } from "../../content/species";
 import { writeSpeciesToLocalityData } from "../../firebase/firebase";
 import { getValueFromOptions } from "../../helpers/utils";
+import CreatableSelectInput from "../CreatableSelectInput";
 import SelectInput from "../SelectInput";
 import TextInput from "../TextInput";
-import { specificationOptions } from "../tables/LocalitiesAndSpeciesTable";
 import "./NewSampleForm.scss";
 
 const SpeciesAtLocalityForm: React.FC = ({
   withLabels = true,
   speciesNames,
+  specificationOptions,
   withZero = false,
 }) => {
   const { currentLocality } = useAppStateContext();
 
   const addItem = (data: any) => {
     const { all, ...withoutAllData } = data;
-    withoutAllData.empty = parseInt(withoutAllData.empty || 0);
-    withoutAllData.live = parseInt(withoutAllData.live || 0);
-    withoutAllData.undefined = parseInt(withoutAllData.undefined || 0);
+    withoutAllData.empty = withoutAllData.empty
+      ? parseInt(withoutAllData.empty)
+      : "";
+
+    withoutAllData.live = withoutAllData.empty
+      ? parseInt(withoutAllData.live)
+      : "";
+    withoutAllData.undefined = withoutAllData.undefined
+      ? parseInt(withoutAllData.undefined)
+      : "";
     writeSpeciesToLocalityData(withoutAllData, currentLocality);
     toast.success("Species was added successfully");
   };
@@ -105,16 +113,14 @@ const SpeciesAtLocalityForm: React.FC = ({
         <Controller
           render={({ field: { onChange, value } }) => {
             return (
-              <SelectInput
+              <CreatableSelectInput
                 options={specificationOptions}
                 value={value ? { value, label: value } : null}
-                onChange={(e: any) => {
-                  onChange(e?.value);
-                }}
+                onChange={(e: any) => onChange(e?.value)}
                 label={withLabels && "Specification"}
                 error={errors.specification?.message}
-                className="short"
                 isSearchable
+                className="short"
               />
             );
           }}

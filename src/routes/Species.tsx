@@ -2,6 +2,7 @@
 import { getDatabase, onValue, ref } from "firebase/database";
 import React, { useEffect, useState } from "react";
 import SpeciesTable from "../components/tables/SpeciesTable";
+import { getAll } from "../helpers/utils";
 import "./HomePage.scss";
 import "./Table.scss";
 
@@ -34,10 +35,7 @@ const Species: React.FC = () => {
           speciesValues.forEach((species) => {
             items.push({
               ...species,
-              all:
-                parseInt(species.empty || 0) +
-                parseInt(species.live || 0) +
-                parseInt(species.undefined || 0),
+              all: getAll(species),
               siteId: childItem.siteId,
               siteKey: childItem.key,
               speciesNameKey: species.speciesNameKey,

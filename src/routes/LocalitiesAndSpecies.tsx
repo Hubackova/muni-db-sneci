@@ -2,6 +2,7 @@
 import { getDatabase, onValue, ref } from "firebase/database";
 import React, { useEffect, useState } from "react";
 import LocalitiesAndSpeciesTable from "../components/tables/LocalitiesAndSpeciesTable";
+import { getAll } from "../helpers/utils";
 import "./HomePage.scss";
 import "./Table.scss";
 
@@ -36,10 +37,7 @@ const LocalitiesAndSpecies: React.FC = () => {
               items.push({
                 ...childItem,
                 ...speciesData,
-                all:
-                  parseInt(speciesData.empty || 0) +
-                  parseInt(speciesData.live || 0) +
-                  parseInt(speciesData.undefined || 0),
+                all: getAll(speciesData),
                 siteId: childItem.siteId,
                 key: childItem.key + speciesData.speciesNameKey,
                 siteKey: childItem.key,

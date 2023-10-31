@@ -6,7 +6,7 @@ import NewLocalityForm from "../components/forms/NewLocalityForm";
 import NewSpeciesForm from "../components/forms/NewSpeciesForm";
 import SpeciesAtLocalityForm from "../components/forms/SpeciesAtLocalityForm";
 import SpeciesTable from "../components/tables/SpeciesTable";
-import { getLocalityName } from "../helpers/utils";
+import { getAll, getLocalityName, getOptions } from "../helpers/utils";
 import "./HomePage.scss";
 import "./Table.scss";
 
@@ -54,10 +54,7 @@ const HomePage: React.FC = () => {
 
   const speciesData = species.map((species) => ({
     ...species,
-    all:
-      parseInt(species.empty || 0) +
-      parseInt(species.live || 0) +
-      parseInt(species.undefined || 0),
+    all: getAll(species),
     siteId: activeLocality.siteId,
   }));
 
@@ -72,7 +69,14 @@ const HomePage: React.FC = () => {
   const filteredSpeciesNames = speciesNames.filter(
     (i) => !currentLocalitySpecies.includes(i.key)
   );
-
+  const allSpecies = [];
+  localities.forEach((i) =>
+    allSpecies.push(i.species && Object.values(i.species))
+  );
+  const specificationOptions = getOptions(
+    allSpecies.flat().filter((i) => !!i),
+    "specification"
+  );
   return (
     <>
       <div className="main-wrapper">
@@ -104,6 +108,7 @@ const HomePage: React.FC = () => {
             <SpeciesAtLocalityForm
               withLabels={!species.length}
               speciesNames={filteredSpeciesNames}
+              specificationOptions={specificationOptions}
               withZero={!speciesData.length}
             />
           </div>

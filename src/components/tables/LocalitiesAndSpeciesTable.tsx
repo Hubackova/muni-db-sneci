@@ -12,7 +12,7 @@ import {
 } from "react-table";
 import { useAppStateContext } from "../../AppStateContext";
 import { dataTypeOptions, samplingOptions } from "../../helpers/options";
-import { getValueFromOptions } from "../../helpers/utils";
+import { getOptions, getValueFromOptions } from "../../helpers/utils";
 import { ReactComponent as ExportIcon } from "../../images/export.svg";
 import {
   CreatableSelectCell,
@@ -23,53 +23,13 @@ import {
 import { GlobalFilter, Multi, multiSelectFilter } from "../Filter";
 import IndeterminateCheckbox from "../IndeterminateCheckbox";
 
-export const specificationOptions = [
-  { value: "sp.", label: "sp." },
-  { value: "cf.", label: "cf." },
-  { value: "juv.", label: "juv." },
-  { value: "sp. juv.", label: "sp. juv." },
-  { value: "s. str.", label: "s. str." },
-  { value: "s. lat.", label: "s. lat." },
-];
-
 const LocalitiesAndSpeciesTable: React.FC<any> = ({
   localities,
   speciesNames,
 }) => {
   const db = getDatabase();
   const { currentLocality } = useAppStateContext();
-  /*   const [showModal, setShowModal] = useState(null); */
-  /*   const [showEditModal, setShowEditModal] = useState(null); */
   const [last, setLast] = useState(false);
-
-  /*   const removeItem = (id: string) => {
-    setShowModal(id);
-  }; */
-
-  const getOptions = React.useCallback(
-    (key: string) =>
-      Object.values(
-        localities.reduce(
-          /* @ts-ignore */
-          (acc, cur) => Object.assign(acc, { [cur[key]]: cur }),
-          {}
-        )
-      )
-        .map((i: any) => ({
-          value: i[key],
-          label: i[key],
-        }))
-        .sort(function (a, b) {
-          if (a.label < b.label) {
-            return -1;
-          }
-          if (a.label > b.label) {
-            return 1;
-          }
-          return 0;
-        }),
-    [localities]
-  );
 
   const customComparator = (prevProps, nextProps) => {
     return nextProps.value === prevProps.value;
@@ -193,14 +153,14 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
         filter: multiSelectFilter,
         Cell: ({ value, row, cell }) => {
           return (
-            <SelectCell
+            <CreatableSelectCell
               initialValue={value}
               row={row}
               cell={cell}
-              options={specificationOptions}
+              options={getOptions(localities, "specification")}
               saveLast={setLast}
-              dbName={`localities/${row.original.siteKey}/species/`}
               updatekey={row.original.speciesKey}
+              dbName={`localities/${row.original.siteKey}/species/`}
             />
           );
         },
@@ -301,7 +261,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
               initialValue={value}
               row={row}
               cell={cell}
-              options={getOptions("country")}
+              options={getOptions(localities, "country")}
               saveLast={setLast}
               updatekey={row.original.siteKey}
             />
@@ -366,7 +326,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
               initialValue={value}
               row={row}
               cell={cell}
-              options={getOptions("collector")}
+              options={getOptions(localities, "collector")}
               saveLast={setLast}
               updatekey={row.original.siteKey}
             />

@@ -36,12 +36,12 @@
       min-width: 190px;
       width: 190px;
       max-width: 190px;
+    }
 
-      &.short {
-        min-width: 108px;
-        width: 108px;
-        max-width: 108px;
-      }
+    .select:nth-child(2) {
+      min-width: 108px;
+      width: 108px;
+      max-width: 108px;
     }
 
     .submit-btn {
