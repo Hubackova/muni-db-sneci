@@ -22,7 +22,6 @@ const HomePage: React.FC = () => {
       snapshot.forEach((child) => {
         let childItem = child.val();
         childItem.key = child.key;
-        console.log(childItem);
         items.push({
           ...childItem,
           speciesNamesKeysinLocality: childItem.species?.length
@@ -105,6 +104,7 @@ const HomePage: React.FC = () => {
             <SpeciesAtLocalityForm
               withLabels={!species.length}
               speciesNames={filteredSpeciesNames}
+              withZero={!speciesData.length}
             />
           </div>
         )}

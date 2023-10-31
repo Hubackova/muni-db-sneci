@@ -23,6 +23,7 @@ const Species: React.FC = () => {
   }, [db]);
 
   useEffect(() => {
+    if (!speciesNames.length) return;
     onValue(ref(db, "localities/"), (snapshot) => {
       const items: any = [];
       snapshot.forEach((child) => {
@@ -45,16 +46,28 @@ const Species: React.FC = () => {
               speciesNamesKeysinLocality: speciesValues.map(
                 (i) => i.speciesNameKey
               ),
+              speciesName: speciesNames.find(
+                (i) => i.key === species.speciesNameKey
+              ).speciesName,
+              dateSampling: childItem.dateSampling,
             });
           });
         }
       });
       setSpecies(items);
     });
-  }, [db]);
+  }, [db, speciesNames]);
   if (!species.length || !speciesNames.length) return <div>no data</div>;
-
-  return <SpeciesTable species={species} speciesNames={speciesNames} />;
+  const sortedSpecies = species.sort(function (a, b) {
+    if (new Date(a.dateSampling) < new Date(b.dateSampling)) {
+      return 1;
+    }
+    if (new Date(a.dateSampling) > new Date(b.dateSampling)) {
+      return -1;
+    }
+    return a.speciesName.localeCompare(b.speciesName);
+  });
+  return <SpeciesTable species={sortedSpecies} speciesNames={speciesNames} />;
 };
 
 export default Species;

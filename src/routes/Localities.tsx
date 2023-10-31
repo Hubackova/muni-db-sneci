@@ -22,7 +22,10 @@ const Localities: React.FC = () => {
   }, [db]);
 
   if (!localities.length) return <div>no data</div>;
-  return <LocalitiesTable localities={localities} />;
+  const sortedLocalities = localities.sort(
+    (a, b) => new Date(b.dateSampling) - new Date(a.dateSampling) 
+  );
+  return <LocalitiesTable localities={sortedLocalities} />;
 };
 
 export default Localities;

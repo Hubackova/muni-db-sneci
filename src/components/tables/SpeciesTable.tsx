@@ -80,7 +80,6 @@ const SpeciesTable: React.FC<any> = ({
 
   const speciesNamesOptionsAll = [
     { value: "add", label: "to be added" },
-    { value: "0", label: "0" },
     ...speciesNamesOptions,
   ];
 
@@ -143,25 +142,25 @@ const SpeciesTable: React.FC<any> = ({
         },
       },
       {
-        Header: "Live ind.",
+        Header: "Live",
         accessor: "live",
         Filter: Multi,
         filter: multiSelectFilter,
       },
       {
-        Header: "Empty shells",
+        Header: "Empty",
         accessor: "empty",
         Filter: Multi,
         filter: multiSelectFilter,
       },
       {
-        Header: "Undefined",
+        Header: "Undef.",
         accessor: "undefined",
         Filter: Multi,
         filter: multiSelectFilter,
       },
       {
-        Header: "All shells",
+        Header: "All",
         accessor: "all",
         Filter: Multi,
         filter: multiSelectFilter,
@@ -177,7 +176,7 @@ const SpeciesTable: React.FC<any> = ({
         ),
       },
       {
-        Header: "Lot number",
+        Header: "Lot no.",
         accessor: "lot",
         Filter: Multi,
         filter: multiSelectFilter,

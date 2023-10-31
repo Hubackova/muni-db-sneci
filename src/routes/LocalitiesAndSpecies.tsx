@@ -23,6 +23,7 @@ const LocalitiesAndSpecies: React.FC = () => {
   }, [db]);
 
   useEffect(() => {
+    if (!speciesNames.length) return;
     onValue(ref(db, "localities/"), (snapshot) => {
       const items: any = [];
       snapshot.forEach((child) => {
@@ -44,6 +45,9 @@ const LocalitiesAndSpecies: React.FC = () => {
                 siteKey: childItem.key,
                 speciesNameKey: speciesData.speciesNameKey,
                 speciesKey: speciesData.speciesKey,
+                speciesName: speciesNames.find(
+                  (i) => i.key === speciesData.speciesNameKey
+                ).speciesName,
                 speciesNamesKeysinLocality: speciesValues.map(
                   (i) => i.speciesNameKey
                 ),
@@ -53,12 +57,21 @@ const LocalitiesAndSpecies: React.FC = () => {
       });
       setLocalities(items);
     });
-  }, [db]);
+  }, [db, speciesNames]);
   if (!localities.length || !speciesNames.length) return <div>no data</div>;
+  const sortedLocalities = localities.sort(function (a, b) {
+    if (new Date(a.dateSampling) < new Date(b.dateSampling)) {
+      return 1;
+    }
+    if (new Date(a.dateSampling) > new Date(b.dateSampling)) {
+      return -1;
+    }
+    return a.speciesName.localeCompare(b.speciesName);
+  });
 
   return (
     <LocalitiesAndSpeciesTable
-      localities={localities}
+      localities={sortedLocalities}
       speciesNames={speciesNames}
     />
   );

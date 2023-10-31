@@ -51,7 +51,16 @@ const SpeciesNames: React.FC = () => {
 
   if (!species.length || !localities.length) return <div>no data</div>;
 
-  return <SpeciesNamesTable species={species} localities={localities} />;
+  const speciesSorted = species.sort(function (a, b) {
+    if (a.speciesName < b.speciesName) {
+      return -1;
+    }
+    if (a.speciesName > b.speciesName) {
+      return 1;
+    }
+    return 0;
+  });
+  return <SpeciesNamesTable species={speciesSorted} localities={localities} />;
 };
 
 export default SpeciesNames;

@@ -14,6 +14,7 @@ import "./NewSampleForm.scss";
 const SpeciesAtLocalityForm: React.FC = ({
   withLabels = true,
   speciesNames,
+  withZero = false,
 }) => {
   const { currentLocality } = useAppStateContext();
 
@@ -65,11 +66,14 @@ const SpeciesAtLocalityForm: React.FC = ({
       return 0;
     });
 
-  const speciesNamesOptionsAll = [
-    { value: "add", label: "to be added" },
-    { value: "0", label: "0" },
-    ...speciesNamesOptions,
-  ];
+  const plusOptions = withZero
+    ? [
+        { value: "add", label: "to be added" },
+        { value: "0", label: "0" },
+      ]
+    : [{ value: "add", label: "to be added" }];
+
+  const speciesNamesOptionsAll = [...plusOptions, ...speciesNamesOptions];
 
   return (
     <form
@@ -129,7 +133,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           step="1"
         />
         <TextInput
-          label={withLabels && "Empty shells"}
+          label={withLabels && "Empty"}
           name="empty"
           error={errors.longitude?.message}
           register={register}
@@ -161,13 +165,13 @@ const SpeciesAtLocalityForm: React.FC = ({
           step="1"
         />
         <TextInput
-          label={withLabels && "Lot number:"}
+          label={withLabels && "Lot no."}
           name="lot"
           error={errors.lot?.message}
           register={register}
           type="number"
           min={0}
-          className="narrow"
+          className="ultra-narrow"
           step="1"
         />
         <TextInput

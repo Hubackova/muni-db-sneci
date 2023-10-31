@@ -195,12 +195,11 @@ export const EditableCell: React.FC<any> = ({
   }, [initialValue]);
   if (!cell) return;
 
-  const isUltraNarrow = ["all", "live", "empty", "undefined"].includes(
+  const isUltraNarrow = ["lot", "all", "live", "empty", "undefined"].includes(
     cell.column.id
   );
   const isNarrow = [
     "abbreviation",
-    "lot",
     "vouchers",
     "specification",
     "fieldCode",
