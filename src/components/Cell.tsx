@@ -172,7 +172,9 @@ export const EditableCell: React.FC<any> = ({
           const key = updatekey || row.original.key;
           update(ref(db, dbName + key), {
             [cell.column.id]: isNumber
-              ? parseFloat(e.target.value)
+              ? e.target.value
+                ? parseFloat(e.target.value)
+                : ""
               : e.target.value,
           });
 
