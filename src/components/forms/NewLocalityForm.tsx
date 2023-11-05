@@ -59,6 +59,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     formState: { errors },
     handleSubmit,
     getValues,
+    setValue,
     control,
   } = useForm<PrimersType>();
 
@@ -99,6 +100,31 @@ const NewLocalityForm: React.FC = ({ localities }) => {
                       className="item"
                       key={i.key}
                       onClick={() => {
+                        setValue("fieldCode", i.fieldCode);
+                        setValue("siteName", i.siteName);
+                        setValue("latitude", i.latitude);
+                        setValue("longitude", i.longitude);
+                        setValue("country", i.country);
+                        setValue("state", i.state);
+                        setValue("settlement", i.settlement);
+                        setValue("mapGrid", i.mapGrid);
+                        setValue("elevation", i.elevation);
+                        setValue("siteDescription", i.siteDescription);
+                        setValue("dateSampling", i.dateSampling);
+                        setValue("collector", i.collector);
+                        setValue("plotSize", i.plotSize);
+                        setValue("sampleSize", i.sampleSize);
+                        setValue("habitatSize", i.habitatSize);
+                        setValue("distanceForest", i.distanceForest);
+                        setValue("samplingMethod", i.samplingMethod);
+                        setValue("waterPH", i.waterPH);
+                        setValue("waterConductivity", i.waterConductivity);
+                        setValue("lotNumber", i.lotNumber);
+                        setValue("releveNumber", i.releveNumber);
+                        setValue("dataType", i.dataType);
+                        setValue("event", i.event);
+                        setValue("noteSite", i.noteSite);
+
                         setCurrentLocality(i.key);
                         setShowModalCode(false);
                       }}
