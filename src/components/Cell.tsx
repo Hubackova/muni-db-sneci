@@ -129,7 +129,7 @@ export const EditableCell: React.FC<any> = ({
     "all",
     "live",
     "empty",
-    "undefined",
+    "undef",
     "lot",
     "vouchers",
     "latitude",
@@ -197,11 +197,11 @@ export const EditableCell: React.FC<any> = ({
   }, [initialValue]);
   if (!cell) return;
 
-  const isUltraNarrow = ["lot", "all", "live", "empty", "undefined"].includes(
+  const isUltraNarrow = ["lot", "all", "live", "empty", "undef"].includes(
     cell.column.id
   );
 
-  const minIszero = ["live", "empty", "undefined"].includes(cell.column.id);
+  const minIszero = ["live", "empty", "undef"].includes(cell.column.id);
 
   const isNarrow = [
     "abbreviation",

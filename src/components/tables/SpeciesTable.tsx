@@ -153,7 +153,7 @@ const SpeciesTable: React.FC<any> = ({
       },
       {
         Header: "Undef.",
-        accessor: "undefined",
+        accessor: "undef",
         Filter: Multi,
         filter: multiSelectFilter,
       },

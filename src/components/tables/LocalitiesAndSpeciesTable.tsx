@@ -4,21 +4,21 @@ import { getDatabase, ref, update } from "firebase/database";
 import React, { useState } from "react";
 import { CSVLink } from "react-csv";
 import {
-  useFilters,
-  useGlobalFilter,
-  useRowSelect,
-  useSortBy,
-  useTable,
+    useFilters,
+    useGlobalFilter,
+    useRowSelect,
+    useSortBy,
+    useTable,
 } from "react-table";
 import { useAppStateContext } from "../../AppStateContext";
 import { dataTypeOptions, samplingOptions } from "../../helpers/options";
 import { getOptions, getValueFromOptions } from "../../helpers/utils";
 import { ReactComponent as ExportIcon } from "../../images/export.svg";
 import {
-  CreatableSelectCell,
-  DateCell,
-  EditableCell,
-  SelectCell,
+    CreatableSelectCell,
+    DateCell,
+    EditableCell,
+    SelectCell,
 } from "../Cell";
 import { GlobalFilter, Multi, multiSelectFilter } from "../Filter";
 import IndeterminateCheckbox from "../IndeterminateCheckbox";
@@ -39,7 +39,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
     "specification",
     "live",
     "empty",
-    "undefined",
+    "undef",
     "all",
     "lot",
     "vouchers",

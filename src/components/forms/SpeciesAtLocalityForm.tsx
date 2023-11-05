@@ -19,22 +19,6 @@ const SpeciesAtLocalityForm: React.FC = ({
 }) => {
   const { currentLocality } = useAppStateContext();
 
-  const addItem = (data: any) => {
-    const { all, ...withoutAllData } = data;
-    withoutAllData.empty = withoutAllData.empty
-      ? parseInt(withoutAllData.empty)
-      : "";
-
-    withoutAllData.live = withoutAllData.empty
-      ? parseInt(withoutAllData.live)
-      : "";
-    withoutAllData.undefined = withoutAllData.undefined
-      ? parseInt(withoutAllData.undefined)
-      : "";
-    writeSpeciesToLocalityData(withoutAllData, currentLocality);
-    toast.success("Species was added successfully");
-  };
-
   const addItemsBackup = () => {
     backup.forEach((i: any) =>
       writeSpeciesToLocalityData(i, "-NhGkOVVUqS3U3kicx2t")
@@ -49,11 +33,28 @@ const SpeciesAtLocalityForm: React.FC = ({
     watch,
     setValue,
     control,
+    reset,
   } = useForm<PrimersType>();
+
+  const addItem = (data: any) => {
+    const { hack, all, ...withoutAllData } = data;
+    withoutAllData.empty = withoutAllData.empty
+      ? parseInt(withoutAllData.empty)
+      : undefined;
+    withoutAllData.live = withoutAllData.live
+      ? parseInt(withoutAllData.live)
+      : undefined;
+    withoutAllData.undef = withoutAllData.undef
+      ? parseInt(withoutAllData.undef)
+      : undefined;
+    reset();
+    writeSpeciesToLocalityData(withoutAllData, currentLocality);
+    toast.success("Species was added successfully");
+  };
 
   const field1Value = watch("live");
   const field2Value = watch("empty");
-  const field3Value = watch("undefined");
+  const field3Value = watch("undef");
   const sum =
     parseInt(field1Value || 0) +
     parseInt(field2Value || 0) +
@@ -127,6 +128,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           control={control}
           name="specification"
         />
+        <input {...register("hack")} style={{ display: "none" }} />
         <TextInput
           label={withLabels && "Live"}
           name="live"
@@ -151,7 +153,7 @@ const SpeciesAtLocalityForm: React.FC = ({
         />
         <TextInput
           label={withLabels && "Undefined"}
-          name="undefined"
+          name="undef"
           error={errors.longitude?.message}
           register={register}
           onBlur={() => setValue("all", sum)}

@@ -21,12 +21,12 @@ export const getAll = (speciesData: any) => {
   const { empty, live } = speciesData;
   if (
     typeof empty === "number" ||
-    typeof speciesData.undefined === "number" ||
+    typeof speciesData.undef === "number" ||
     typeof live === "number"
   ) {
     return (
       parseInt(empty || 0) +
-      parseInt(speciesData.undefined || 0) +
+      parseInt(speciesData.undef || 0) +
       parseInt(live || 0)
     );
   } else return undefined;
