@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useAppStateContext } from "../../AppStateContext";
@@ -11,6 +11,8 @@ import SelectInput from "../SelectInput";
 import TextArea from "../TextArea";
 import TextInput from "../TextInput";
 import "./NewSampleForm.scss";
+
+const FORM_DATA_KEY = "localityForm";
 
 const NewLocalityForm: React.FC = ({ localities }) => {
   const { setCurrentLocality } = useAppStateContext();
@@ -45,6 +47,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     data.longitude = parseFloat(data.longitude || 0);
     data.latitude = parseFloat(data.latitude || 0);
     const localityKey = writeLocalityData(data);
+    sessionStorage.removeItem(FORM_DATA_KEY);
     toast.success("New locality was added successfully");
     setCurrentLocality(localityKey);
   };
@@ -54,6 +57,46 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     toast.success("ok");
   };
 
+  const getSavedData = React.useCallback(() => {
+    let data = sessionStorage.getItem(FORM_DATA_KEY);
+    if (data) {
+      // Parse it to a javaScript object
+      try {
+        data = JSON.parse(data);
+      } catch (err) {
+        console.log(err);
+      }
+      return data;
+    }
+    return {
+      fieldcode: "",
+      siteId: "",
+      siteName: "",
+      latitude: "",
+      longitude: "",
+      country: "",
+      state: "",
+      settlement: "",
+      mapGrid: "",
+      elevation: "",
+      siteDescription: "",
+      dateSampling: "",
+      collector: "",
+      plotSize: "",
+      sampleSize: "",
+      habitatSize: "",
+      distanceForest: "",
+      samplingMethod: "",
+      waterPH: "",
+      waterConductivity: "",
+      lotNumber: "",
+      releveNumber: "",
+      dataType: "",
+      event: "",
+      noteSite: "",
+    };
+  }, []);
+
   const {
     register,
     formState: { errors },
@@ -61,7 +104,18 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     getValues,
     setValue,
     control,
-  } = useForm<PrimersType>();
+    watch,
+  } = useForm<PrimersType>({
+    mode: "all",
+    defaultValues: getSavedData(),
+  });
+
+  useEffect(() => {
+    const subscription = watch((value) =>
+      sessionStorage.setItem(FORM_DATA_KEY, JSON.stringify(value))
+    );
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   const siteIds = localities.map((locality) => locality.siteId);
   const fieldCodes = localities.map((locality) => locality.fieldCode);
