@@ -37,6 +37,7 @@ const SpeciesAtLocalityForm: React.FC = ({
   } = useForm<PrimersType>();
 
   const addItem = (data: any) => {
+    if (!data.speciesNameKey) return toast.error("Species name is required");
     const { hack, all, ...withoutAllData } = data;
     withoutAllData.empty = withoutAllData.empty
       ? parseInt(withoutAllData.empty)
