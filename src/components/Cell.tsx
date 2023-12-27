@@ -417,6 +417,7 @@ export const CreatableSelectCell: React.FC<any> = ({
   maxChars = 22,
   updatekey,
   backValue = "",
+  isDisabled = false,
 }) => {
   const db = getDatabase();
   const { original } = row;
@@ -477,6 +478,7 @@ export const CreatableSelectCell: React.FC<any> = ({
         )}
 
       <CreatableSelectInput
+        disabled={isDisabled}
         ref={inputRef}
         options={options}
         value={value}

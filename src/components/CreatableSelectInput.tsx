@@ -15,6 +15,7 @@ function CreatableSelectInput(
     isTransparent = false,
     isSearchable = false,
     isFilter = false,
+    disabled = false,
     ...props
   }: any,
   ref: React.Ref<any>
@@ -24,6 +25,7 @@ function CreatableSelectInput(
       {label && <label className="label">{label}</label>}
       <CreatableSelect
         {...props}
+        isDisabled={disabled}
         ref={ref}
         isSearchable={isSearchable}
         className={cx("select-input", props.className, {

@@ -44,9 +44,9 @@ const Species: React.FC = () => {
               speciesNamesKeysinLocality: speciesValues.map(
                 (i) => i.speciesNameKey
               ),
-              speciesName: speciesNames.find(
-                (i) => i.key === species.speciesNameKey
-              ).speciesName,
+              speciesName:
+                speciesNames.find((i) => i.key === species.speciesNameKey)
+                  ?.speciesName || "0",
               dateSampling: childItem.dateSampling,
             });
           });

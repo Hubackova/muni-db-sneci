@@ -4,21 +4,21 @@ import { getDatabase, ref, update } from "firebase/database";
 import React, { useState } from "react";
 import { CSVLink } from "react-csv";
 import {
-    useFilters,
-    useGlobalFilter,
-    useRowSelect,
-    useSortBy,
-    useTable,
+  useFilters,
+  useGlobalFilter,
+  useRowSelect,
+  useSortBy,
+  useTable,
 } from "react-table";
 import { useAppStateContext } from "../../AppStateContext";
 import { dataTypeOptions, samplingOptions } from "../../helpers/options";
 import { getOptions, getValueFromOptions } from "../../helpers/utils";
 import { ReactComponent as ExportIcon } from "../../images/export.svg";
 import {
-    CreatableSelectCell,
-    DateCell,
-    EditableCell,
-    SelectCell,
+  CreatableSelectCell,
+  DateCell,
+  EditableCell,
+  SelectCell,
 } from "../Cell";
 import { GlobalFilter, Multi, multiSelectFilter } from "../Filter";
 import IndeterminateCheckbox from "../IndeterminateCheckbox";
@@ -62,6 +62,8 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
     const dbName = isSpeciesUpdate
       ? `localities/${currentLocality || row.original.siteKey}/species/`
       : "localities/";
+    const zeroSpecies = row.original.speciesName === "0";
+
     return (
       <EditableCell
         initialValue={value}
@@ -72,6 +74,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
         updatekey={
           isSpeciesUpdate ? row.original.speciesKey : row.original.siteKey
         }
+        disabled={zeroSpecies && isSpeciesUpdate}
       />
     );
   }, customComparator);
@@ -132,16 +135,18 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
                 !row.original.speciesNamesKeysinLocality.includes(i.value)) ||
               i.value === "add"
           );
+          const isLocalityWithZero = row.original.speciesNameKey === "0";
           return (
             <SelectCell
               backValue={value}
-              initialValue={item?.label || ""}
+              initialValue={isLocalityWithZero ? "0" : item?.label || ""}
               row={row}
               cell={cell}
               options={filteredOptions}
               saveLast={setLast}
               dbName={`localities/${row.original.siteKey}/species/`}
               updatekey={row.original.speciesKey}
+              isDisabled={isLocalityWithZero}
             />
           );
         },
@@ -152,6 +157,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
         Filter: Multi,
         filter: multiSelectFilter,
         Cell: ({ value, row, cell }) => {
+          const isLocalityWithZero = row.original.speciesNameKey === "0";
           return (
             <CreatableSelectCell
               initialValue={value}
@@ -161,6 +167,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
               saveLast={setLast}
               updatekey={row.original.speciesKey}
               dbName={`localities/${row.original.siteKey}/species/`}
+              isDisabled={isLocalityWithZero}
             />
           );
         },
@@ -179,7 +186,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
       },
       {
         Header: "Undef.",
-        accessor: "undefined",
+        accessor: "undef",
         Filter: Multi,
         filter: multiSelectFilter,
       },
@@ -192,8 +199,9 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
         Cell: React.memo<React.FC<any>>(({ row: { original } }) => {
           return (
             <input
-              value={[original.all] || ""}
+              value={original.speciesName === "0" ? 0 : [original.all] || ""}
               readOnly
+              disabled={original.speciesName === "0"}
               className="ultra-narrow"
             ></input>
           );

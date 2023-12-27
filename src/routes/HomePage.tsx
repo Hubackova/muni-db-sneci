@@ -77,6 +77,8 @@ const HomePage: React.FC = () => {
     allSpecies.flat().filter((i) => !!i),
     "specification"
   );
+  const isLocalityWithZero =
+    speciesData.length === 1 && speciesData[0].speciesNameKey === "0";
   return (
     <>
       <div className="main-wrapper">
@@ -105,12 +107,14 @@ const HomePage: React.FC = () => {
                 {getLocalityName(localities, currentLocality)}
               </h5>
             )}
-            <SpeciesAtLocalityForm
-              withLabels={!species.length}
-              speciesNames={filteredSpeciesNames}
-              specificationOptions={specificationOptions}
-              withZero={!speciesData.length}
-            />
+            {!isLocalityWithZero && (
+              <SpeciesAtLocalityForm
+                withLabels={!species.length}
+                speciesNames={filteredSpeciesNames}
+                specificationOptions={specificationOptions}
+                withZero={!speciesData.length}
+              />
+            )}
           </div>
         )}
       </div>

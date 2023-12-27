@@ -43,9 +43,9 @@ const LocalitiesAndSpecies: React.FC = () => {
                 siteKey: childItem.key,
                 speciesNameKey: speciesData.speciesNameKey,
                 speciesKey: speciesData.speciesKey,
-                speciesName: speciesNames.find(
-                  (i) => i.key === speciesData.speciesNameKey
-                ).speciesName,
+                speciesName:
+                  speciesNames.find((i) => i.key === speciesData.speciesNameKey)
+                    ?.speciesName || "0",
                 speciesNamesKeysinLocality: speciesValues.map(
                   (i) => i.speciesNameKey
                 ),

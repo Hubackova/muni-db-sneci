@@ -47,6 +47,7 @@ const SpeciesTable: React.FC<any> = ({
   };
 
   const DefaultCell = React.memo<React.FC<any>>(({ value, row, cell }) => {
+    const zeroSpecies = row.original.speciesName === "0";
     return (
       <EditableCell
         initialValue={value}
@@ -57,6 +58,7 @@ const SpeciesTable: React.FC<any> = ({
         }/species/`}
         saveLast={setLast}
         updatekey={row.original.speciesKey}
+        disabled={zeroSpecies}
       />
     );
   }, customComparator);
@@ -101,10 +103,11 @@ const SpeciesTable: React.FC<any> = ({
                 row.original.speciesNamesKeysinLocality.includes(i.value)
               ) || i.value === "add"
           );
+          const isLocalityWithZero = row.original.speciesNameKey === "0";
           return (
             <SelectCell
               backValue={value}
-              initialValue={item?.label || ""}
+              initialValue={isLocalityWithZero ? "0" : item?.label || ""}
               row={row}
               cell={cell}
               options={filteredOptions}
@@ -114,6 +117,7 @@ const SpeciesTable: React.FC<any> = ({
               }/species/`}
               updatekey={row.original.speciesKey}
               className="speciesNameKey"
+              isDisabled={isLocalityWithZero}
             />
           );
         },
@@ -124,6 +128,7 @@ const SpeciesTable: React.FC<any> = ({
         Filter: Multi,
         filter: multiSelectFilter,
         Cell: ({ value, row, cell }) => {
+          const isLocalityWithZero = row.original.speciesNameKey === "0";
           return (
             <CreatableSelectCell
               initialValue={value}
@@ -135,6 +140,7 @@ const SpeciesTable: React.FC<any> = ({
               dbName={`localities/${
                 currentLocality || row.original.siteKey
               }/species/`}
+              isDisabled={isLocalityWithZero}
             />
           );
         },
@@ -165,8 +171,9 @@ const SpeciesTable: React.FC<any> = ({
         Cell: React.memo<React.FC<any>>(
           ({ row: { original } }) => (
             <input
-              value={[original.all] || ""}
+              value={original.speciesName === "0" ? 0 : [original.all] || ""}
               readOnly
+              disabled={original.speciesName === "0"}
               className="ultra-narrow"
             ></input>
           ),
@@ -222,7 +229,10 @@ const SpeciesTable: React.FC<any> = ({
     {
       columns: compact ? columns : fullColumns,
       data: species,
-      defaultColumn: { Cell: DefaultCell, Filter: () => {} },
+      defaultColumn: {
+        Cell: DefaultCell,
+        Filter: () => {},
+      },
       autoResetFilters: false,
     },
     useGlobalFilter,

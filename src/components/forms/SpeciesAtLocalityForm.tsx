@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from "react";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useAppStateContext } from "../../AppStateContext";
@@ -18,7 +18,7 @@ const SpeciesAtLocalityForm: React.FC = ({
   withZero = false,
 }) => {
   const { currentLocality } = useAppStateContext();
-
+  const [disabled, setDisabled] = useState(false);
   const addItemsBackup = () => {
     backup.forEach((i: any) =>
       writeSpeciesToLocalityData(i, "-NhGkOVVUqS3U3kicx2t")
@@ -100,6 +100,7 @@ const SpeciesAtLocalityForm: React.FC = ({
                 value={value ? { value, label: item?.label || "" } : null}
                 onChange={(e: any) => {
                   onChange(e?.value);
+                  if (e?.value === "0") setDisabled(true);
                 }}
                 label={withLabels && "Species name"}
                 error={errors.speciesName?.message}
@@ -123,6 +124,7 @@ const SpeciesAtLocalityForm: React.FC = ({
                 error={errors.specification?.message}
                 isSearchable
                 className="short"
+                disabled={disabled}
               />
             );
           }}
@@ -140,6 +142,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           className="ultra-narrow"
           min={0}
           step="1"
+          disabled={disabled}
         />
         <TextInput
           label={withLabels && "Empty"}
@@ -151,6 +154,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           className="ultra-narrow"
           min={0}
           step="1"
+          disabled={disabled}
         />
         <TextInput
           label={withLabels && "Undefined"}
@@ -162,6 +166,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           className="ultra-narrow"
           min={0}
           step="1"
+          disabled={disabled}
         />
         <TextInput
           label={withLabels && "All"}
@@ -172,6 +177,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           type="number"
           min={0}
           step="1"
+          disabled={disabled}
         />
         <TextInput
           label={withLabels && "Lot no."}
@@ -182,6 +188,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           min={0}
           className="ultra-narrow"
           step="1"
+          disabled={disabled}
         />
         <TextInput
           label={withLabels && "Vouchers"}
@@ -192,6 +199,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           min={0}
           className="narrow"
           step="1"
+          disabled={disabled}
         />
         <TextInput
           className="double"
@@ -199,12 +207,14 @@ const SpeciesAtLocalityForm: React.FC = ({
           name="noteSpecies"
           error={errors.noteSpecies?.message}
           register={register}
+          disabled={disabled}
         />
       </div>
 
       <button className="submit-btn" type="submit">
         Save
       </button>
+
       {/* <button
         className="submit-btn"
         type="button"
