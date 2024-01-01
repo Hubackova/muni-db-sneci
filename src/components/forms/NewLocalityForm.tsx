@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useAppStateContext } from "../../AppStateContext";
-import {
+/* import {
   backup,
   backup2,
   backup3,
@@ -14,7 +14,7 @@ import {
   backup8,
   backup9,
   backup10,
-} from "../../content/localities";
+} from "../../content/localities"; */
 import { writeLocalityData } from "../../firebase/firebase";
 import { dataTypeOptions, samplingOptions } from "../../helpers/options";
 import CreatableSelectInput from "../CreatableSelectInput";
@@ -64,7 +64,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     setCurrentLocality(localityKey);
   };
 
-  const addItemsBackup = () => {
+  /*   const addItemsBackup = () => {
     backup10.forEach((i: any) => {
       const dateSampling = !i.dateSampling
         ? ""
@@ -72,7 +72,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
       writeLocalityData({ ...i, dateSampling });
     });
     toast.success("ok");
-  };
+  }; */
 
   const getSavedData = React.useCallback(() => {
     let data = sessionStorage.getItem(FORM_DATA_KEY);

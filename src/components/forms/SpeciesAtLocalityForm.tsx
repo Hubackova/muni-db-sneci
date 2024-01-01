@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useAppStateContext } from "../../AppStateContext";
-import { backup } from "../../content/species";
+/* import { backup } from "../../content/species"; */
 import { writeSpeciesToLocalityData } from "../../firebase/firebase";
 import { getValueFromOptions } from "../../helpers/utils";
 import CreatableSelectInput from "../CreatableSelectInput";
@@ -42,10 +42,10 @@ const SpeciesAtLocalityForm: React.FC = ({
     writeSpeciesToLocalityData(data, localityKey);
   }
 
-  const addItemsBackup = () => {
+  /*   const addItemsBackup = () => {
     processItems(backup.slice(501, 1000));
   };
-
+ */
   const {
     register,
     formState: { errors },
