@@ -30,6 +30,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
   const [showModal, setShowModal] = useState(null);
   const [showEditModal, setShowEditModal] = useState(null);
   const [last, setLast] = useState(false);
+  const [full, setFull] = useState(false);
   const fieldCodes = localities.map((i) => i.fieldCode);
   const navigate = useNavigate();
   const { setCurrentLocality } = useAppStateContext();
@@ -379,7 +380,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
     selectedFlatRows,
     prepareRow,
   } = tableInstance;
-
+  const rowsShow = full ? rows : rows.slice(0, 100);
   return (
     <div>
       <div className="table-container">
@@ -423,7 +424,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
           </thead>
 
           <tbody {...getTableBodyProps()}>
-            {rows.map((row, index) => {
+            {rowsShow.map((row, index) => {
               prepareRow(row);
               return (
                 <tr {...row.getRowProps()} key={row.original.key + "-" + index}>
@@ -484,6 +485,13 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
           globalFilter={state.globalFilter}
           setGlobalFilter={setGlobalFilter}
         />
+        {rows.length > 100 && (
+          <button onClick={() => setFull(!full)}>
+            {full
+              ? "show less"
+              : `show more -  ${rows.length - 100} items left`}
+          </button>
+        )}
         <div className="download">
           <CSVLink
             data={selectedFlatRows.map((i) => i.values)}

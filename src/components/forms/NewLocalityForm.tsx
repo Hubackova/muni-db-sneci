@@ -3,7 +3,18 @@ import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useAppStateContext } from "../../AppStateContext";
-import { backup } from "../../content/localities";
+import {
+  backup,
+  backup2,
+  backup3,
+  backup4,
+  backup5,
+  backup6,
+  backup7,
+  backup8,
+  backup9,
+  backup10,
+} from "../../content/localities";
 import { writeLocalityData } from "../../firebase/firebase";
 import { dataTypeOptions, samplingOptions } from "../../helpers/options";
 import CreatableSelectInput from "../CreatableSelectInput";
@@ -11,6 +22,7 @@ import SelectInput from "../SelectInput";
 import TextArea from "../TextArea";
 import TextInput from "../TextInput";
 import "./NewSampleForm.scss";
+import moment from "moment";
 
 const FORM_DATA_KEY = "localityForm";
 
@@ -53,7 +65,12 @@ const NewLocalityForm: React.FC = ({ localities }) => {
   };
 
   const addItemsBackup = () => {
-    backup.forEach((i: any) => writeLocalityData(i));
+    backup10.forEach((i: any) => {
+      const dateSampling = !i.dateSampling
+        ? ""
+        : moment(i.dateSampling, "DD.MM.YYYY").format("YYYY-MM-DD");
+      writeLocalityData({ ...i, dateSampling });
+    });
     toast.success("ok");
   };
 

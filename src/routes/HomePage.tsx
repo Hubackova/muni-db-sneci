@@ -113,6 +113,7 @@ const HomePage: React.FC = () => {
                 speciesNames={filteredSpeciesNames}
                 specificationOptions={specificationOptions}
                 withZero={!speciesData.length}
+                localities={localities}
               />
             )}
           </div>

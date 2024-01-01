@@ -16,14 +16,34 @@ const SpeciesAtLocalityForm: React.FC = ({
   speciesNames,
   specificationOptions,
   withZero = false,
+  localities,
 }) => {
   const { currentLocality } = useAppStateContext();
   const [disabled, setDisabled] = useState(false);
+
+  function processItems(items) {
+    var index = 0;
+    function processNextItem() {
+      if (index < items.length) {
+        processItem(items[index]);
+        index++;
+        setTimeout(processNextItem, 0); // Yield control
+      }
+    }
+    processNextItem();
+  }
+
+  function processItem(i) {
+    const { speciesName, siteId, ...data } = i;
+    data.speciesNameKey = speciesNames.find(
+      (species) => species.speciesName === i.speciesName
+    )?.key;
+    const localityKey = localities.find((loc) => loc.siteId === i.siteId)?.key;
+    writeSpeciesToLocalityData(data, localityKey);
+  }
+
   const addItemsBackup = () => {
-    backup.forEach((i: any) =>
-      writeSpeciesToLocalityData(i, "-NhGkOVVUqS3U3kicx2t")
-    );
-    toast.success("ok");
+    processItems(backup.slice(501, 1000));
   };
 
   const {

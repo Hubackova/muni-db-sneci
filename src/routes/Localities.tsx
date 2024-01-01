@@ -23,8 +23,9 @@ const Localities: React.FC = () => {
 
   if (!localities.length) return <div>no data</div>;
   const sortedLocalities = localities.sort(
-    (a, b) => new Date(b.dateSampling) - new Date(a.dateSampling) 
+    (a, b) => new Date(b.dateSampling) - new Date(a.dateSampling)
   );
+
   return <LocalitiesTable localities={sortedLocalities} />;
 };
 
