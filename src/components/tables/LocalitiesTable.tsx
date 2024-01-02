@@ -30,10 +30,11 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
   const [showModal, setShowModal] = useState(null);
   const [showEditModal, setShowEditModal] = useState(null);
   const [last, setLast] = useState(false);
-  const [full, setFull] = useState(false);
   const fieldCodes = localities.map((i) => i.fieldCode);
   const navigate = useNavigate();
   const { setCurrentLocality } = useAppStateContext();
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   const getOptions = React.useCallback(
     (key: string) =>
@@ -380,7 +381,46 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
     selectedFlatRows,
     prepareRow,
   } = tableInstance;
-  const rowsShow = full ? rows : rows.slice(0, 100);
+
+  const ITEMS_PER_PAGE = 200;
+  const totalPages = Math.ceil(rows.length / ITEMS_PER_PAGE);
+
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Výpočet indexu první a poslední položky na aktuální stránce
+  const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
+  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+
+  const rowsShow = rows.slice(indexOfFirstItem, indexOfLastItem);
+
+  const buttons = (
+    <div className="pagination">
+      <div className="pg-buttons">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index}
+            onClick={() => handlePageClick(index + 1)}
+            title={`${index * ITEMS_PER_PAGE + 1} - ${Math.min(
+              (index + 1) * ITEMS_PER_PAGE,
+              rows.length
+            )}`}
+            className={index + 1 === currentPage ? "pg-btn active" : "pg-btn"}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
+      <div>
+        {`${(currentPage - 1) * ITEMS_PER_PAGE + 1} - ${Math.min(
+          currentPage * ITEMS_PER_PAGE,
+          rows.length
+        )} / ${rows.length}`}
+      </div>
+    </div>
+  );
+
   return (
     <div>
       <div className="table-container">
@@ -485,13 +525,6 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
           globalFilter={state.globalFilter}
           setGlobalFilter={setGlobalFilter}
         />
-        {rows.length > 100 && (
-          <button onClick={() => setFull(!full)}>
-            {full
-              ? "show less"
-              : `show more -  ${rows.length - 100} items left`}
-          </button>
-        )}
         <div className="download">
           <CSVLink
             data={selectedFlatRows.map((i) => i.values)}
@@ -509,6 +542,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
           </button>
         )}
       </div>
+      {buttons}
     </div>
   );
 };
