@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { getDatabase, ref, remove, update } from "firebase/database";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CSVLink } from "react-csv";
 import { useNavigate } from "react-router-dom";
 import {
@@ -420,6 +420,12 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
       </div>
     </div>
   );
+
+  useEffect(() => {
+    if (rows.length < currentPage * 200) {
+      setCurrentPage(1);
+    }
+  }, [currentPage, rows.length]);
 
   return (
     <div>
