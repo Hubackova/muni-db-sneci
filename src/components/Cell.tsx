@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import moment from "moment";
 import { getDatabase, ref, update } from "firebase/database";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
@@ -80,6 +81,9 @@ export const DateCell: React.FC<any> = ({
     setValue(initialValue);
   }, [initialValue]);
 
+  const isValidDate = moment(value, "YYYY-MM-DD", true).isValid();
+  const isValidMonth = moment(value, "YYYY-MM", true).isValid();
+
   return (
     <>
       {showEditModal?.row.id === cell.row.id &&
@@ -102,7 +106,8 @@ export const DateCell: React.FC<any> = ({
       <input
         value={value}
         onChange={onChange}
-        type="date"
+        type={isValidDate ? "date" : isValidMonth ? "month" : "number"}
+        step="1"
         title={value.length > maxChars ? value : ""}
       />
     </>
