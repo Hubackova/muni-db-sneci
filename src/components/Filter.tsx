@@ -83,7 +83,6 @@ export function Multi({
   const [minDate, setMinDate] = useState(now);
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, opened, setOpened);
-
   const options = useMemo(() => {
     const options = new Set();
     preFilteredRows.forEach((row) => {
@@ -185,7 +184,9 @@ export function Multi({
           </div>
 
           <>
-            {!Number.isNaN(allMin) && (
+            {(!Number.isNaN(allMin) ||
+              column.id === "latitude" ||
+              column.id === "longitude") && (
               <>
                 <div className="normal">Filter by number</div>
                 <input
