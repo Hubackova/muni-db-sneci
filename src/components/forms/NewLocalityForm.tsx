@@ -29,6 +29,7 @@ const FORM_DATA_KEY = "localityForm";
 const NewLocalityForm: React.FC = ({ localities }) => {
   const { setCurrentLocality } = useAppStateContext();
   const [showModalCode, setShowModalCode] = useState(false);
+  const [alternative, setAlternative] = useState(false);
 
   const getOptions = React.useCallback(
     (key: string) =>
@@ -316,35 +317,57 @@ const NewLocalityForm: React.FC = ({ localities }) => {
           required="This field is required"
         />
       </div>
+
       <div className="row">
-        <TextInput
-          label="Date of sampling *"
-          name="dateSampling"
-          error={errors.dateSampling?.message}
-          register={register}
-          type="date"
-          required="This field is required"
-        />{" "}
-        <Controller
-          render={({ field: { onChange, value } }) => (
-            <CreatableSelectInput
-              options={getOptions("collector")}
-              value={value ? { value, label: value } : null}
-              onChange={(e: any) => {
-                if (e?.value !== getValues("collector")) {
-                  onChange(e?.value);
-                }
-              }}
-              label="Collector *"
-              error={errors.collector?.message}
-              isSearchable
+        <div>
+          <div
+            className="alternative"
+            onClick={() => setAlternative(!alternative)}
+          >
+            {alternative ? "Set to classic date" : "Set to alternative date"}
+          </div>
+          {alternative ? (
+            <TextInput
+              label="Date of sampling *"
+              name="dateSampling"
+              error={errors.dateSampling?.message}
+              register={register}
+              required="This field is required"
+            />
+          ) : (
+            <TextInput
+              label="Date of sampling *"
+              name="dateSampling"
+              error={errors.dateSampling?.message}
+              register={register}
+              type="date"
               required="This field is required"
             />
           )}
-          control={control}
-          name="collector"
-          rules={{ required: "This field is required" }}
-        />
+        </div>
+        <div>
+          <div className="alternative hidden">{"-"}</div>
+          <Controller
+            render={({ field: { onChange, value } }) => (
+              <CreatableSelectInput
+                options={getOptions("collector")}
+                value={value ? { value, label: value } : null}
+                onChange={(e: any) => {
+                  if (e?.value !== getValues("collector")) {
+                    onChange(e?.value);
+                  }
+                }}
+                label="Collector *"
+                error={errors.collector?.message}
+                isSearchable
+                required="This field is required"
+              />
+            )}
+            control={control}
+            name="collector"
+            rules={{ required: "This field is required" }}
+          />
+        </div>
       </div>
       <div className="row">
         <TextInput

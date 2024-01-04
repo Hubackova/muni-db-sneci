@@ -84,6 +84,18 @@
     flex-direction: column;
   }
 
+  .alternative {
+    font-size: 0.8em;
+    text-align: left;
+    color: darkblue;
+    cursor: pointer;
+    padding: 2px 4px 2px 0;
+
+    &.hidden {
+      opacity: 0;
+    }
+  }
+
   .submit-btn {
     height: 40px;
   }
