@@ -70,6 +70,29 @@ const arrayRemoveArr = (arr, valueArr) => {
   return arr.filter((el) => !valueArr.includes(el));
 };
 
+const customSort = (a, b) => {
+  const typeA = typeof a;
+  const typeB = typeof b;
+
+  // Porovnání podle typu
+  if (typeA !== typeB) {
+    return typeA.localeCompare(typeB);
+  }
+
+  // Pokud jsou oba typy čísla, porovnáme je přímo
+  if (typeA === "number") {
+    return a - b;
+  }
+
+  // Pokud jsou oba typy stringy, porovnáme je abecedně
+  if (typeA === "string") {
+    return a.localeCompare(b);
+  }
+
+  // Ostatní případy
+  return 0;
+};
+
 export function Multi({
   column: { filterValue, setFilter, preFilteredRows, id },
   column,
@@ -83,18 +106,16 @@ export function Multi({
   const [minDate, setMinDate] = useState(now);
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, opened, setOpened);
+
   const options = useMemo(() => {
     const options = new Set();
     preFilteredRows.forEach((row) => {
       options.add(row.values[id]);
     });
     const optValues = [...options.values()];
-    const isAnystring = optValues.some((i) => typeof i === "string");
-    if (!isAnystring) {
-      return optValues.sort((a, b) => {
-        return a - b;
-      });
-    } else return optValues.sort();
+    const sortedArray = optValues.sort(customSort);
+
+    return sortedArray;
   }, [id, preFilteredRows]);
 
   const isValidDate = moment(

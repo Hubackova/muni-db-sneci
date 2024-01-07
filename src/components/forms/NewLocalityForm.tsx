@@ -324,7 +324,9 @@ const NewLocalityForm: React.FC = ({ localities }) => {
             className="alternative"
             onClick={() => setAlternative(!alternative)}
           >
-            {alternative ? "Set to classic date" : "Set to alternative date"}
+            {alternative
+              ? "Set to classic format"
+              : "Set to alternative format"}
           </div>
           {alternative ? (
             <TextInput
