@@ -21,8 +21,7 @@ import CreatableSelectInput from "../CreatableSelectInput";
 import SelectInput from "../SelectInput";
 import TextArea from "../TextArea";
 import TextInput from "../TextInput";
-import "./NewSampleForm.scss";
-import moment from "moment";
+import "./NewForm.scss";
 
 const FORM_DATA_KEY = "localityForm";
 
@@ -57,12 +56,15 @@ const NewLocalityForm: React.FC = ({ localities }) => {
   );
 
   const addItem = (data: any) => {
-    data.longitude = parseFloat(data.longitude || 0);
-    data.latitude = parseFloat(data.latitude || 0);
-    const localityKey = writeLocalityData(data);
-    sessionStorage.removeItem(FORM_DATA_KEY);
-    toast.success("New locality was added successfully");
-    setCurrentLocality(localityKey);
+    data.longitude =
+      data.longitude === "n.a." ? "n.a." : parseFloat(data.longitude || 0);
+    data.latitude =
+      data.latitude === "n.a." ? "n.a." : parseFloat(data.latitude || 0);
+    console.log(data);
+    // const localityKey = writeLocalityData(data);
+    // sessionStorage.removeItem(FORM_DATA_KEY);
+    // toast.success("New locality was added successfully");
+    // setCurrentLocality(localityKey);
   };
 
   /*   const addItemsBackup = () => {
@@ -246,9 +248,12 @@ const NewLocalityForm: React.FC = ({ localities }) => {
           name="latitude"
           error={errors.latitude?.message}
           register={register}
-          type="number"
-          step={0.00001}
           required="This field is required"
+          validate={(value) =>
+            /^(\d+\.?\d{0,4}|\.\d{1,4})$/.test(value) ||
+            value === "n.a." ||
+            "Only numbers or dots or n.a. + max 4 decimal places"
+          }
         />
       </div>
       <div className="row">
@@ -257,9 +262,12 @@ const NewLocalityForm: React.FC = ({ localities }) => {
           name="longitude"
           error={errors.longitude?.message}
           register={register}
-          type="number"
-          step={0.00001}
           required="This field is required"
+          validate={(value) =>
+            /^(\d+\.?\d{0,4}|\.\d{1,4})$/.test(value) ||
+            value === "n.a." ||
+            "Only numbers or dots or n.a. + max 4 decimal places"
+          }
         />
         <Controller
           render={({ field: { onChange, value } }) => (
@@ -320,32 +328,56 @@ const NewLocalityForm: React.FC = ({ localities }) => {
 
       <div className="row">
         <div>
-          <div
-            className="alternative"
-            onClick={() => setAlternative(!alternative)}
-          >
-            {alternative
-              ? "Set to classic format"
-              : "Set to alternative format"}
+          <div className="date-switcher">
+            <span>Set to</span>
+            {alternative !== "year" && (
+              <div
+                className="date-btn-switch"
+                onClick={() => setAlternative("year")}
+              >
+                year
+              </div>
+            )}
+            {alternative !== "year" && <span> / </span>}
+            {alternative !== "month" && (
+              <div
+                className="date-btn-switch"
+                onClick={() => setAlternative("month")}
+              >
+                month
+              </div>
+            )}
+            {alternative === "year" && <span> / </span>}
+            {alternative !== "full" && (
+              <div
+                className="date-btn-switch"
+                onClick={() => setAlternative("full")}
+              >
+                full
+              </div>
+            )}
+            <span>format</span>
           </div>
-          {alternative ? (
-            <TextInput
-              label="Date of sampling *"
-              name="dateSampling"
-              error={errors.dateSampling?.message}
-              register={register}
-              required="This field is required"
-            />
-          ) : (
-            <TextInput
-              label="Date of sampling *"
-              name="dateSampling"
-              error={errors.dateSampling?.message}
-              register={register}
-              type="date"
-              required="This field is required"
-            />
-          )}
+          <TextInput
+            label="Date of sampling *"
+            name="dateSampling"
+            error={errors.dateSampling?.message}
+            register={register}
+            type={
+              alternative === "full"
+                ? "date"
+                : alternative === "month"
+                ? "month"
+                : "number"
+            }
+            required="This field is required"
+            validate={(value) =>
+              alternative !== "year" ||
+              value.length !== "n.a." ||
+              value.length === 4 ||
+              "The year is in the wrong format"
+            }
+          />
         </div>
         <div>
           <div className="alternative hidden">{"-"}</div>
@@ -419,7 +451,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
           control={control}
           rules={{ required: "This field is required" }}
           name="samplingMethod"
-        />{" "}
+        />
         <TextInput
           label="Water pH"
           name="waterPH"
@@ -436,7 +468,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
           error={errors.waterConductivity?.message}
           register={register}
           type="number"
-        />{" "}
+        />
         <TextInput
           label="Lot number"
           name="lotNumber"
@@ -451,7 +483,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
           error={errors.releveNumber?.message}
           register={register}
           type="number"
-        />{" "}
+        />
         <Controller
           render={({ field: { onChange, value } }) => (
             <CreatableSelectInput

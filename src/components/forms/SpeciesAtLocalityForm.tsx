@@ -9,7 +9,7 @@ import { getValueFromOptions } from "../../helpers/utils";
 import CreatableSelectInput from "../CreatableSelectInput";
 import SelectInput from "../SelectInput";
 import TextInput from "../TextInput";
-import "./NewSampleForm.scss";
+import "./NewForm.scss";
 
 const SpeciesAtLocalityForm: React.FC = ({
   withLabels = true,

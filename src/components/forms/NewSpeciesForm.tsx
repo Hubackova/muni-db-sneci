@@ -7,7 +7,7 @@ import { backup } from "../../content/speciesNames";
 import { writeSpeciesNameData } from "../../firebase/firebase";
 import SelectInput from "../SelectInput";
 import TextInput from "../TextInput";
-import "./NewSampleForm.scss";
+import "./NewForm.scss";
 const NewSpeciesForm: React.FC = ({ speciesNames }) => {
   const { setCurrentLocality } = useAppStateContext();
   const speciesNamesValues = speciesNames.map((i: any) => i.speciesName);
