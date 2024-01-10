@@ -28,7 +28,7 @@ const FORM_DATA_KEY = "localityForm";
 const NewLocalityForm: React.FC = ({ localities }) => {
   const { setCurrentLocality } = useAppStateContext();
   const [showModalCode, setShowModalCode] = useState(false);
-  const [alternative, setAlternative] = useState(false);
+  const [alternative, setAlternative] = useState("full");
 
   const getOptions = React.useCallback(
     (key: string) =>
@@ -328,7 +328,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
       <div className="row">
         <div>
           <div className="date-switcher">
-            <span>Set</span>
+            <span>Set to</span>
             {alternative !== "year" && (
               <div
                 className="date-btn-switch"
