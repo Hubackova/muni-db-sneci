@@ -367,13 +367,12 @@ const NewLocalityForm: React.FC = ({ localities }) => {
                 ? "date"
                 : alternative === "month"
                 ? "month"
-                : "number"
+                : ""
             }
             required="This field is required"
             validate={(value) =>
               alternative !== "year" ||
-              value.length !== "n.a." ||
-              value.length === 4 ||
+              /^(\d{4}|n\.a\.)$/i.test(value) ||
               "The year is in the wrong format"
             }
           />
