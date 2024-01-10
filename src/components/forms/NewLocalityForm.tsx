@@ -328,7 +328,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
       <div className="row">
         <div>
           <div className="date-switcher">
-            <span>Set to</span>
+            <span>Set</span>
             {alternative !== "year" && (
               <div
                 className="date-btn-switch"
