@@ -60,11 +60,10 @@ const NewLocalityForm: React.FC = ({ localities }) => {
       data.longitude === "n.a." ? "n.a." : parseFloat(data.longitude || 0);
     data.latitude =
       data.latitude === "n.a." ? "n.a." : parseFloat(data.latitude || 0);
-    console.log(data);
-    // const localityKey = writeLocalityData(data);
-    // sessionStorage.removeItem(FORM_DATA_KEY);
-    // toast.success("New locality was added successfully");
-    // setCurrentLocality(localityKey);
+    const localityKey = writeLocalityData(data);
+    sessionStorage.removeItem(FORM_DATA_KEY);
+    toast.success("New locality was added successfully");
+    setCurrentLocality(localityKey);
   };
 
   /*   const addItemsBackup = () => {
