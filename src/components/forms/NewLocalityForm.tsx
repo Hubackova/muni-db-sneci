@@ -380,7 +380,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
               placeholder="YYYY-MM or n.a."
               required="This field is required"
               validate={(value) =>
-                /^(\d{4}\s-\s\d{2}\s\d{2}|n\.a\.)$/i.test(value) ||
+                /^(\d{4}-\d{2}|n\.a\.)$/i.test(value) ||
                 "Date should be in YYYY-MM format (or n.a.)"
               }
             />
