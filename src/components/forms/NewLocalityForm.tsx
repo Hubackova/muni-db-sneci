@@ -122,6 +122,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     handleSubmit,
     getValues,
     setValue,
+    clearErrors,
     control,
     watch,
   } = useForm<PrimersType>({
@@ -328,54 +329,76 @@ const NewLocalityForm: React.FC = ({ localities }) => {
       <div className="row">
         <div>
           <div className="date-switcher">
-            <span>Set to</span>
-            {alternative !== "year" && (
-              <div
-                className="date-btn-switch"
-                onClick={() => setAlternative("year")}
-              >
-                year
-              </div>
-            )}
-            {alternative !== "year" && <span> / </span>}
-            {alternative !== "month" && (
-              <div
-                className="date-btn-switch"
-                onClick={() => setAlternative("month")}
-              >
-                month
-              </div>
-            )}
-            {alternative === "year" && <span> / </span>}
-            {alternative !== "full" && (
-              <div
-                className="date-btn-switch"
-                onClick={() => setAlternative("full")}
-              >
-                full
-              </div>
-            )}
-            <span>format</span>
+            <div
+              className="date-btn-switch"
+              onClick={() => {
+                clearErrors("dateSampling");
+                setValue("dateSampling", "");
+                return setAlternative("full");
+              }}
+            >
+              YYYY-MM-DD
+            </div>
+            <div
+              className="date-btn-switch"
+              onClick={() => {
+                clearErrors("dateSampling");
+                setValue("dateSampling", "");
+                return setAlternative("month");
+              }}
+            >
+              YYYY-MM
+            </div>
+            <div
+              className="date-btn-switch"
+              onClick={() => {
+                clearErrors("dateSampling");
+                setValue("dateSampling", "");
+                return setAlternative("year");
+              }}
+            >
+              YYYY
+            </div>
           </div>
-          <TextInput
-            label="Date of sampling *"
-            name="dateSampling"
-            error={errors.dateSampling?.message}
-            register={register}
-            type={
-              alternative === "full"
-                ? "date"
-                : alternative === "month"
-                ? "month"
-                : ""
-            }
-            required="This field is required"
-            validate={(value) =>
-              alternative !== "year" ||
-              /^(\d{4}|n\.a\.)$/i.test(value) ||
-              "The year is in the wrong format"
-            }
-          />
+          {alternative === "full" && (
+            <TextInput
+              label="Date of sampling *"
+              name="dateSampling"
+              error={errors.dateSampling?.message}
+              register={register}
+              required="This field is required"
+              type="date"
+            />
+          )}
+          {alternative === "month" && (
+            <TextInput
+              label="Date of sampling *"
+              name="dateSampling"
+              error={errors.dateSampling?.message}
+              register={register}
+              type="month"
+              placeholder="YYYY-MM or n.a."
+              required="This field is required"
+              validate={(value) =>
+                /^(\d{4}\s-\s\d{2}\s\d{2}|n\.a\.)$/i.test(value) ||
+                "Date should be in YYYY-MM format (or n.a.)"
+              }
+            />
+          )}
+          {alternative === "year" && (
+            <TextInput
+              label="Date of sampling *"
+              name="dateSampling"
+              error={errors.dateSampling?.message}
+              register={register}
+              required="This field is required"
+              placeholder="YYYY or n.a."
+              validate={(value) =>
+                /^(\d{4}|n\.a\.)$/i.test(value) ||
+                "Date should be in YYYY format (or n.a.)"
+              }
+            />
+          )}
         </div>
         <div>
           <div className="alternative hidden">{"-"}</div>

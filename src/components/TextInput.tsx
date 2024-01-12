@@ -18,6 +18,7 @@ type InputProps = {
   step?: any;
   readOnly?: boolean;
   min?: any;
+  placeholder?: string;
 };
 
 const TextInput = ({
@@ -34,6 +35,7 @@ const TextInput = ({
   step,
   readOnly,
   className,
+  placeholder,
   min,
 }: InputProps) => (
   <div className={cx("container", className)}>
@@ -45,6 +47,7 @@ const TextInput = ({
       step={step}
       disabled={disabled}
       readOnly={readOnly}
+      placeholder={placeholder}
       min={min}
       {...register(name, {
         required,
