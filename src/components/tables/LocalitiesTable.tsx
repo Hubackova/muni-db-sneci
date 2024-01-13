@@ -13,14 +13,7 @@ import {
 } from "react-table";
 import { toast } from "react-toastify";
 import { useAppStateContext } from "../../AppStateContext";
-import { dataTypeOptions, samplingOptions } from "../../helpers/options";
 import { ReactComponent as ExportIcon } from "../../images/export.svg";
-import {
-  CreatableSelectCell,
-  DateCell,
-  EditableCell,
-  SelectCell,
-} from "../Cell";
 import ConfirmModal from "../ConfirmModal";
 import { GlobalFilter, Multi, multiSelectFilter } from "../Filter";
 import IndeterminateCheckbox from "../IndeterminateCheckbox";
@@ -30,36 +23,10 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
   const [showModal, setShowModal] = useState(null);
   const [showEditModal, setShowEditModal] = useState(null);
   const [last, setLast] = useState(false);
-  const fieldCodes = localities.map((i) => i.fieldCode);
   const navigate = useNavigate();
-  const { setCurrentLocality } = useAppStateContext();
+  const { setCurrentLocality, setLocalityData } = useAppStateContext();
 
   const [currentPage, setCurrentPage] = useState(1);
-
-  const getOptions = React.useCallback(
-    (key: string) =>
-      Object.values(
-        localities.reduce(
-          /* @ts-ignore */
-          (acc, cur) => Object.assign(acc, { [cur[key]]: cur }),
-          {}
-        )
-      )
-        .map((i: any) => ({
-          value: i[key],
-          label: i[key],
-        }))
-        .sort(function (a, b) {
-          if (a.label < b.label) {
-            return -1;
-          }
-          if (a.label > b.label) {
-            return 1;
-          }
-          return 0;
-        }),
-    [localities]
-  );
 
   const removeItem = (id: string) => {
     setShowModal(id);
@@ -77,19 +44,6 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
     setLast(false);
   };
 
-  const DefaultCell = React.memo<React.FC<any>>(
-    ({ value, row, cell }) => (
-      <EditableCell
-        initialValue={value}
-        row={row}
-        cell={cell}
-        dbName="localities/"
-        saveLast={setLast}
-      />
-    ),
-    customComparator
-  );
-
   const columns = React.useMemo(
     () => [
       {
@@ -103,18 +57,13 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
               className="plus"
               onClick={() => {
                 setCurrentLocality(row.original.key);
+                setLocalityData(row.original);
                 navigate("/");
               }}
             >
               <b title="Add species">+</b>
             </span>
-            <EditableCell
-              initialValue={value}
-              row={row}
-              cell={cell}
-              dbName="localities/"
-              saveLast={setLast}
-            />
+            <span>{value}</span>
           </div>
         )),
       },
@@ -123,16 +72,6 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
         accessor: "fieldCode",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: React.memo<React.FC<any>>(({ value, row, cell }) => (
-          <EditableCell
-            initialValue={value}
-            row={row}
-            cell={cell}
-            saveLast={setLast}
-            fieldCodes={fieldCodes}
-            dbName="localities/"
-          />
-        )),
       },
       {
         Header: "Site name",
@@ -157,18 +96,6 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
         accessor: "country",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: ({ value, row, cell }) => {
-          return (
-            <CreatableSelectCell
-              initialValue={value}
-              row={row}
-              cell={cell}
-              options={getOptions("country")}
-              saveLast={setLast}
-              updatekey={row.original.key}
-            />
-          );
-        },
       },
       {
         Header: "State/Province/Region",
@@ -203,17 +130,6 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
       {
         Header: "Date of sampling",
         accessor: "dateSampling",
-        Cell: React.memo<React.FC<any>>(
-          ({ value: initialValue, row, cell }) => (
-            <DateCell
-              initialValue={initialValue}
-              row={row}
-              cell={cell}
-              saveLast={setLast}
-            />
-          ),
-          customComparator
-        ),
         Filter: Multi,
         filter: multiSelectFilter,
       },
@@ -222,18 +138,6 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
         accessor: "collector",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: ({ value, row, cell }) => {
-          return (
-            <CreatableSelectCell
-              initialValue={value}
-              row={row}
-              cell={cell}
-              options={getOptions("collector")}
-              saveLast={setLast}
-              updatekey={row.original.key}
-            />
-          );
-        },
       },
       {
         Header: "Plot size (m 2 )",
@@ -264,18 +168,6 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
         accessor: "samplingMethod",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: ({ value, row, cell }) => {
-          return (
-            <SelectCell
-              initialValue={value}
-              row={row}
-              cell={cell}
-              options={samplingOptions}
-              saveLast={setLast}
-              updatekey={row.original.key}
-            />
-          );
-        },
       },
       {
         Header: "Water pH",
@@ -306,18 +198,6 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
         accessor: "dataType",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: ({ value, row, cell }) => {
-          return (
-            <CreatableSelectCell
-              initialValue={value}
-              row={row}
-              cell={cell}
-              options={dataTypeOptions}
-              saveLast={setLast}
-              updatekey={row.original.key}
-            />
-          );
-        },
       },
       {
         Header: "PLA/event",
@@ -339,7 +219,6 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
     {
       columns,
       data: localities,
-      defaultColumn: { Cell: DefaultCell, Filter: () => {} },
       autoResetFilters: false,
     },
     useGlobalFilter,
@@ -441,7 +320,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
             onHide={() => setShowModal(null)}
           />
         )}
-        <table className="table pcr" {...getTableProps()}>
+        <table className="table localities" {...getTableProps()}>
           <thead>
             {headerGroups.map((headerGroup, index) => (
               <tr {...headerGroup.getHeaderGroupProps()} key={index}>

@@ -1,6 +1,3 @@
-.table-with-options {
-}
-
 .table-container {
   /*   max-width: calc(100vw); */
 
@@ -22,7 +19,7 @@
 
 .table {
   max-width: 100%;
-
+  border-collapse: collapse;
   display: block;
   white-space: nowrap;
 
@@ -35,7 +32,13 @@
     border-radius: 4px;
   }
 
-  &.pcr {
+  td[role="cell"] {
+    border-right: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+    padding: 1px 3px;
+  }
+
+  &.localities {
     tr > td,
     tr > th {
       &:nth-of-type(3) {

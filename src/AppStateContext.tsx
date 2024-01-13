@@ -3,11 +3,15 @@ import React, { createContext, useContext, useState } from "react";
 export type AppStateType = {
   currentLocality: string;
   setCurrentLocality: (c: string) => void;
+  setLocalityData: (data: any) => void;
+  localityData: any;
 };
 
 export const initialAppState: AppStateType = {
   currentLocality: "",
   setCurrentLocality: () => {},
+  setLocalityData: () => {},
+  localityData: null,
 };
 
 const AppStateContext = createContext<AppStateType>(initialAppState);
@@ -21,9 +25,17 @@ const AppStateProvider: React.FC<any> = ({ children }) => {
       currentLocality: locality,
     }));
   };
+  const setLocalityData = (data: any) => {
+    setState((prevState) => ({
+      ...prevState,
+      localityData: data,
+    }));
+  };
 
   return (
-    <AppStateContext.Provider value={{ ...state, setCurrentLocality }}>
+    <AppStateContext.Provider
+      value={{ ...state, setCurrentLocality, setLocalityData }}
+    >
       {children}
     </AppStateContext.Provider>
   );

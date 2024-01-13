@@ -22,11 +22,14 @@ import SelectInput from "../SelectInput";
 import TextArea from "../TextArea";
 import TextInput from "../TextInput";
 import "./NewForm.scss";
+import { ref, update, getDatabase } from "firebase/database";
 
 const FORM_DATA_KEY = "localityForm";
 
 const NewLocalityForm: React.FC = ({ localities }) => {
-  const { setCurrentLocality } = useAppStateContext();
+  const db = getDatabase();
+  const { setCurrentLocality, localityData, setLocalityData } =
+    useAppStateContext();
   const [showModalCode, setShowModalCode] = useState(false);
   const [alternative, setAlternative] = useState("full");
 
@@ -60,10 +63,18 @@ const NewLocalityForm: React.FC = ({ localities }) => {
       data.longitude === "n.a." ? "n.a." : parseFloat(data.longitude || 0);
     data.latitude =
       data.latitude === "n.a." ? "n.a." : parseFloat(data.latitude || 0);
-    const localityKey = writeLocalityData(data);
-    sessionStorage.removeItem(FORM_DATA_KEY);
-    toast.success("New locality was added successfully");
-    setCurrentLocality(localityKey);
+    if (localityData) {
+      update(ref(db, "localities/" + data.key), {
+        ...data,
+      });
+      toast.success("Locality was updated successfully");
+      setLocalityData(null);
+    } else {
+      const localityKey = writeLocalityData(data);
+      sessionStorage.removeItem(FORM_DATA_KEY);
+      toast.success("New locality was added successfully");
+      setCurrentLocality(localityKey);
+    }
   };
 
   /*   const addItemsBackup = () => {
@@ -127,7 +138,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     watch,
   } = useForm<PrimersType>({
     mode: "all",
-    defaultValues: getSavedData(),
+    defaultValues: localityData || getSavedData(),
   });
 
   useEffect(() => {
@@ -142,7 +153,9 @@ const NewLocalityForm: React.FC = ({ localities }) => {
 
   return (
     <form className="form locality" onSubmit={handleSubmit(addItem)}>
-      <h5>Add new locality:</h5>
+      <h5>
+        {localityData ? `Edit ${localityData.siteId}` : "Add new locality:"}
+      </h5>
       <div className="row">
         <div>
           <TextInput
@@ -152,7 +165,9 @@ const NewLocalityForm: React.FC = ({ localities }) => {
             register={register}
             required="This field is required"
             validate={() =>
-              !siteIds.includes(getValues("siteId")) || "Duplicate site ID"
+              (localityData && getValues("siteId") === localityData.siteId) ||
+              !siteIds.includes(getValues("siteId")) ||
+              "Duplicate site ID"
             }
           />
 
@@ -228,6 +243,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
           validate={() => {
             const fieldCode = getValues("fieldCode");
             return (
+              (localityData && fieldCode === localityData.fieldCode) ||
               !fieldCode ||
               !fieldCodes.includes(fieldCode) ||
               "Duplicate fieldCode"
@@ -457,22 +473,38 @@ const NewLocalityForm: React.FC = ({ localities }) => {
         />
       </div>
       <div className="row">
-        <Controller
-          render={({ field: { onChange, value } }) => (
-            <SelectInput
-              options={samplingOptions}
-              value={value ? { value, label: value } : null}
-              onChange={(e: any) => onChange(e?.value)}
-              label="Sampling method *"
-              error={errors.samplingMethod?.message}
-              isSearchable
-              required="This field is required"
-            />
-          )}
-          control={control}
-          rules={{ required: "This field is required" }}
-          name="samplingMethod"
-        />
+        {localityData ? (
+          <Controller
+            render={({ field: { onChange, value } }) => (
+              <SelectInput
+                options={samplingOptions}
+                value={value ? { value, label: value } : null}
+                onChange={(e: any) => onChange(e?.value)}
+                label="Sampling method *"
+                isSearchable
+              />
+            )}
+            control={control}
+            name="samplingMethod"
+          />
+        ) : (
+          <Controller
+            render={({ field: { onChange, value } }) => (
+              <SelectInput
+                options={samplingOptions}
+                value={value ? { value, label: value } : null}
+                onChange={(e: any) => onChange(e?.value)}
+                label="Sampling method *"
+                error={errors.samplingMethod?.message}
+                isSearchable
+                required="This field is required"
+              />
+            )}
+            control={control}
+            rules={{ required: "This field is required" }}
+            name="samplingMethod"
+          />
+        )}
         <TextInput
           label="Water pH"
           name="waterPH"
