@@ -86,6 +86,37 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     [localities]
   );
 
+  const handleReset = () => {
+    setCurrentLocality("");
+    setLocalityData(null);
+    sessionStorage.removeItem(FORM_DATA_KEY);
+    setValue("siteId", "");
+    setValue("fieldCode", "");
+    setValue("siteName", "");
+    setValue("latitude", "");
+    setValue("longitude", "");
+    setValue("country", "");
+    setValue("state", "");
+    setValue("settlement", "");
+    setValue("mapGrid", "");
+    setValue("elevation", "");
+    setValue("siteDescription", "");
+    setValue("dateSampling", "");
+    setValue("collector", "");
+    setValue("plotSize", "");
+    setValue("sampleSize", "");
+    setValue("habitatSize", "");
+    setValue("distanceForest", "");
+    setValue("samplingMethod", "");
+    setValue("waterPH", "");
+    setValue("waterConductivity", "");
+    setValue("lotNumber", "");
+    setValue("releveNumber", "");
+    setValue("dataType", "");
+    setValue("event", "");
+    setValue("noteSite", "");
+  };
+
   const addItem = (data: any) => {
     data.longitude =
       data.longitude === "na" ? "na" : parseFloat(data.longitude || 0);
@@ -96,7 +127,6 @@ const NewLocalityForm: React.FC = ({ localities }) => {
         ...data,
       });
       toast.success("Locality was updated successfully");
-      setLocalityData(null);
     } else {
       const localityKey = writeLocalityData(data);
       sessionStorage.removeItem(FORM_DATA_KEY);
@@ -138,7 +168,6 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     clearErrors,
     control,
     watch,
-    reset,
   } = useForm<PrimersType>({
     mode: "all",
     defaultValues: localityData || getSavedData(),
@@ -153,37 +182,6 @@ const NewLocalityForm: React.FC = ({ localities }) => {
 
   const siteIds = localities.map((locality) => locality.siteId);
   const fieldCodes = localities.map((locality) => locality.fieldCode);
-
-  const handleReset = () => {
-    setCurrentLocality("");
-    setLocalityData(null);
-    sessionStorage.removeItem(FORM_DATA_KEY);
-    setValue("siteId", "");
-    setValue("fieldCode", "");
-    setValue("siteName", "");
-    setValue("latitude", "");
-    setValue("longitude", "");
-    setValue("country", "");
-    setValue("state", "");
-    setValue("settlement", "");
-    setValue("mapGrid", "");
-    setValue("elevation", "");
-    setValue("siteDescription", "");
-    setValue("dateSampling", "");
-    setValue("collector", "");
-    setValue("plotSize", "");
-    setValue("sampleSize", "");
-    setValue("habitatSize", "");
-    setValue("distanceForest", "");
-    setValue("samplingMethod", "");
-    setValue("waterPH", "");
-    setValue("waterConductivity", "");
-    setValue("lotNumber", "");
-    setValue("releveNumber", "");
-    setValue("dataType", "");
-    setValue("event", "");
-    setValue("noteSite", "");
-  };
 
   return (
     <form className="form locality" onSubmit={handleSubmit(addItem)}>
