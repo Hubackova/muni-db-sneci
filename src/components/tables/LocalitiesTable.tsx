@@ -52,18 +52,15 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
         Filter: Multi,
         filter: multiSelectFilter,
         Cell: React.memo<React.FC<any>>(({ value, row, cell }) => (
-          <div>
-            <span
-              className="plus"
-              onClick={() => {
-                setCurrentLocality(row.original.key);
-                setLocalityData(row.original);
-                navigate("/");
-              }}
-            >
-              <b title="Add species">+</b>
-            </span>
-            <span>{value}</span>
+          <div
+            className="siteId"
+            onClick={() => {
+              setCurrentLocality(row.original.key);
+              setLocalityData(row.original);
+              navigate("/");
+            }}
+          >
+            {value}
           </div>
         )),
       },

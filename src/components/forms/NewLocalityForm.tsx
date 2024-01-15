@@ -26,6 +26,34 @@ import { ref, update, getDatabase } from "firebase/database";
 
 const FORM_DATA_KEY = "localityForm";
 
+const DEFAULT_DATA = {
+  fieldCode: "",
+  siteId: "",
+  siteName: "",
+  latitude: "",
+  longitude: "",
+  country: "",
+  state: "",
+  settlement: "",
+  mapGrid: "",
+  elevation: "",
+  siteDescription: "",
+  dateSampling: "",
+  collector: "",
+  plotSize: "",
+  sampleSize: "",
+  habitatSize: "",
+  distanceForest: "",
+  samplingMethod: "",
+  waterPH: "",
+  waterConductivity: "",
+  lotNumber: "",
+  releveNumber: "",
+  dataType: "",
+  event: "",
+  noteSite: "",
+};
+
 const NewLocalityForm: React.FC = ({ localities }) => {
   const db = getDatabase();
   const { setCurrentLocality, localityData, setLocalityData } =
@@ -60,9 +88,9 @@ const NewLocalityForm: React.FC = ({ localities }) => {
 
   const addItem = (data: any) => {
     data.longitude =
-      data.longitude === "n.a." ? "n.a." : parseFloat(data.longitude || 0);
+      data.longitude === "na" ? "na" : parseFloat(data.longitude || 0);
     data.latitude =
-      data.latitude === "n.a." ? "n.a." : parseFloat(data.latitude || 0);
+      data.latitude === "na" ? "na" : parseFloat(data.latitude || 0);
     if (localityData) {
       update(ref(db, "localities/" + data.key), {
         ...data,
@@ -98,33 +126,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
       }
       return data;
     }
-    return {
-      fieldcode: "",
-      siteId: "",
-      siteName: "",
-      latitude: "",
-      longitude: "",
-      country: "",
-      state: "",
-      settlement: "",
-      mapGrid: "",
-      elevation: "",
-      siteDescription: "",
-      dateSampling: "",
-      collector: "",
-      plotSize: "",
-      sampleSize: "",
-      habitatSize: "",
-      distanceForest: "",
-      samplingMethod: "",
-      waterPH: "",
-      waterConductivity: "",
-      lotNumber: "",
-      releveNumber: "",
-      dataType: "",
-      event: "",
-      noteSite: "",
-    };
+    return DEFAULT_DATA;
   }, []);
 
   const {
@@ -136,6 +138,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     clearErrors,
     control,
     watch,
+    reset,
   } = useForm<PrimersType>({
     mode: "all",
     defaultValues: localityData || getSavedData(),
@@ -151,8 +154,42 @@ const NewLocalityForm: React.FC = ({ localities }) => {
   const siteIds = localities.map((locality) => locality.siteId);
   const fieldCodes = localities.map((locality) => locality.fieldCode);
 
+  const handleReset = () => {
+    setCurrentLocality("");
+    setLocalityData(null);
+    sessionStorage.removeItem(FORM_DATA_KEY);
+    setValue("siteId", "");
+    setValue("fieldCode", "");
+    setValue("siteName", "");
+    setValue("latitude", "");
+    setValue("longitude", "");
+    setValue("country", "");
+    setValue("state", "");
+    setValue("settlement", "");
+    setValue("mapGrid", "");
+    setValue("elevation", "");
+    setValue("siteDescription", "");
+    setValue("dateSampling", "");
+    setValue("collector", "");
+    setValue("plotSize", "");
+    setValue("sampleSize", "");
+    setValue("habitatSize", "");
+    setValue("distanceForest", "");
+    setValue("samplingMethod", "");
+    setValue("waterPH", "");
+    setValue("waterConductivity", "");
+    setValue("lotNumber", "");
+    setValue("releveNumber", "");
+    setValue("dataType", "");
+    setValue("event", "");
+    setValue("noteSite", "");
+  };
+
   return (
     <form className="form locality" onSubmit={handleSubmit(addItem)}>
+      <button className="resetBtn" onClick={handleReset}>
+        reset form
+      </button>
       <h5>
         {localityData ? `Edit ${localityData.siteId}` : "Add new locality:"}
       </h5>
@@ -255,9 +292,9 @@ const NewLocalityForm: React.FC = ({ localities }) => {
         <TextInput
           label="Site name *"
           name="siteName"
-          error={errors.siteName?.message}
+          error={!localityData && errors.siteName?.message}
           register={register}
-          required="This field is required"
+          required={!localityData && "This field is required"}
         />
         <TextInput
           label="Latitude (°N) *"
@@ -266,9 +303,10 @@ const NewLocalityForm: React.FC = ({ localities }) => {
           register={register}
           required="This field is required"
           validate={(value) =>
-            /^(\d+\.?\d{0,4}|\.\d{1,4})$/.test(value) ||
-            value === "n.a." ||
-            "Only numbers or dots or n.a. + max 4 decimal places"
+            localityData ||
+            /^(\d+\.?\d{0,5}|\.\d{1,5}|n\.a\.)$/.test(value) ||
+            value === "na" ||
+            "Only numbers or dots or na + max 5 decimal places"
           }
         />
       </div>
@@ -280,9 +318,10 @@ const NewLocalityForm: React.FC = ({ localities }) => {
           register={register}
           required="This field is required"
           validate={(value) =>
-            /^(\d+\.?\d{0,4}|\.\d{1,4})$/.test(value) ||
-            value === "n.a." ||
-            "Only numbers or dots or n.a. + max 4 decimal places"
+            localityData ||
+            /^(\d+\.?\d{0,5}|\.\d{1,5}|n\.a\.)$/.test(value) ||
+            value === "na" ||
+            "Only numbers or dots or na + max 5 decimal places"
           }
         />
         <Controller
@@ -393,11 +432,11 @@ const NewLocalityForm: React.FC = ({ localities }) => {
               error={errors.dateSampling?.message}
               register={register}
               type="month"
-              placeholder="YYYY-MM or n.a."
+              placeholder="YYYY-MM or na"
               required="This field is required"
               validate={(value) =>
-                /^(\d{4}-\d{2}|n\.a\.)$/i.test(value) ||
-                "Date should be in YYYY-MM format (or n.a.)"
+                /^(\d{4}-\d{2}|na)$/i.test(value) ||
+                "Date should be in YYYY-MM format (or na)"
               }
             />
           )}
@@ -408,10 +447,10 @@ const NewLocalityForm: React.FC = ({ localities }) => {
               error={errors.dateSampling?.message}
               register={register}
               required="This field is required"
-              placeholder="YYYY or n.a."
+              placeholder="YYYY or na"
               validate={(value) =>
-                /^(\d{4}|n\.a\.)$/i.test(value) ||
-                "Date should be in YYYY format (or n.a.)"
+                /^(\d{4}|na)$/i.test(value) ||
+                "Date should be in YYYY format (or na)"
               }
             />
           )}
