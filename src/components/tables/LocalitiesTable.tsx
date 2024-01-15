@@ -16,6 +16,7 @@ import { useAppStateContext } from "../../AppStateContext";
 import { ReactComponent as ExportIcon } from "../../images/export.svg";
 import ConfirmModal from "../ConfirmModal";
 import { GlobalFilter, Multi, multiSelectFilter } from "../Filter";
+import { MultiDate } from "../FilterDate";
 import IndeterminateCheckbox from "../IndeterminateCheckbox";
 
 const LocalitiesTable: React.FC<any> = ({ localities }) => {
@@ -32,9 +33,6 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
     setShowModal(id);
   };
 
-  const customComparator = (prevProps, nextProps) => {
-    return nextProps.value === prevProps.value;
-  };
   const handleRevert = () => {
     update(ref(db, "localities/" + last.rowKey), {
       [last.cellId]: last.initialValue,
@@ -51,7 +49,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
         accessor: "siteId",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: React.memo<React.FC<any>>(({ value, row, cell }) => (
+        Cell: React.memo<React.FC<any>>(({ value, row }) => (
           <div
             className="siteId"
             onClick={() => {
@@ -127,7 +125,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
       {
         Header: "Date of sampling",
         accessor: "dateSampling",
-        Filter: Multi,
+        Filter: MultiDate,
         filter: multiSelectFilter,
       },
       {

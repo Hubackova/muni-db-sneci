@@ -11,41 +11,20 @@ import {
   useTable,
 } from "react-table";
 import { useAppStateContext } from "../../AppStateContext";
-import { dataTypeOptions, samplingOptions } from "../../helpers/options";
-import { getOptions, getValueFromOptions } from "../../helpers/utils";
 import { ReactComponent as ExportIcon } from "../../images/export.svg";
-import {
-  CreatableSelectCell,
-  DateCell,
-  EditableCell,
-  SelectCell,
-} from "../Cell";
 import { GlobalFilter, Multi, multiSelectFilter } from "../Filter";
+import { MultiDate } from "../FilterDate";
 import IndeterminateCheckbox from "../IndeterminateCheckbox";
+import { useNavigate } from "react-router-dom";
 
 const LocalitiesAndSpeciesTable: React.FC<any> = ({
   localities,
   speciesNames,
 }) => {
   const db = getDatabase();
-  const { currentLocality } = useAppStateContext();
+  const navigate = useNavigate();
+  const { setCurrentLocality, setLocalityData } = useAppStateContext();
   const [last, setLast] = useState(false);
-
-  const customComparator = (prevProps, nextProps) => {
-    return nextProps.value === prevProps.value;
-  };
-
-  const speciesCells = [
-    "specification",
-    "live",
-    "empty",
-    "undef",
-    "all",
-    "lot",
-    "vouchers",
-    "noteSpecies",
-    "speciesNameKey",
-  ];
 
   const handleRevert = () => {
     update(ref(db, last.dbName + last.rowKey), {
@@ -55,31 +34,6 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
       last.setValue({ value: last.initialValue, label: last.initialValue });
     setLast(false);
   };
-
-  const DefaultCell = React.memo<React.FC<any>>(({ value, row, cell }) => {
-    const isSpeciesUpdate = speciesCells.includes(cell.column.id);
-
-    const dbName = isSpeciesUpdate
-      ? `localities/${currentLocality || row.original.siteKey}/species/`
-      : "localities/";
-    const zeroSpecies = row.original.speciesName === "0";
-
-    return (
-      <EditableCell
-        initialValue={value}
-        row={row}
-        cell={cell}
-        dbName={dbName}
-        saveLast={setLast}
-        updatekey={
-          isSpeciesUpdate ? row.original.speciesKey : row.original.siteKey
-        }
-        disabled={zeroSpecies && isSpeciesUpdate}
-      />
-    );
-  }, customComparator);
-
-  const fieldCodes = localities.map((i) => i.fieldCode);
 
   const speciesNamesOptions = speciesNames
     .map((i: any) => ({
@@ -108,69 +62,32 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
         accessor: "siteId",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: React.memo<React.FC<any>>(
-          ({ row: { original } }) => (
-            <input
-              defaultValue={[original.siteId] || ""}
-              disabled
-              className="narrow"
-            ></input>
-          ),
-          customComparator
-        ),
+        Cell: React.memo<React.FC<any>>(({ value, row }) => {
+          return (
+            <div
+              className="siteId"
+              onClick={() => {
+                setCurrentLocality(row.original.siteKey);
+                setLocalityData(row.original);
+                navigate("/");
+              }}
+            >
+              {value}
+            </div>
+          );
+        }),
       },
       {
         Header: "Species Name",
-        accessor: "speciesNameKey",
+        accessor: "speciesName",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: ({ value, row, cell }) => {
-          const item = getValueFromOptions(
-            row.original.speciesNameKey,
-            speciesNamesOptionsAll
-          );
-          const filteredOptions = speciesNamesOptionsAll.filter(
-            (i) =>
-              (row.original.speciesNamesKeysinLocality &&
-                !row.original.speciesNamesKeysinLocality.includes(i.value)) ||
-              i.value === "add"
-          );
-          const isLocalityWithZero = row.original.speciesNameKey === "0";
-          return (
-            <SelectCell
-              backValue={value}
-              initialValue={isLocalityWithZero ? "0" : item?.label || ""}
-              row={row}
-              cell={cell}
-              options={filteredOptions}
-              saveLast={setLast}
-              dbName={`localities/${row.original.siteKey}/species/`}
-              updatekey={row.original.speciesKey}
-              isDisabled={isLocalityWithZero}
-            />
-          );
-        },
       },
       {
         Header: "Specification",
         accessor: "specification",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: ({ value, row, cell }) => {
-          const isLocalityWithZero = row.original.speciesNameKey === "0";
-          return (
-            <CreatableSelectCell
-              initialValue={value}
-              row={row}
-              cell={cell}
-              options={getOptions(localities, "specification")}
-              saveLast={setLast}
-              updatekey={row.original.speciesKey}
-              dbName={`localities/${row.original.siteKey}/species/`}
-              isDisabled={isLocalityWithZero}
-            />
-          );
-        },
       },
       {
         Header: "Live",
@@ -196,16 +113,6 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
         accessor: "all",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: React.memo<React.FC<any>>(({ row: { original } }) => {
-          return (
-            <input
-              value={original.speciesName === "0" ? 0 : [original.all] || ""}
-              readOnly
-              disabled={original.speciesName === "0"}
-              className="ultra-narrow"
-            ></input>
-          );
-        }, customComparator),
       },
       {
         Header: "Lot no.",
@@ -230,15 +137,6 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
         accessor: "fieldCode",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: React.memo<React.FC<any>>(({ value, row, cell }) => (
-          <EditableCell
-            initialValue={value}
-            row={row}
-            cell={cell}
-            saveLast={setLast}
-            fieldCodes={fieldCodes}
-          />
-        )),
       },
       {
         Header: "Site name",
@@ -263,18 +161,6 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
         accessor: "country",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: ({ value, row, cell }) => {
-          return (
-            <CreatableSelectCell
-              initialValue={value}
-              row={row}
-              cell={cell}
-              options={getOptions(localities, "country")}
-              saveLast={setLast}
-              updatekey={row.original.siteKey}
-            />
-          );
-        },
       },
       {
         Header: "State/Province/Region",
@@ -309,18 +195,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
       {
         Header: "Date of sampling",
         accessor: "dateSampling",
-        Cell: React.memo<React.FC<any>>(
-          ({ value: initialValue, row, cell }) => (
-            <DateCell
-              initialValue={initialValue}
-              row={row}
-              cell={cell}
-              saveLast={setLast}
-            />
-          ),
-          customComparator
-        ),
-        Filter: Multi,
+        Filter: MultiDate,
         filter: multiSelectFilter,
       },
       {
@@ -328,18 +203,6 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
         accessor: "collector",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: ({ value, row, cell }) => {
-          return (
-            <CreatableSelectCell
-              initialValue={value}
-              row={row}
-              cell={cell}
-              options={getOptions(localities, "collector")}
-              saveLast={setLast}
-              updatekey={row.original.siteKey}
-            />
-          );
-        },
       },
       {
         Header: "Plot size (m 2 )",
@@ -370,18 +233,6 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
         accessor: "samplingMethod",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: ({ value, row, cell }) => {
-          return (
-            <SelectCell
-              initialValue={value}
-              row={row}
-              cell={cell}
-              options={samplingOptions}
-              saveLast={setLast}
-              updatekey={row.original.siteKey}
-            />
-          );
-        },
       },
       {
         Header: "Water pH",
@@ -412,18 +263,6 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
         accessor: "dataType",
         Filter: Multi,
         filter: multiSelectFilter,
-        Cell: ({ value, row, cell }) => {
-          return (
-            <CreatableSelectCell
-              initialValue={value}
-              row={row}
-              cell={cell}
-              options={dataTypeOptions}
-              saveLast={setLast}
-              updatekey={row.original.siteKey}
-            />
-          );
-        },
       },
       {
         Header: "PLA/event",
@@ -445,7 +284,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
     {
       columns,
       data: localities,
-      defaultColumn: { Cell: DefaultCell, Filter: () => {} },
+      defaultColumn: { Filter: () => {} },
       autoResetFilters: false,
     },
     useGlobalFilter,
