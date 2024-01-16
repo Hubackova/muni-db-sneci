@@ -232,7 +232,7 @@ const SpeciesAtLocalityForm: React.FC = ({
       </div>
 
       <button className="submit-btn" type="submit">
-        Save
+        Confirm new
       </button>
 
       {/* <button
