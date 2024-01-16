@@ -67,6 +67,12 @@
 
     .filter-link {
       cursor: pointer;
+      &.month {
+        margin-left: 8px;
+      }
+      &.day {
+        margin-left: 16px;
+      }
     }
   }
 }
