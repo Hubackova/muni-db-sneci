@@ -284,7 +284,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
   );
 
   useEffect(() => {
-    if (rows.length < currentPage * 200) {
+    if (Math.ceil(rows.length / 200) < currentPage) {
       setCurrentPage(1);
     }
   }, [currentPage, rows.length]);
