@@ -19,9 +19,10 @@
 
 .table {
   max-width: 100%;
-  border-collapse: collapse;
+
   display: block;
   white-space: nowrap;
+  border-spacing: 0;
 
   .remove button {
     padding: 0 3px;
@@ -45,7 +46,7 @@
         left: 40px;
         position: sticky;
         z-index: 1001;
-        background-color: transparent;
+        background: white;
       }
     }
     tr > th {

@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { getDatabase, ref, update } from "firebase/database";
-import React, { useState } from "react";
+import React from "react";
 import { CSVLink } from "react-csv";
 import {
   useFilters,
@@ -21,10 +21,8 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
   localities,
   speciesNames,
 }) => {
-  const db = getDatabase();
   const navigate = useNavigate();
   const { setCurrentLocality, setLocalityData } = useAppStateContext();
-  const [last, setLast] = useState(false);
 
   const speciesNamesOptions = speciesNames
     .map((i: any) => ({

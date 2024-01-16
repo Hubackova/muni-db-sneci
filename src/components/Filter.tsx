@@ -15,7 +15,7 @@ function debounce(func, timeout = 3000) {
   };
 }
 
-function useOutsideAlerter(ref, opened, setOpened) {
+export function useOutsideAlerter(ref, opened, setOpened) {
   useEffect(() => {
     /**
      * Alert if clicked on outside of element
