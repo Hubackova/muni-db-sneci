@@ -67,7 +67,7 @@ const Species: React.FC = () => {
     return a.speciesName.localeCompare(b.speciesName);
   });
 
-  return <SpeciesTable species={sortedSpecies} speciesNames={speciesNames} />;
+  return <SpeciesTable species={sortedSpecies} />;
 };
 
 export default Species;

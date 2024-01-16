@@ -5,7 +5,7 @@ import { useAppStateContext } from "../AppStateContext";
 import NewLocalityForm from "../components/forms/NewLocalityForm";
 import NewSpeciesForm from "../components/forms/NewSpeciesForm";
 import SpeciesAtLocalityForm from "../components/forms/SpeciesAtLocalityForm";
-import SpeciesTable from "../components/tables/SpeciesTable";
+import SpeciesTableHome from "../components/tables/SpeciesTableHome";
 import { getAll, getLocalityName, getOptions } from "../helpers/utils";
 import "./HomePage.scss";
 import "./Table.scss";
@@ -94,10 +94,9 @@ const HomePage: React.FC = () => {
                   {getLocalityName(localities, currentLocality)}
                 </h5>
                 <br />
-                <SpeciesTable
+                <SpeciesTableHome
                   species={speciesData}
                   speciesNames={speciesNames}
-                  compact
                 />
               </>
             )}

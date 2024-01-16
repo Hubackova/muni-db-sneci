@@ -26,15 +26,6 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
   const { setCurrentLocality, setLocalityData } = useAppStateContext();
   const [last, setLast] = useState(false);
 
-  const handleRevert = () => {
-    update(ref(db, last.dbName + last.rowKey), {
-      [last.cellId]: last.initialValue,
-    });
-    last.setValue &&
-      last.setValue({ value: last.initialValue, label: last.initialValue });
-    setLast(false);
-  };
-
   const speciesNamesOptions = speciesNames
     .map((i: any) => ({
       value: i.key,
@@ -277,7 +268,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
         filter: multiSelectFilter,
       },
     ],
-    []
+    [navigate, setCurrentLocality, setLocalityData]
   );
 
   const tableInstance = useTable(
@@ -330,22 +321,10 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
   return (
     <div>
       <div className="table-container">
-        {/*         {showModal && (
-          <ConfirmModal
-            title="Do you want to continue?"
-            onConfirm={() => {
-              setShowModal(null);
-              remove(ref(db, "localities/" + showModal));
-              toast.success("Program was removed successfully");
-            }}
-            onHide={() => setShowModal(null)}
-          />
-        )} */}
         <table className="table pcr" {...getTableProps()}>
           <thead>
             {headerGroups.map((headerGroup, index) => (
               <tr {...headerGroup.getHeaderGroupProps()} key={index}>
-                {/* <th></th> */}
                 {headerGroup.headers.map((column) => (
                   <th key={column.id}>
                     <span
@@ -374,21 +353,14 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
               prepareRow(row);
               return (
                 <tr {...row.getRowProps()} key={row.original.key}>
-                  {/*                   <td role="cell" className="remove">
-                    <button onClick={() => removeItem(row.original.key)}>
-                      X
-                    </button>
-                  </td> */}
                   {row.cells.map((cell) => {
                     return (
-                      <>
-                        <td
-                          key={row.original.key + cell.column.id}
-                          {...cell.getCellProps()}
-                        >
-                          {cell.render("Cell")}
-                        </td>
-                      </>
+                      <td
+                        key={row.original.key + cell.column.id}
+                        {...cell.getCellProps()}
+                      >
+                        {cell.render("Cell")}
+                      </td>
                     );
                   })}
                 </tr>
@@ -423,11 +395,6 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
             </div>
           </CSVLink>
         </div>
-        {last?.rowKey && last.cellId !== "localityCode" && (
-          <button className="revert" onClick={handleRevert}>
-            Back
-          </button>
-        )}
       </div>
     </div>
   );

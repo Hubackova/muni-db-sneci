@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { getDatabase, ref, remove, update } from "firebase/database";
+import { getDatabase, ref, remove } from "firebase/database";
 import React, { useEffect, useState } from "react";
 import { CSVLink } from "react-csv";
 import { useNavigate } from "react-router-dom";
@@ -22,24 +22,12 @@ import IndeterminateCheckbox from "../IndeterminateCheckbox";
 const LocalitiesTable: React.FC<any> = ({ localities }) => {
   const db = getDatabase();
   const [showModal, setShowModal] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(null);
-  const [last, setLast] = useState(false);
   const navigate = useNavigate();
   const { setCurrentLocality, setLocalityData } = useAppStateContext();
-
   const [currentPage, setCurrentPage] = useState(1);
 
   const removeItem = (id: string) => {
     setShowModal(id);
-  };
-
-  const handleRevert = () => {
-    update(ref(db, "localities/" + last.rowKey), {
-      [last.cellId]: last.initialValue,
-    });
-    last.setValue &&
-      last.setValue({ value: last.initialValue, label: last.initialValue });
-    setLast(false);
   };
 
   const columns = React.useMemo(
@@ -207,7 +195,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
         filter: multiSelectFilter,
       },
     ],
-    []
+    [navigate, setCurrentLocality, setLocalityData]
   );
 
   const tableInstance = useTable(
@@ -355,42 +343,12 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
                   </td>
                   {row.cells.map((cell) => {
                     return (
-                      <React.Fragment key={cell.column.id}>
-                        {showEditModal?.row.id === cell.row.id &&
-                          showEditModal.id === cell.column.id && (
-                            <ConfirmModal
-                              title={`Do you want to change value from ${
-                                showEditModal.initialValue || "<empty>"
-                              } to ${showEditModal.newValue} ?`}
-                              onConfirm={() => {
-                                setShowEditModal(null);
-                                update(
-                                  ref(
-                                    db,
-                                    "localities/" +
-                                      showEditModal.row.original.key
-                                  ),
-                                  {
-                                    [showEditModal.id]: showEditModal.newValue,
-                                  }
-                                );
-                                toast.success("Field was edited successfully");
-                              }}
-                              onCancel={() => {
-                                showEditModal.setValue(
-                                  showEditModal.initialValue
-                                );
-                              }}
-                              onHide={() => setShowEditModal(null)}
-                            />
-                          )}
-                        <td
-                          key={row.id + cell.column.id}
-                          {...cell.getCellProps()}
-                        >
-                          {cell.render("Cell")}
-                        </td>
-                      </React.Fragment>
+                      <td
+                        key={row.id + cell.column.id}
+                        {...cell.getCellProps()}
+                      >
+                        {cell.render("Cell")}
+                      </td>
                     );
                   })}
                 </tr>
@@ -416,11 +374,6 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
             </div>
           </CSVLink>
         </div>
-        {last?.rowKey && last.cellId !== "localityCode" && (
-          <button className="revert" onClick={handleRevert}>
-            Back
-          </button>
-        )}
       </div>
       {buttons}
     </div>
