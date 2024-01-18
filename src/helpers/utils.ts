@@ -42,3 +42,7 @@ export const getOptions = (data, key) => {
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 };
+
+export const arrayRemoveArr = (arr, valueArr) => {
+  return arr.filter((el) => !valueArr.includes(el));
+};

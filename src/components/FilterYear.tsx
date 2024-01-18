@@ -2,6 +2,7 @@
 import moment from "moment";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import "./Filter.scss";
+import { arrayRemoveArr } from "../helpers/utils";
 
 export const FilterYear: React.FC<any> = ({
   setFilter,
