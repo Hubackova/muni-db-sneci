@@ -4,6 +4,9 @@ import moment from "moment";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { ReactComponent as FilterIcon } from "../images/filter.svg";
 import { useOutsideAlerter } from "./Filter";
+import { FilterYear } from "./FilterYear";
+import { FilterMonth } from "./FilterMonth";
+import { FilterDay } from "./FilterDay";
 import "./Filter.scss";
 
 export function MultiDate({
@@ -12,21 +15,33 @@ export function MultiDate({
 }) {
   const now = moment().format("YYYY-MM-DD");
   const [opened, setOpened] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-
   const [maxDate, setMaxDate] = useState(now);
   const [minDate, setMinDate] = useState(now);
+  const [specificFilter, setSpecificFliter] = useState(null);
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, opened, setOpened);
-
-  const [selectedYear, setSelectedYear] = React.useState(null);
 
   const options = useMemo(() => {
     const uniqueOptions = new Set(preFilteredRows.map((row) => row.values[id]));
     return [...uniqueOptions];
   }, [id, preFilteredRows]);
 
-  const allDate = useMemo(() => options.map((date) => moment(date)), [options]);
+  const getMomentArray = useMemo(() => {
+    const momentMap = new Map();
+    return (dates) => {
+      return dates.map((date) => {
+        if (!momentMap.has(date)) {
+          momentMap.set(date, moment(date));
+        }
+        return momentMap.get(date);
+      });
+    };
+  }, []);
+
+  const allDate = useMemo(
+    () => getMomentArray(options),
+    [getMomentArray, options]
+  );
 
   const getUniqueValues = useCallback(
     (formatter) => {
@@ -38,15 +53,26 @@ export function MultiDate({
     [allDate]
   );
 
-  const yearsAll = useMemo(
-    () => getUniqueValues((row) => row.format("YYYY")),
-    [getUniqueValues]
-  );
+  const { yearsAll, monthsAll } = useMemo(() => {
+    return {
+      yearsAll: getUniqueValues((row) => row.format("YYYY")),
+      monthsAll: getUniqueValues((row) => row.format("MM")),
+    };
+  }, [getUniqueValues]);
 
-  const monthsAll = useMemo(
-    () => getUniqueValues((row) => row.format("MM")),
-    [getUniqueValues]
-  );
+  const monthOptionsMap = useMemo(() => {
+    const map = new Map();
+    options.forEach((opt) => {
+      const monthKey = moment(opt).format("MM");
+      if (!map.has(monthKey)) {
+        map.set(
+          monthKey,
+          options.filter((o) => moment(o).format("MM") === monthKey)
+        );
+      }
+    });
+    return map;
+  }, [options]);
 
   // UI for Multi-Select box
   return (
@@ -88,247 +114,90 @@ export function MultiDate({
             >
               Unselect all
             </div>
-            <input
-              value={searchValue}
-              onChange={(e) =>
-                setSearchValue(
-                  typeof e.target.value === "string"
-                    ? e.target.value.toLowerCase()
-                    : e.target.value
-                )
-              }
-              placeholder={`Search records...`}
-            />
             <hr />
 
-            <>
-              <div className="normal">Date from</div>
-              <input
-                type="date"
-                value={minDate}
-                onChange={(e) => {
-                  setMinDate(e.target.value);
-                  const val = e.target.value;
-                  let dates = options.filter(
-                    (element) =>
-                      moment(element).isSameOrAfter(moment(val)) &&
-                      moment(element).isSameOrBefore(moment(maxDate))
-                  );
+            <div className="normal">Date from</div>
+            <input
+              type="date"
+              value={minDate}
+              onChange={(e) => {
+                setMinDate(e.target.value);
+                const val = e.target.value;
+                let dates = options.filter(
+                  (element) =>
+                    moment(element).isSameOrAfter(moment(val)) &&
+                    moment(element).isSameOrBefore(moment(maxDate))
+                );
 
-                  setFilter(val ? dates : []);
-                }}
+                setFilter(val ? dates : []);
+              }}
+            />
+            <div className="normal">Date to</div>
+            <input
+              type="date"
+              value={maxDate}
+              onChange={(e) => {
+                setMaxDate(e.target.value);
+                const val = e.target.value;
+                let dates = options.filter(
+                  (element) =>
+                    moment(element).isSameOrBefore(moment(val)) &&
+                    moment(element).isSameOrAfter(moment(minDate))
+                );
+
+                setFilter(val ? dates : []);
+              }}
+            />
+
+            <div
+              className="normal clickable"
+              onClick={() => setSpecificFliter("year")}
+            >
+              <b>Filter by year</b>
+            </div>
+            {specificFilter === "year" && (
+              <FilterYear
+                setFilter={setFilter}
+                options={options}
+                yearsAll={yearsAll}
+                filterValue={filterValue}
               />
-              <div className="normal">Date to</div>
-              <input
-                type="date"
-                value={maxDate}
-                onChange={(e) => {
-                  setMaxDate(e.target.value);
-                  const val = e.target.value;
-                  let dates = options.filter(
-                    (element) =>
-                      moment(element).isSameOrBefore(moment(val)) &&
-                      moment(element).isSameOrAfter(moment(minDate))
-                  );
+            )}
+            <hr />
 
-                  setFilter(val ? dates : []);
-                }}
+            <div
+              className="normal clickable"
+              onClick={() => setSpecificFliter("month")}
+            >
+              <b>Filter by month</b>
+            </div>
+            {specificFilter === "month" && (
+              <FilterMonth
+                setFilter={setFilter}
+                options={monthOptionsMap}
+                monthsAll={monthsAll}
+                filterValue={filterValue}
               />
-              <div className="normal">
-                <b>Filter by year</b>
+            )}
+            <hr />
+
+            <div>
+              <div
+                className="normal clickable"
+                onClick={() => setSpecificFliter("day")}
+              >
+                <b>Filter by date</b>
               </div>
-              {yearsAll
-                .sort((a, b) => parseInt(b) - parseInt(a))
-                .map((year, index) => {
-                  const yearFormat = moment(year).format("YYYY");
-                  const isChecked = filterValue?.some(
-                    (val) => moment(val).format("YYYY") === yearFormat
-                  );
-                  const selectedOptions = options.filter(
-                    (opt) => moment(opt).format("YYYY") === yearFormat
-                  );
-
-                  const handleFilterClick = () => {
-                    isChecked
-                      ? setFilter(arrayRemoveArr(filterValue, selectedOptions))
-                      : setFilter(
-                          filterValue?.length
-                            ? [...filterValue, ...selectedOptions]
-                            : selectedOptions
-                        );
-                  };
-
-                  return (
-                    <div
-                      key={index}
-                      className="filter-link"
-                      onClick={handleFilterClick}
-                    >
-                      {isChecked ? "✅" : "⬜"} {yearFormat}
-                    </div>
-                  );
-                })}
-
-              <div className="normal">
-                <b>Filter by month</b>
-              </div>
-              {monthsAll
-                .sort((a, b) => moment(a).format("MM") - moment(b).format("MM"))
-                .map((month, index) => {
-                  const monthFormat = moment(month, "MM").format("MMMM");
-                  const isChecked = filterValue?.some(
-                    (val) => moment(val).format("MM") === monthFormat
-                  );
-                  const selectedOptions = options.filter(
-                    (opt) => moment(opt).format("MM") === monthFormat
-                  );
-
-                  const handleFilterClick = () => {
-                    isChecked
-                      ? setFilter(arrayRemoveArr(filterValue, selectedOptions))
-                      : setFilter(
-                          filterValue?.length
-                            ? [...filterValue, ...selectedOptions]
-                            : selectedOptions
-                        );
-                  };
-
-                  return (
-                    <div
-                      key={index}
-                      className="filter-link"
-                      onClick={handleFilterClick}
-                    >
-                      {isChecked ? "✅" : "⬜"} {monthFormat}
-                    </div>
-                  );
-                })}
+              {specificFilter === "day" && (
+                <FilterDay
+                  setFilter={setFilter}
+                  options={options}
+                  yearsAll={yearsAll}
+                  filterValue={filterValue}
+                />
+              )}
               <hr />
-
-              <div>
-                <div className="normal">
-                  <b>Filter by date</b>
-                </div>
-                <div>
-                  {yearsAll
-                    .sort((a, b) => parseInt(b) - parseInt(a))
-                    .map((year, index) => {
-                      const yearFormat = moment(year).format("YYYY");
-
-                      const handleYearClick = () => {
-                        setSelectedYear(
-                          selectedYear === yearFormat ? null : yearFormat
-                        );
-                      };
-
-                      const monthsWithDays = Array.from(
-                        new Set(
-                          options
-                            .filter(
-                              (opt) => moment(opt).format("YYYY") === yearFormat
-                            )
-                            .map((opt) => moment(opt).format("MM"))
-                        )
-                      ).sort((a, b) => parseInt(a) - parseInt(b));
-
-                      return (
-                        <div key={index} className="filter-link">
-                          <span onClick={handleYearClick}>{yearFormat}</span>
-
-                          {selectedYear === yearFormat && (
-                            <div>
-                              {monthsWithDays.map((month, index) => {
-                                const monthFormat = moment(month, "MM").format(
-                                  "MMMM"
-                                );
-
-                                return (
-                                  <div
-                                    key={index}
-                                    className="filter-link month"
-                                  >
-                                    <span>{monthFormat}</span>
-
-                                    <div>
-                                      {Array.from(
-                                        new Set(
-                                          options
-                                            .filter(
-                                              (opt) =>
-                                                moment(opt).format(
-                                                  "YYYY-MM"
-                                                ) === `${yearFormat}-${month}`
-                                            )
-                                            .map((day) =>
-                                              moment(day).format("DD")
-                                            )
-                                        )
-                                      )
-                                        .sort(
-                                          (a, b) => parseInt(a) - parseInt(b)
-                                        )
-                                        .map((dayFormat, index) => {
-                                          const isCheckedDay =
-                                            filterValue?.some(
-                                              (val) =>
-                                                moment(val).format(
-                                                  "YYYY-MM-DD"
-                                                ) ===
-                                                `${yearFormat}-${month}-${dayFormat}`
-                                            );
-
-                                          const handleDayClick = () => {
-                                            const selectedOptionsDay =
-                                              options.filter(
-                                                (opt) =>
-                                                  moment(opt).format(
-                                                    "YYYY-MM-DD"
-                                                  ) ===
-                                                  `${yearFormat}-${month}-${dayFormat}`
-                                              );
-
-                                            isCheckedDay
-                                              ? setFilter(
-                                                  arrayRemoveArr(
-                                                    filterValue,
-                                                    selectedOptionsDay
-                                                  )
-                                                )
-                                              : setFilter(
-                                                  filterValue?.length
-                                                    ? [
-                                                        ...filterValue,
-                                                        ...selectedOptionsDay,
-                                                      ]
-                                                    : selectedOptionsDay
-                                                );
-                                          };
-
-                                          return (
-                                            <div
-                                              key={index}
-                                              onClick={handleDayClick}
-                                              className="filter-link day"
-                                            >
-                                              <span>
-                                                {isCheckedDay ? "✅" : "⬜"}
-                                                {dayFormat}
-                                              </span>
-                                            </div>
-                                          );
-                                        })}
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                </div>
-              </div>
-            </>
+            </div>
           </>
         </div>
       )}

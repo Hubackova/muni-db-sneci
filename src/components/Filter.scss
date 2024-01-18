@@ -63,6 +63,10 @@
     .normal {
       font-weight: normal;
       margin-top: 4px;
+
+      &.clickable {
+        cursor: pointer;
+      }
     }
 
     .filter-link {
