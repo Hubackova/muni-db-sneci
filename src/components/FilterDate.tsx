@@ -20,7 +20,6 @@ export function MultiDate({
   useOutsideAlerter(wrapperRef, opened, setOpened);
 
   const [selectedYear, setSelectedYear] = React.useState(null);
-  const [selectedMonth, setSelectedMonth] = React.useState(null);
 
   const options = useMemo(() => {
     const uniqueOptions = new Set(preFilteredRows.map((row) => row.values[id]));
@@ -169,6 +168,7 @@ export function MultiDate({
                     </div>
                   );
                 })}
+
               <div className="normal">
                 <b>Filter by month</b>
               </div>
@@ -219,7 +219,6 @@ export function MultiDate({
                         setSelectedYear(
                           selectedYear === yearFormat ? null : yearFormat
                         );
-                        setSelectedMonth(null);
                       };
 
                       const monthsWithDays = Array.from(
@@ -243,91 +242,82 @@ export function MultiDate({
                                   "MMMM"
                                 );
 
-                                const handleMonthClick = () => {
-                                  setSelectedMonth(
-                                    selectedMonth === month ? null : month
-                                  );
-                                };
-
                                 return (
                                   <div
                                     key={index}
                                     className="filter-link month"
                                   >
-                                    <span onClick={handleMonthClick}>
-                                      {monthFormat}
-                                    </span>
+                                    <span>{monthFormat}</span>
 
-                                    {selectedMonth === month && (
-                                      <div>
-                                        {Array.from(
-                                          new Set(
-                                            options
-                                              .filter(
+                                    <div>
+                                      {Array.from(
+                                        new Set(
+                                          options
+                                            .filter(
+                                              (opt) =>
+                                                moment(opt).format(
+                                                  "YYYY-MM"
+                                                ) === `${yearFormat}-${month}`
+                                            )
+                                            .map((day) =>
+                                              moment(day).format("DD")
+                                            )
+                                        )
+                                      )
+                                        .sort(
+                                          (a, b) => parseInt(a) - parseInt(b)
+                                        )
+                                        .map((dayFormat, index) => {
+                                          const isCheckedDay =
+                                            filterValue?.some(
+                                              (val) =>
+                                                moment(val).format(
+                                                  "YYYY-MM-DD"
+                                                ) ===
+                                                `${yearFormat}-${month}-${dayFormat}`
+                                            );
+
+                                          const handleDayClick = () => {
+                                            const selectedOptionsDay =
+                                              options.filter(
                                                 (opt) =>
                                                   moment(opt).format(
-                                                    "YYYY-MM"
-                                                  ) === `${yearFormat}-${month}`
-                                              )
-                                              .map((day) =>
-                                                moment(day).format("DD")
-                                              )
-                                          )
-                                        )
-                                          .sort(
-                                            (a, b) => parseInt(a) - parseInt(b)
-                                          )
-                                          .map((dayFormat, index) => {
-                                            const isCheckedDay =
-                                              filterValue?.some(
-                                                (val) =>
-                                                  moment(val).format(
                                                     "YYYY-MM-DD"
                                                   ) ===
                                                   `${yearFormat}-${month}-${dayFormat}`
                                               );
 
-                                            const handleDayClick = () => {
-                                              const selectedOptionsDay =
-                                                options.filter(
-                                                  (opt) =>
-                                                    moment(opt).format(
-                                                      "YYYY-MM-DD"
-                                                    ) ===
-                                                    `${yearFormat}-${month}-${dayFormat}`
-                                                );
-
-                                              isCheckedDay
-                                                ? setFilter(
-                                                    arrayRemoveArr(
-                                                      filterValue,
-                                                      selectedOptionsDay
-                                                    )
+                                            isCheckedDay
+                                              ? setFilter(
+                                                  arrayRemoveArr(
+                                                    filterValue,
+                                                    selectedOptionsDay
                                                   )
-                                                : setFilter(
-                                                    filterValue?.length
-                                                      ? [
-                                                          ...filterValue,
-                                                          ...selectedOptionsDay,
-                                                        ]
-                                                      : selectedOptionsDay
-                                                  );
-                                            };
+                                                )
+                                              : setFilter(
+                                                  filterValue?.length
+                                                    ? [
+                                                        ...filterValue,
+                                                        ...selectedOptionsDay,
+                                                      ]
+                                                    : selectedOptionsDay
+                                                );
+                                          };
 
-                                            return (
-                                              <div
-                                                key={index}
-                                                className="filter-link day"
-                                              >
-                                                <span onClick={handleDayClick}>
-                                                  {isCheckedDay ? "✅" : "⬜"}
-                                                  {dayFormat}
-                                                </span>
-                                              </div>
-                                            );
-                                          })}
-                                      </div>
-                                    )}
+                                          return (
+                                            <div
+                                              key={index}
+                                              onClick={handleDayClick}
+                                              className="filter-link day"
+                                            >
+                                              <span>
+                                                {isCheckedDay ? "✅" : "⬜"}
+                                                {dayFormat}
+                                              </span>
+                                            </div>
+                                          );
+                                        })}
+                                    </div>
                                   </div>
                                 );
                               })}
