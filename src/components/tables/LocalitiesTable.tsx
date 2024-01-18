@@ -16,8 +16,8 @@ import { useAppStateContext } from "../../AppStateContext";
 import { ReactComponent as ExportIcon } from "../../images/export.svg";
 import ConfirmModal from "../ConfirmModal";
 import { GlobalFilter, Multi, multiSelectFilter } from "../Filter";
-import { MultiDate } from "../FilterDate";
 import IndeterminateCheckbox from "../IndeterminateCheckbox";
+import { localityColumns, DefaultCell } from "./LocalitiesAndSpeciesTable";
 
 const LocalitiesTable: React.FC<any> = ({ localities }) => {
   const db = getDatabase();
@@ -50,150 +50,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
           </div>
         )),
       },
-      {
-        Header: "Field code",
-        accessor: "fieldCode",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Site name",
-        accessor: "siteName",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Latitude (°N)",
-        accessor: "latitude",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Longitude (°E)",
-        accessor: "longitude",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Country",
-        accessor: "country",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "State/Province/Region",
-        accessor: "state",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Settlement",
-        accessor: "settlement",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Mapping grid",
-        accessor: "mapGrid",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Site / habitat description",
-        accessor: "siteDescription",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Elevation (m a.s.l.)",
-        accessor: "elevation",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Date of sampling",
-        accessor: "dateSampling",
-        Filter: MultiDate,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Collector",
-        accessor: "collector",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Plot size (m 2 )",
-        accessor: "plotSize",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Sample size (L)",
-        accessor: "sampleSize",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Habitat size (m 2 )",
-        accessor: "habitatSize",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Distance forest (m)",
-        accessor: "distanceForest",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Sampling method",
-        accessor: "samplingMethod",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Water pH",
-        accessor: "waterPH",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Water conduct. (µS/cm)",
-        accessor: "waterConductivity",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Lot number",
-        accessor: "lotNumber",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Releve number",
-        accessor: "releveNumber",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Data type",
-        accessor: "dataType",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "PLA/event",
-        accessor: "event",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Note (site)",
-        accessor: "noteSite",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
+      ...localityColumns,
     ],
     [navigate, setCurrentLocality, setLocalityData]
   );
@@ -202,6 +59,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
     {
       columns,
       data: localities,
+      defaultColumn: { Cell: DefaultCell, Filter: () => {} },
       autoResetFilters: false,
     },
     useGlobalFilter,
