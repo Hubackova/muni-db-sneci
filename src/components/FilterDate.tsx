@@ -115,21 +115,24 @@ export function MultiDate({
               Unselect all
             </div>
             <hr />
-
+            <button
+              onClick={() => {
+                let dates = options.filter(
+                  (element) =>
+                    moment(element).isSameOrAfter(moment(minDate)) &&
+                    moment(element).isSameOrBefore(moment(maxDate))
+                );
+                setFilter(dates);
+              }}
+            >
+              Filter from - to
+            </button>
             <div className="normal">Date from</div>
             <input
               type="date"
               value={minDate}
               onChange={(e) => {
                 setMinDate(e.target.value);
-                const val = e.target.value;
-                let dates = options.filter(
-                  (element) =>
-                    moment(element).isSameOrAfter(moment(val)) &&
-                    moment(element).isSameOrBefore(moment(maxDate))
-                );
-
-                setFilter(val ? dates : []);
               }}
             />
             <div className="normal">Date to</div>
@@ -138,17 +141,10 @@ export function MultiDate({
               value={maxDate}
               onChange={(e) => {
                 setMaxDate(e.target.value);
-                const val = e.target.value;
-                let dates = options.filter(
-                  (element) =>
-                    moment(element).isSameOrBefore(moment(val)) &&
-                    moment(element).isSameOrAfter(moment(minDate))
-                );
-
-                setFilter(val ? dates : []);
               }}
             />
 
+            <hr />
             <div
               className="normal clickable"
               onClick={() => setSpecificFliter("year")}
@@ -164,7 +160,6 @@ export function MultiDate({
               />
             )}
             <hr />
-
             <div
               className="normal clickable"
               onClick={() => setSpecificFliter("month")}
@@ -180,7 +175,6 @@ export function MultiDate({
               />
             )}
             <hr />
-
             <div>
               <div
                 className="normal clickable"

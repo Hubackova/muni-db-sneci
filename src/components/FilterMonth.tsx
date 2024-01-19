@@ -1,6 +1,6 @@
 // @ts-nocheck
 import moment from "moment";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React from "react";
 import "./Filter.scss";
 import { arrayRemoveArr } from "../helpers/utils";
 
@@ -13,12 +13,15 @@ export const FilterMonth: React.FC<any> = ({
   return (
     <div>
       {monthsAll
-        .sort((a, b) => moment(a).format("MM") - moment(b).format("MM"))
+        .sort((a, b) => a - b)
         .map((month, index) => {
-          const monthFormat = moment(month).format("MM");
-          const isChecked = filterValue?.some(
-            (val) => moment(val).format("MM") === monthFormat
-          );
+          const local = moment.utc(month, "MM-DD-YYYY HH:mm:ss").local();
+          const monthFormat = moment(local, "YYYY-MM-DD HH:mm:ss").format("MM");
+          const isChecked = filterValue?.some((val) => {
+            console.log(monthsAll, val, moment(val).format("mm"), month);
+            return moment(val).format("MM") === month;
+          });
+
           const selectedOptions = options.get(monthFormat) || [];
 
           const handleFilterClick = () => {
