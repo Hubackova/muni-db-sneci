@@ -4,8 +4,7 @@ import moment from "moment";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { ReactComponent as FilterIcon } from "../images/filter.svg";
 import { useOutsideAlerter } from "./Filter";
-import { FilterYear } from "./FilterYear";
-import { FilterMonth } from "./FilterMonth";
+
 import { FilterDay } from "./FilterDay";
 import "./Filter.scss";
 
@@ -17,7 +16,7 @@ export function MultiDate({
   const [opened, setOpened] = useState(false);
   const [maxDate, setMaxDate] = useState(now);
   const [minDate, setMinDate] = useState(now);
-  const [specificFilter, setSpecificFliter] = useState(null);
+
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, opened, setOpened);
 
@@ -53,26 +52,11 @@ export function MultiDate({
     [allDate]
   );
 
-  const { yearsAll, monthsAll } = useMemo(() => {
+  const { yearsAll } = useMemo(() => {
     return {
       yearsAll: getUniqueValues((row) => row.format("YYYY")),
-      monthsAll: getUniqueValues((row) => row.format("MM")),
     };
   }, [getUniqueValues]);
-
-  const monthOptionsMap = useMemo(() => {
-    const map = new Map();
-    options.forEach((opt) => {
-      const monthKey = moment(opt).format("MM");
-      if (!map.has(monthKey)) {
-        map.set(
-          monthKey,
-          options.filter((o) => moment(o).format("MM") === monthKey)
-        );
-      }
-    });
-    return map;
-  }, [options]);
 
   // UI for Multi-Select box
   return (
@@ -145,51 +129,19 @@ export function MultiDate({
             />
 
             <hr />
-            <div
-              className="normal clickable"
-              onClick={() => setSpecificFliter("year")}
-            >
-              <b>Filter by year</b>
-            </div>
-            {specificFilter === "year" && (
-              <FilterYear
+
+            <div>
+              <div>
+                <b>Filter by date</b>
+              </div>
+
+              <FilterDay
                 setFilter={setFilter}
                 options={options}
                 yearsAll={yearsAll}
                 filterValue={filterValue}
               />
-            )}
-            <hr />
-            <div
-              className="normal clickable"
-              onClick={() => setSpecificFliter("month")}
-            >
-              <b>Filter by month</b>
-            </div>
-            {specificFilter === "month" && (
-              <FilterMonth
-                setFilter={setFilter}
-                options={monthOptionsMap}
-                monthsAll={monthsAll}
-                filterValue={filterValue}
-              />
-            )}
-            <hr />
-            <div>
-              <div
-                className="normal clickable"
-                onClick={() => setSpecificFliter("day")}
-              >
-                <b>Filter by date</b>
-              </div>
-              {specificFilter === "day" && (
-                <FilterDay
-                  setFilter={setFilter}
-                  options={options}
-                  yearsAll={yearsAll}
-                  filterValue={filterValue}
-                />
-              )}
+
               <hr />
             </div>
           </>
