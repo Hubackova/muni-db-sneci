@@ -9,7 +9,8 @@ const getFilterStatusByYear = (originalDates, filteredDates) => {
 
   // Rozdělení dat do skupin podle roku
   originalDates.forEach((date) => {
-    const year = date.split("-")[0];
+    if (!date) return;
+    const year = date.toString().split("-")[0];
     if (!years[year]) {
       years[year] = { total: 0, filtered: 0 };
     }
@@ -18,7 +19,8 @@ const getFilterStatusByYear = (originalDates, filteredDates) => {
 
   // Určení počtu vyfiltrovaných dat pro každý rok
   filteredDates.forEach((date) => {
-    const year = date.split("-")[0];
+    if (!date) return;
+    const year = date.toString().split("-")[0];
     if (years[year]) {
       years[year].filtered++;
     }
@@ -46,7 +48,8 @@ const getFilterStatusByYearAndMonth = (originalDates, filteredDates) => {
 
   // Rozdělení dat do skupin podle roku a měsíce
   originalDates.forEach((date) => {
-    const [year, month] = date.split("-").slice(0, 2);
+    if (!date) return;
+    const [year, month] = date.toString().split("-").slice(0, 2);
     const key = `${year}-${month}`;
 
     if (!yearsMonths[key]) {
@@ -57,7 +60,8 @@ const getFilterStatusByYearAndMonth = (originalDates, filteredDates) => {
 
   // Určení počtu vyfiltrovaných dat pro každý rok a měsíc
   filteredDates.forEach((date) => {
-    const [year, month] = date.split("-").slice(0, 2);
+    if (!date) return;
+    const [year, month] = date.toString().split("-").slice(0, 2);
     const key = `${year}-${month}`;
 
     if (yearsMonths[key]) {
@@ -69,8 +73,6 @@ const getFilterStatusByYearAndMonth = (originalDates, filteredDates) => {
   const result = {};
   Object.keys(yearsMonths).forEach((key) => {
     const { total, filtered } = yearsMonths[key];
-    const [year, month] = key.split("-");
-
     if (filtered === total) {
       result[key] = "all";
     } else if (filtered > 0) {
@@ -164,7 +166,6 @@ export const FilterDay: React.FC<any> = ({
                   {monthsWithDays.map((month, monthIndex) => {
                     const yearmonth = `${year}-${month}`;
                     const monthStatus = filterStatusByYearAndMonth[yearmonth];
-                    console.log(month);
                     return (
                       <div key={monthIndex} className="filter-link month">
                         <span

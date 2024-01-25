@@ -1,2 +1,5 @@
 node_modules
 src/content/*
+localities.js
+species-names.js
+species.js

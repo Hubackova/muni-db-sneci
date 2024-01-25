@@ -619,7 +619,7 @@ export const backup = [
     speciesName: "Bulgarica nitidosa",
     abbreviation: "BulNit",
     group: "Terrestrial",
-    speciesAndAuthor: "Bulgarica nitidosa (Ulièný, 1893)",
+    speciesAndAuthor: "Bulgarica nitidosa (Uličný, 1893)",
     note: "",
   },
   {
@@ -647,7 +647,7 @@ export const backup = [
     speciesName: "Bythinella hansboetersi",
     abbreviation: "BytHan",
     group: "Aquatic",
-    speciesAndAuthor: "Bythinella hansboetersi Glöer et Pešiæ, 2006",
+    speciesAndAuthor: "Bythinella hansboetersi Glöer et Pešić, 2006",
     note: "",
   },
   {
@@ -3245,7 +3245,7 @@ export const backup = [
     speciesName: "Oxychilus inopinatus",
     abbreviation: "OxyIno",
     group: "Terrestrial",
-    speciesAndAuthor: "Oxychilus inopinatus (Ulièný, 1887)",
+    speciesAndAuthor: "Oxychilus inopinatus (Uličný, 1887)",
     note: "",
   },
   {
@@ -3385,7 +3385,7 @@ export const backup = [
     speciesName: "Pedipes pedipes",
     abbreviation: "PedPed",
     group: "Aquatic",
-    speciesAndAuthor: "Pedipes pedipes (Brugui?re, 1789)",
+    speciesAndAuthor: "Pedipes pedipes (Bruguière, 1789)",
     note: "",
   },
   {
@@ -3434,14 +3434,14 @@ export const backup = [
     speciesName: "Perpolita hammonis s.lat.",
     abbreviation: "PerHam",
     group: "Terrestrial",
-    speciesAndAuthor: "Perpolita hammonis (Str?m, 1765)",
+    speciesAndAuthor: "Perpolita hammonis (Strøm, 1765)",
     note: "",
   },
   {
     speciesName: "Perpolita hammonis s.str.",
     abbreviation: "PerHam",
     group: "Terrestrial",
-    speciesAndAuthor: "Perpolita hammonis (Str?m, 1765)",
+    speciesAndAuthor: "Perpolita hammonis (Strøm, 1765)",
     note: "",
   },
   {
@@ -3469,7 +3469,7 @@ export const backup = [
     speciesName: "Petasina bakowskii",
     abbreviation: "PetBak",
     group: "Terrestrial",
-    speciesAndAuthor: "Petasina bakowskii (Poliñski, 1924)",
+    speciesAndAuthor: "Petasina bakowskii (Poliński, 1924)",
     note: "",
   },
   {
@@ -3623,7 +3623,7 @@ export const backup = [
     speciesName: "Plicuteria lubomirski",
     abbreviation: "PliLub",
     group: "Terrestrial",
-    speciesAndAuthor: "Plicuteria lubomirskii (Œlósarski, 1881)",
+    speciesAndAuthor: "Plicuteria lubomirskii (Ślósarski, 1881)",
     note: "",
   },
   {
@@ -3658,7 +3658,7 @@ export const backup = [
     speciesName: "Poiretia algira",
     abbreviation: "PoiAlg",
     group: "Terrestrial",
-    speciesAndAuthor: "Poiretia algira (Brugui?re, 1792)",
+    speciesAndAuthor: "Poiretia algira (Bruguière, 1792)",
     note: "",
   },
   {
@@ -4719,7 +4719,7 @@ export const backup = [
     note: "",
   },
   {
-    speciesName: "Vallonia gracilicosta",
+    speciesName: "Vallonia gracilicosta",
     abbreviation: "Val",
     group: "Terrestrial",
     speciesAndAuthor: "Vallonia gracilicosta Reinhardt, 1883",
@@ -5167,7 +5167,7 @@ export const backup = [
     speciesName: "Vestia ranojevici",
     abbreviation: "VesRan",
     group: "Terrestrial",
-    speciesAndAuthor: "Vestia ranojevici (Pavloviæ, 1912)",
+    speciesAndAuthor: "Vestia ranojevici (Pavlović, 1912)",
     note: "",
   },
   {
