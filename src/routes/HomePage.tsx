@@ -79,6 +79,7 @@ const HomePage: React.FC = () => {
   );
   const isLocalityWithZero =
     speciesData.length === 1 && speciesData[0].speciesNameKey === "0";
+
   return (
     <>
       <div className="main-wrapper">

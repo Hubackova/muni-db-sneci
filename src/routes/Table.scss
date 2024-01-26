@@ -298,6 +298,7 @@ form {
 // --
 
 .pagination {
+  max-width: 98vw;
   align-items: center;
   font-size: 0.8em;
   display: flex;
@@ -305,13 +306,14 @@ form {
 
   .pg-buttons {
     display: flex;
+    flex-wrap: wrap;
     align-items: flex-start;
 
     .pg-btn {
       min-width: 28px;
       border-radius: 4px;
       padding: 2px 6px;
-      margin: 0 2px;
+      margin: 1px 2px;
       border: none;
       cursor: pointer;
       border: 1px solid gray;

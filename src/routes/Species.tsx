@@ -56,7 +56,7 @@ const Species: React.FC = () => {
     });
   }, [db, speciesNames]);
   if (!species.length || !speciesNames.length) return <div>no data</div>;
-  const sortedSpecies = species.slice(0, 100).sort(function (a, b) {
+  const sortedSpecies = species.sort(function (a, b) {
     //todo
     if (new Date(a.dateSampling) < new Date(b.dateSampling)) {
       return 1;

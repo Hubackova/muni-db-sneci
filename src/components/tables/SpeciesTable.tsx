@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { getDatabase, ref, remove } from "firebase/database";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CSVLink } from "react-csv";
 import {
   useFilters,
@@ -25,6 +25,7 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
   const navigate = useNavigate();
   const { currentLocality, setCurrentLocality, setLocalityData } =
     useAppStateContext();
+  const [currentPage, setCurrentPage] = useState(1);
   const removeItem = (id: string) => {
     setShowModal(id);
   };
@@ -158,6 +159,51 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
     prepareRow,
   } = tableInstance;
 
+  const ITEMS_PER_PAGE = 200;
+  const totalPages = Math.ceil(rows.length / ITEMS_PER_PAGE);
+
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Výpočet indexu první a poslední položky na aktuální stránce
+  const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
+  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+
+  const rowsShow = rows.slice(indexOfFirstItem, indexOfLastItem);
+
+  const buttons = (
+    <div className="pagination">
+      <div className="pg-buttons">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index}
+            onClick={() => handlePageClick(index + 1)}
+            title={`${index * ITEMS_PER_PAGE + 1} - ${Math.min(
+              (index + 1) * ITEMS_PER_PAGE,
+              rows.length
+            )}`}
+            className={index + 1 === currentPage ? "pg-btn active" : "pg-btn"}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
+      <div>
+        {`${(currentPage - 1) * ITEMS_PER_PAGE + 1} - ${Math.min(
+          currentPage * ITEMS_PER_PAGE,
+          rows.length
+        )} / ${rows.length}`}
+      </div>
+    </div>
+  );
+
+  useEffect(() => {
+    if (Math.ceil(rows.length / 200) < currentPage) {
+      setCurrentPage(1);
+    }
+  }, [currentPage, rows.length]);
+
   return (
     <div>
       <div className="table-container">
@@ -201,7 +247,7 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
           </thead>
 
           <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
+            {rowsShow.map((row) => {
               prepareRow(row);
 
               return (
@@ -256,6 +302,7 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
           </CSVLink>
         </div>
       </div>
+      {buttons}
     </div>
   );
 };
