@@ -102,7 +102,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
     prepareRow,
   } = tableInstance;
 
-  const ITEMS_PER_PAGE = 200;
+  const ITEMS_PER_PAGE = 500;
   const totalPages = Math.ceil(rows.length / ITEMS_PER_PAGE);
 
   const handlePageClick = (pageNumber) => {

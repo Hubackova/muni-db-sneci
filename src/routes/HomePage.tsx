@@ -67,7 +67,9 @@ const HomePage: React.FC = () => {
     );
   }
   const filteredSpeciesNames = speciesNames.filter(
-    (i) => !currentLocalitySpecies.includes(i.key)
+    (i) =>
+      !currentLocalitySpecies.includes(i.key) &&
+      !(speciesData.length && i.key === "none")
   );
   const allSpecies = [];
   localities.forEach((i) =>

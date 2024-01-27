@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useAppStateContext } from "../../AppStateContext";
-/* import { backup } from "../../content/species"; */
 import { writeSpeciesToLocalityData } from "../../firebase/firebase";
 import { getValueFromOptions } from "../../helpers/utils";
 import CreatableSelectInput from "../CreatableSelectInput";
@@ -15,37 +14,11 @@ const SpeciesAtLocalityForm: React.FC = ({
   withLabels = true,
   speciesNames,
   specificationOptions,
-  withZero = false,
   localities,
 }) => {
   const { currentLocality } = useAppStateContext();
   const [disabled, setDisabled] = useState(false);
 
-  function processItems(items) {
-    var index = 0;
-    function processNextItem() {
-      if (index < items.length) {
-        processItem(items[index]);
-        index++;
-        setTimeout(processNextItem, 0); // Yield control
-      }
-    }
-    processNextItem();
-  }
-
-  function processItem(i) {
-    const { speciesName, siteId, ...data } = i;
-    data.speciesNameKey = speciesNames.find(
-      (species) => species.speciesName === i.speciesName
-    )?.key;
-    const localityKey = localities.find((loc) => loc.siteId === i.siteId)?.key;
-    writeSpeciesToLocalityData(data, localityKey);
-  }
-
-  /*   const addItemsBackup = () => {
-    processItems(backup.slice(501, 1000));
-  };
- */
   const {
     register,
     formState: { errors },
@@ -82,10 +55,12 @@ const SpeciesAtLocalityForm: React.FC = ({
     parseInt(field3Value || 0);
 
   const speciesNamesOptions = speciesNames
-    .map((i: any) => ({
-      value: i.key,
-      label: i.speciesName,
-    }))
+    .map((i: any) => {
+      return {
+        value: i.key,
+        label: i.speciesName,
+      };
+    })
     .sort(function (a, b) {
       if (a.label < b.label) {
         return -1;
@@ -96,15 +71,6 @@ const SpeciesAtLocalityForm: React.FC = ({
       return 0;
     });
 
-  const plusOptions = withZero
-    ? [
-        { value: "add", label: "to be added" },
-        { value: "0", label: "0" },
-      ]
-    : [{ value: "add", label: "to be added" }];
-
-  const speciesNamesOptionsAll = [...plusOptions, ...speciesNamesOptions];
-
   return (
     <form
       className="form compact species-table"
@@ -113,10 +79,10 @@ const SpeciesAtLocalityForm: React.FC = ({
       <div className="row">
         <Controller
           render={({ field: { onChange, value } }) => {
-            const item = getValueFromOptions(value, speciesNamesOptionsAll);
+            const item = getValueFromOptions(value, speciesNamesOptions);
             return (
               <SelectInput
-                options={speciesNamesOptionsAll}
+                options={speciesNamesOptions}
                 value={value ? { value, label: item?.label || "" } : null}
                 onChange={(e: any) => {
                   onChange(e?.value);

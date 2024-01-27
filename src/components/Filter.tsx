@@ -250,19 +250,18 @@ export function Multi({
 
           {selectOptions.map((i) => {
             const isChecked =
-              !filterValue?.length || filterValue.includes(i.value);
+              filterValue?.length && filterValue.includes(i.value);
 
-            const filteredValues = filterValue || options;
             return (
               <div
                 key={i.value}
                 className="filter-link"
                 onClick={() => {
                   isChecked
-                    ? setFilter(arrayRemove(filteredValues, i.value))
+                    ? setFilter(arrayRemove(filterValue, i.value))
                     : setFilter(
-                        filteredValues?.length
-                          ? [...filteredValues, i.value]
+                        filterValue?.length
+                          ? [...filterValue, i.value]
                           : [i.value]
                       );
                 }}

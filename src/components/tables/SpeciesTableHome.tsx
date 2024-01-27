@@ -73,7 +73,7 @@ const SpeciesTableHome: React.FC<any> = ({ species, speciesNames }) => {
     });
 
   const speciesNamesOptionsAll = [
-    { value: "add", label: "to be added" },
+    { value: "to be added", label: "to be added" },
     ...speciesNamesOptions,
   ];
 

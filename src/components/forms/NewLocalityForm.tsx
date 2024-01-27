@@ -558,6 +558,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
           error={errors.waterConductivity?.message}
           register={register}
           type="number"
+          step={0.01}
         />
         <TextInput
           label="Lot number"
