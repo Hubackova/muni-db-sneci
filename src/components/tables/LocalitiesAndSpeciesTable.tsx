@@ -15,6 +15,7 @@ import { GlobalFilter, Multi, multiSelectFilter } from "../Filter";
 import { MultiDate } from "../FilterDate";
 import IndeterminateCheckbox from "../IndeterminateCheckbox";
 import { useNavigate } from "react-router-dom";
+import PaginationButtons from "../PaginationButtons";
 
 export const DefaultCell = React.memo<React.FC<any>>(({ value, cell }) => (
   <div className={cell.column.id} title={value}>
@@ -329,43 +330,12 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
   } = tableInstance;
 
   const ITEMS_PER_PAGE = 500;
-  const totalPages = Math.ceil(rows.length / ITEMS_PER_PAGE);
-
-  const handlePageClick = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
 
   // Výpočet indexu první a poslední položky na aktuální stránce
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
   const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
 
   const rowsShow = rows.slice(indexOfFirstItem, indexOfLastItem);
-
-  const buttons = (
-    <div className="pagination">
-      <div className="pg-buttons">
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index}
-            onClick={() => handlePageClick(index + 1)}
-            title={`${index * ITEMS_PER_PAGE + 1} - ${Math.min(
-              (index + 1) * ITEMS_PER_PAGE,
-              rows.length
-            )}`}
-            className={index + 1 === currentPage ? "pg-btn active" : "pg-btn"}
-          >
-            {index + 1}
-          </button>
-        ))}
-      </div>
-      <div>
-        {`${(currentPage - 1) * ITEMS_PER_PAGE + 1} - ${Math.min(
-          currentPage * ITEMS_PER_PAGE,
-          rows.length
-        )} / ${rows.length}`}
-      </div>
-    </div>
-  );
 
   useEffect(() => {
     if (Math.ceil(rows.length / 200) < currentPage) {
@@ -451,7 +421,12 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
           </CSVLink>
         </div>
       </div>
-      {buttons}
+      <PaginationButtons
+        setCurrentPage={setCurrentPage}
+        ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+        currentPage={currentPage}
+        rows={rows}
+      />
     </div>
   );
 };
