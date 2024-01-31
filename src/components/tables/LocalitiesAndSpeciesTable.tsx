@@ -179,26 +179,6 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
   const { setCurrentLocality, setLocalityData } = useAppStateContext();
   const [currentPage, setCurrentPage] = useState(1);
 
-  const speciesNamesOptions = speciesNames
-    .map((i: any) => ({
-      value: i.key,
-      label: i.speciesName,
-    }))
-    .sort(function (a, b) {
-      if (a.label < b.label) {
-        return -1;
-      }
-      if (a.label > b.label) {
-        return 1;
-      }
-      return 0;
-    });
-
-  const speciesNamesOptionsAll = [
-    { value: "to be added", label: "to be added" },
-    ...speciesNamesOptions,
-  ];
-
   const columns = React.useMemo(
     () => [
       {
