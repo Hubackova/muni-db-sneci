@@ -174,6 +174,45 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
     }
   }, [currentPage, rows.length]);
 
+  function findAndLogDuplicateSiteAndSpecies(array) {
+    const duplicatePairs = [];
+    const uniquePairs = new Set();
+
+    for (const obj of array) {
+      const key = `${obj.siteId}-${obj.speciesName}`;
+
+      if (uniquePairs.has(key)) {
+        duplicatePairs.push({
+          siteId: obj.siteId,
+          speciesName: obj.speciesName,
+        });
+      } else {
+        uniquePairs.add(key);
+      }
+    }
+
+    if (duplicatePairs.length > 0) {
+      console.log("Duplicity nalezeny:");
+      duplicatePairs.forEach((pair) => {
+        console.log(`SiteId: ${pair.siteId}, SpeciesName: ${pair.speciesName}`);
+      });
+    } else {
+      console.log("Žádné duplicity nenalezeny.");
+    }
+  }
+  findAndLogDuplicateSiteAndSpecies(species);
+  const rowsForExport = selectedFlatRows.map((i) => {
+    const {
+      siteKey,
+      speciesKey,
+      speciesNameKey,
+      speciesNamesKeysinLocality,
+      key,
+      ...rest
+    } = i.original;
+    return rest;
+  });
+
   return (
     <div>
       <div className="table-container">
@@ -264,7 +303,7 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
           setGlobalFilter={setGlobalFilter}
         />
         <div className="download">
-          <CSVLink data={selectedFlatRows} filename="species.csv">
+          <CSVLink data={rowsForExport} filename="species.csv">
             <div className="export">
               <ExportIcon />
               export CSV
