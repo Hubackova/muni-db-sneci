@@ -343,6 +343,19 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
     }
   }, [currentPage, rows.length]);
 
+  const rowsForExport = selectedFlatRows.map((i) => {
+    const {
+      siteKey,
+      speciesKey,
+      speciesNameKey,
+      species,
+      speciesNamesKeysinLocality,
+      key,
+      ...rest
+    } = i.original;
+    return rest;
+  });
+
   return (
     <div>
       <div className="table-container">
@@ -401,19 +414,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({
           setGlobalFilter={setGlobalFilter}
         />
         <div className="download">
-          <CSVLink
-            data={selectedFlatRows.map((i) => {
-              const item = {
-                ...i.values,
-                speciesName: speciesNamesOptionsAll.find(
-                  (j) => j.value === i.values.speciesNameKey
-                )?.label,
-              };
-              const { speciesNameKey, ...data } = item;
-              return data;
-            })}
-            filename="localities-species.csv"
-          >
+          <CSVLink data={rowsForExport} filename="localities-species.csv">
             <div className="export">
               <ExportIcon />
               export CSV
