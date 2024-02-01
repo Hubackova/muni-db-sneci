@@ -153,6 +153,24 @@ export const EditableCell: React.FC<any> = ({
     setValue(isNumber ? parseFloat(e.target.value) : e.target.value);
   };
 
+  const updateItem = () => {
+    const key = updatekey || row.original.key;
+    update(ref(db, dbName + key), {
+      [cell.column.id]: isNumber
+        ? e.target.value
+          ? parseFloat(e.target.value)
+          : ""
+        : e.target.value,
+    });
+
+    saveLast({
+      rowKey: key,
+      cellId: cell.column.id,
+      initialValue,
+      dbName,
+    });
+  };
+
   const onBlur = (e: any) => {
     if (
       (initialValue?.toString() || "") !== (e.target.value?.toString() || "")
@@ -166,31 +184,23 @@ export const EditableCell: React.FC<any> = ({
         setValue(initialValue);
         return toast.error("Duplicate Field code - " + errValue);
       }
-
-      setShowEditModal({
-        row,
-        newValue: isNumber ? parseFloat(e.target.value) : e.target.value,
-        id: cell.column.id,
-        initialValue,
-        setValue,
-        callback: () => {
-          const key = updatekey || row.original.key;
-          update(ref(db, dbName + key), {
-            [cell.column.id]: isNumber
-              ? e.target.value
-                ? parseFloat(e.target.value)
-                : ""
-              : e.target.value,
-          });
-
-          saveLast({
-            rowKey: key,
-            cellId: cell.column.id,
-            initialValue,
-            dbName,
-          });
-        },
-      });
+      if (
+        cell.column.id === "undef" ||
+        cell.column.id === "empty" ||
+        cell.column.id === "live"
+      ) {
+        updateItem();
+      } else {
+        console.log(cell.column.id);
+        setShowEditModal({
+          row,
+          newValue: isNumber ? parseFloat(e.target.value) : e.target.value,
+          id: cell.column.id,
+          initialValue,
+          setValue,
+          callback: () => updateItem(),
+        });
+      }
     }
   };
 
