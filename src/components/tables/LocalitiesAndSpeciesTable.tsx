@@ -273,7 +273,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
           },
           {
             id: "siteId",
-            desc: false,
+            desc: true,
           },
           {
             id: "speciesName",

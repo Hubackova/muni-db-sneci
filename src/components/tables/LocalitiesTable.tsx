@@ -70,7 +70,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
           },
           {
             id: "siteId",
-            desc: false,
+            desc: true,
           },
         ],
       },

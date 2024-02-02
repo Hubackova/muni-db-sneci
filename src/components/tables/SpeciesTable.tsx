@@ -127,7 +127,7 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
           },
           {
             id: "siteId",
-            desc: false,
+            desc: true,
           },
         ],
       },
