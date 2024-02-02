@@ -119,6 +119,18 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
         Filter: () => {},
       },
       autoResetFilters: false,
+      initialState: {
+        sortBy: [
+          {
+            id: "dateSampling",
+            desc: true,
+          },
+          {
+            id: "siteId",
+            desc: false,
+          },
+        ],
+      },
     },
     useGlobalFilter,
     useFilters,

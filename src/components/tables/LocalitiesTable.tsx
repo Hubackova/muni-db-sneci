@@ -62,6 +62,18 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
       data: localities,
       defaultColumn: { Cell: DefaultCell, Filter: () => {} },
       autoResetFilters: false,
+      initialState: {
+        sortBy: [
+          {
+            id: "dateSampling",
+            desc: true,
+          },
+          {
+            id: "siteId",
+            desc: false,
+          },
+        ],
+      },
     },
     useGlobalFilter,
     useFilters,

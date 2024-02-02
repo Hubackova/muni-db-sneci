@@ -56,7 +56,8 @@ const LocalitiesAndSpecies: React.FC = () => {
       setLocalities(items);
     });
   }, [db, speciesNames]);
-  if (!localities.length || !speciesNames.length) return <div>no data</div>;
+  if (!localities.length || !speciesNames.length)
+    return <div>no data / loading...</div>;
   const sortedLocalities = localities.sort(function (a, b) {
     if (new Date(a.dateSampling) < new Date(b.dateSampling)) {
       return 1;

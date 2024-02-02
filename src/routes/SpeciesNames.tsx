@@ -47,7 +47,8 @@ const SpeciesNames: React.FC = () => {
     });
   }, [db]);
 
-  if (!species.length || !localities.length) return <div>no data</div>;
+  if (!species.length || !localities.length)
+    return <div>no data / loading...</div>;
 
   const speciesSorted = species.sort(function (a, b) {
     if (a.speciesName < b.speciesName) {
