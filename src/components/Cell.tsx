@@ -191,7 +191,6 @@ export const EditableCell: React.FC<any> = ({
       ) {
         updateItem();
       } else {
-        console.log(cell.column.id);
         setShowEditModal({
           row,
           newValue: isNumber ? parseFloat(e.target.value) : e.target.value,

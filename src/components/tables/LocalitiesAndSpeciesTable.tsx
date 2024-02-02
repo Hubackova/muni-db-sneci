@@ -171,10 +171,7 @@ export const localityColumns = [
   },
 ];
 
-const LocalitiesAndSpeciesTable: React.FC<any> = ({
-  localities,
-  speciesNames,
-}) => {
+const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
   const navigate = useNavigate();
   const { setCurrentLocality, setLocalityData } = useAppStateContext();
   const [currentPage, setCurrentPage] = useState(1);

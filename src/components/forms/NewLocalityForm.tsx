@@ -111,8 +111,9 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     data.latitude =
       data.latitude === "na" ? "na" : parseFloat(data.latitude || 0);
     if (localityData) {
-      update(ref(db, "localities/" + data.key), {
-        ...data,
+      const { species, ...rest } = data;
+      update(ref(db, "localities/" + data.siteKey), {
+        ...rest,
       });
       toast.success("Locality was updated successfully");
     } else {
@@ -122,16 +123,6 @@ const NewLocalityForm: React.FC = ({ localities }) => {
       setCurrentLocality(localityKey);
     }
   };
-
-  /*   const addItemsBackup = () => {
-    backup10.forEach((i: any) => {
-      const dateSampling = !i.dateSampling
-        ? ""
-        : moment(i.dateSampling, "DD.MM.YYYY").format("YYYY-MM-DD");
-      writeLocalityData({ ...i, dateSampling });
-    });
-    toast.success("ok");
-  }; */
 
   const getSavedData = React.useCallback(() => {
     let data = sessionStorage.getItem(FORM_DATA_KEY);
@@ -598,13 +589,6 @@ const NewLocalityForm: React.FC = ({ localities }) => {
       <button className="submit-btn" type="submit">
         Save
       </button>
-      {/* <button
-        className="submit-btn"
-        type="button"
-        onClick={() => addItemsBackup()}
-      >
-        Backup
-      </button> */}
     </form>
   );
 };
