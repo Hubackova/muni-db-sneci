@@ -85,7 +85,14 @@ const SpeciesAtLocalityForm: React.FC = ({
       <div>
         {species.map((spec) => {
           const { speciesNameKey, ...rest } = spec;
-          return <div style={{ fontSize: 12 }}>{rest.speciesName}</div>;
+          return (
+            <div style={{ fontSize: 12 }}>
+              {rest.speciesName}{" "}
+              {rest.specification && `| ${rest.specification}`} | Live:{" "}
+              {rest.live || "-"} | Empty: {rest.empty || "-"} | Undefined:{" "}
+              {rest.undef || "-"}
+            </div>
+          );
         })}
       </div>
       <form
