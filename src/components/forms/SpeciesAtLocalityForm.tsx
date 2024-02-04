@@ -50,6 +50,8 @@ const SpeciesAtLocalityForm: React.FC = ({
       const { speciesName, ...rest } = i;
       writeSpeciesToLocalityData(rest, currentLocality);
     });
+    setSpeciesName("");
+    setSpecies([]);
     toast.success("Species was added successfully");
   };
 
@@ -81,6 +83,11 @@ const SpeciesAtLocalityForm: React.FC = ({
   return (
     <>
       <div>
+        <div style={{ fontSize: 12 }}>
+          TOHLE BY PAK NEBYLO TAK HNUSNY... mohl by tam byt treba jen nazev
+          druhu
+        </div>
+        ;
         {species.map((spec) => {
           const { speciesNameKey, ...rest } = spec;
           return <div style={{ fontSize: 12 }}>{JSON.stringify(rest)}</div>;
