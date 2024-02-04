@@ -111,11 +111,10 @@ const HomePage: React.FC = () => {
             )}
             {!isLocalityWithZero && (
               <SpeciesAtLocalityForm
-                withLabels={!species.length}
+                withLabels={true}
                 speciesNames={filteredSpeciesNames}
                 specificationOptions={specificationOptions}
                 withZero={!speciesData.length}
-                localities={localities}
               />
             )}
           </div>
