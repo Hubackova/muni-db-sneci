@@ -90,7 +90,9 @@ const SpeciesAtLocalityForm: React.FC = ({
               {rest.speciesName}{" "}
               {rest.specification && `| ${rest.specification}`} | Live:{" "}
               {rest.live || "-"} | Empty: {rest.empty || "-"} | Undefined:{" "}
-              {rest.undef || "-"}
+              {rest.undef || "-"} {rest.lot && `| lot: ${rest.lot}`}
+              {rest.vouchers && `| vouchers: ${rest.vouchers}`}
+              {rest.noteSpecies && `| note: ${rest.noteSpecies}`}
             </div>
           );
         })}
