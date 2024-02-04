@@ -153,8 +153,9 @@ export const EditableCell: React.FC<any> = ({
     setValue(isNumber ? parseFloat(e.target.value) : e.target.value);
   };
 
-  const updateItem = () => {
+  const updateItem = (e: any) => {
     const key = updatekey || row.original.key;
+    console.log(key);
     update(ref(db, dbName + key), {
       [cell.column.id]: isNumber
         ? e.target.value
@@ -189,7 +190,7 @@ export const EditableCell: React.FC<any> = ({
         cell.column.id === "empty" ||
         cell.column.id === "live"
       ) {
-        updateItem();
+        updateItem(e);
       } else {
         setShowEditModal({
           row,
@@ -197,7 +198,7 @@ export const EditableCell: React.FC<any> = ({
           id: cell.column.id,
           initialValue,
           setValue,
-          callback: () => updateItem(),
+          callback: () => updateItem(e),
         });
       }
     }
