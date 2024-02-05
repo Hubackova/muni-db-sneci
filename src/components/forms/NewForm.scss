@@ -8,11 +8,9 @@
   }
 
   &.species-table {
-    margin-left: 30px;
-
     .input {
       max-width: 178px;
-      padding: 2px 2px;
+      padding: 5px 2px;
     }
 
     .container.ultra-narrow {
@@ -43,9 +41,19 @@
       width: 108px;
       max-width: 108px;
     }
+    .btn-wrapper {
+      display: flex;
+      gap: 12px;
 
-    .submit-btn {
-      align-self: flex-start !important;
+      .submit-btn {
+        align-self: flex-start !important;
+
+        &:nth-of-type(2) {
+          background-color: rgb(199, 226, 162);
+          border: 1px solid green;
+          border-radius: 2px;
+        }
+      }
     }
   }
 

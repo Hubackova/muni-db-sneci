@@ -23,6 +23,34 @@
   border-spacing: 0;
   table-layout: fixed;
 
+  &.wip {
+    padding: 20px 0;
+  }
+  &.wip,
+  &.home {
+    td {
+      &:nth-of-type(2) {
+        min-width: 244px;
+      }
+      &:nth-of-type(3) {
+        min-width: 118px;
+      }
+      &:nth-of-type(4),
+      &:nth-of-type(5),
+      &:nth-of-type(6),
+      &:nth-of-type(7),
+      &:nth-of-type(8) {
+        min-width: 78px;
+      }
+      &:nth-of-type(9) {
+        min-width: 112px;
+      }
+      &:nth-of-type(10) {
+        min-width: 140px;
+      }
+    }
+  }
+
   .remove button {
     padding: 0 3px;
     border: 1px solid rgb(248, 83, 83);

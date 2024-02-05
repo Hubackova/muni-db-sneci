@@ -228,7 +228,7 @@ const SpeciesTableHome: React.FC<any> = ({ species, speciesNames }) => {
             onHide={() => setShowModal(null)}
           />
         )}
-        <table className="table" {...getTableProps()}>
+        <table className="table home" {...getTableProps()}>
           <thead>
             {headerGroups.map((headerGroup, index) => (
               <tr {...headerGroup.getHeaderGroupProps()} key={index}>

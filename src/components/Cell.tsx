@@ -155,7 +155,6 @@ export const EditableCell: React.FC<any> = ({
 
   const updateItem = (e: any) => {
     const key = updatekey || row.original.key;
-    console.log(key);
     update(ref(db, dbName + key), {
       [cell.column.id]: isNumber
         ? e.target.value

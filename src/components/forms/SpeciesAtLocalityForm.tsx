@@ -9,6 +9,7 @@ import CreatableSelectInput from "../CreatableSelectInput";
 import SelectInput from "../SelectInput";
 import TextInput from "../TextInput";
 import "./NewForm.scss";
+import { useTable } from "react-table";
 
 const SpeciesAtLocalityForm: React.FC = ({
   withLabels = true,
@@ -23,45 +24,43 @@ const SpeciesAtLocalityForm: React.FC = ({
     register,
     formState: { errors },
     handleSubmit,
-    watch,
     setValue,
     control,
-    reset,
   } = useForm<PrimersType>();
 
   const addItem = (data: any) => {
     if (!data.speciesNameKey) return toast.error("Species name is required");
-    const { hack, all, ...withoutAllData } = data;
-    withoutAllData.empty = withoutAllData.empty
-      ? parseInt(withoutAllData.empty)
-      : undefined;
-    withoutAllData.live = withoutAllData.live
-      ? parseInt(withoutAllData.live)
-      : undefined;
-    withoutAllData.undef = withoutAllData.undef
-      ? parseInt(withoutAllData.undef)
-      : undefined;
-    reset();
-    setSpecies([...species, { ...withoutAllData, speciesName }]);
+
+    data.empty = data.empty ? parseInt(data.empty) : undefined;
+    data.live = data.live ? parseInt(data.live) : undefined;
+    data.undef = data.undef ? parseInt(data.undef) : undefined;
+
+    const all =
+      !data.live && !data.empty && !data.undef
+        ? ""
+        : parseInt(data.live || 0) +
+          parseInt(data.empty || 0) +
+          parseInt(data.undef || 0);
+    setValue("speciesNameKey", "");
+    setValue("specification", "");
+    setValue("live", "");
+    setValue("empty", "");
+    setValue("undef", "");
+    setValue("lot", "");
+    setValue("vouchers", "");
+    setValue("noteSpecies", "");
+    setSpecies([...species, { ...data, speciesName, all }]);
   };
 
   const saveSpeciesToDb = () => {
     species.map((i) => {
-      const { speciesName, ...rest } = i;
-      writeSpeciesToLocalityData(rest, currentLocality);
+      const { speciesName, all, ...rest } = i;
+      return writeSpeciesToLocalityData(rest, currentLocality);
     });
     setSpeciesName("");
     setSpecies([]);
     toast.success("Species was added successfully");
   };
-
-  const field1Value = watch("live");
-  const field2Value = watch("empty");
-  const field3Value = watch("undef");
-  const sum =
-    parseInt(field1Value || 0) +
-    parseInt(field2Value || 0) +
-    parseInt(field3Value || 0);
 
   const speciesNamesOptions = speciesNames
     .map((i: any) => {
@@ -80,23 +79,82 @@ const SpeciesAtLocalityForm: React.FC = ({
       return 0;
     });
 
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "Species Name",
+        accessor: "speciesName",
+      },
+      {
+        Header: "Specification",
+        accessor: "specification",
+      },
+      {
+        Header: "Live",
+        accessor: "live",
+      },
+      {
+        Header: "Empty",
+        accessor: "empty",
+      },
+      {
+        Header: "Undef.",
+        accessor: "undef",
+      },
+      {
+        Header: "All",
+        accessor: "all",
+      },
+      {
+        Header: "Lot no.",
+        accessor: "lot",
+      },
+      {
+        Header: "Vouchers",
+        accessor: "vouchers",
+      },
+      {
+        Header: "Note",
+        accessor: "noteSpecies",
+      },
+    ],
+    []
+  );
+  const tableInstance = useTable({ columns, data: species });
+  const { getTableProps, getTableBodyProps, rows, prepareRow } = tableInstance;
   return (
     <>
-      <div>
-        {species.map((spec) => {
-          const { speciesNameKey, ...rest } = spec;
-          return (
-            <div style={{ fontSize: 12 }}>
-              {rest.speciesName}{" "}
-              {rest.specification && `| ${rest.specification}`} | Live:{" "}
-              {rest.live || "-"} | Empty: {rest.empty || "-"} | Undefined:{" "}
-              {rest.undef || "-"} {rest.lot && `| lot: ${rest.lot}`}
-              {rest.vouchers && `| vouchers: ${rest.vouchers}`}
-              {rest.noteSpecies && `| note: ${rest.noteSpecies}`}
-            </div>
-          );
-        })}
-      </div>
+      <table className="table wip" {...getTableProps()}>
+        <tbody {...getTableBodyProps()}>
+          {rows.map((row) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()} key={row.original.key}>
+                <td role="cell" className="remove">
+                  <button
+                    onClick={() => {
+                      const newArrayOfObjects = species.filter(
+                        (obj) => obj.speciesName !== row.original.speciesName
+                      );
+
+                      setSpecies(newArrayOfObjects);
+                    }}
+                  >
+                    X
+                  </button>
+                </td>
+                {row.cells.map((cell) => {
+                  return (
+                    <td key={row.id + cell.column.id} {...cell.getCellProps()}>
+                      {cell.render("Cell")}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
       <form
         className="form compact species-table"
         onSubmit={handleSubmit(addItem)}
@@ -114,7 +172,6 @@ const SpeciesAtLocalityForm: React.FC = ({
                       e?.value,
                       speciesNamesOptions
                     );
-                    console.log(item?.label);
                     setSpeciesName(item?.label);
                     onChange(e?.value);
                     if (e?.value === "0") setDisabled(true);
@@ -148,13 +205,10 @@ const SpeciesAtLocalityForm: React.FC = ({
             control={control}
             name="specification"
           />
-          <input {...register("hack")} style={{ display: "none" }} />
           <TextInput
             label={withLabels && "Live"}
             name="live"
-            error={errors.latitude?.message}
             register={register}
-            onBlur={() => setValue("all", sum)}
             type="number"
             className="ultra-narrow"
             min={0}
@@ -164,9 +218,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           <TextInput
             label={withLabels && "Empty"}
             name="empty"
-            error={errors.longitude?.message}
             register={register}
-            onBlur={() => setValue("all", sum)}
             type="number"
             className="ultra-narrow"
             min={0}
@@ -176,22 +228,9 @@ const SpeciesAtLocalityForm: React.FC = ({
           <TextInput
             label={withLabels && "Undefined"}
             name="undef"
-            error={errors.longitude?.message}
             register={register}
-            onBlur={() => setValue("all", sum)}
             type="number"
             className="ultra-narrow"
-            min={0}
-            step="1"
-            disabled={disabled}
-          />
-          <TextInput
-            label={withLabels && "All"}
-            name="all"
-            register={register}
-            readOnly={true}
-            className="ultra-narrow"
-            type="number"
             min={0}
             step="1"
             disabled={disabled}
@@ -199,7 +238,6 @@ const SpeciesAtLocalityForm: React.FC = ({
           <TextInput
             label={withLabels && "Lot no."}
             name="lot"
-            error={errors.lot?.message}
             register={register}
             type="number"
             min={0}
@@ -210,7 +248,6 @@ const SpeciesAtLocalityForm: React.FC = ({
           <TextInput
             label={withLabels && "Vouchers"}
             name="vouchers"
-            error={errors.vouchers?.message}
             register={register}
             type="number"
             min={0}
@@ -222,18 +259,22 @@ const SpeciesAtLocalityForm: React.FC = ({
             className="double"
             label={withLabels && "Note (species)"}
             name="noteSpecies"
-            error={errors.noteSpecies?.message}
             register={register}
             disabled={disabled}
           />
         </div>
-
-        <button className="submit-btn" type="submit">
-          Confirm new
-        </button>
-        <button className="submit-btn" type="button" onClick={saveSpeciesToDb}>
-          Save species
-        </button>
+        <div className="btn-wrapper">
+          <button className="submit-btn" type="submit">
+            Confirm new
+          </button>
+          <button
+            className="submit-btn"
+            type="button"
+            onClick={saveSpeciesToDb}
+          >
+            Save species
+          </button>
+        </div>
         {/* <button
         className="submit-btn"
         type="button"
