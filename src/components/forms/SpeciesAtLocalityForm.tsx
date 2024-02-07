@@ -49,6 +49,8 @@ const SpeciesAtLocalityForm: React.FC = ({
     setValue("lot", "");
     setValue("vouchers", "");
     setValue("noteSpecies", "");
+    if (species.find((i) => i.speciesName === speciesName))
+      return toast.error("This species is already on the list");
     setSpecies([...species, { ...data, speciesName, all }]);
   };
 
