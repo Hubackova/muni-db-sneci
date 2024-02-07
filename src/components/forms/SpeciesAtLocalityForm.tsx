@@ -265,14 +265,14 @@ const SpeciesAtLocalityForm: React.FC = ({
         </div>
         <div className="btn-wrapper">
           <button className="submit-btn" type="submit">
-            Confirm new
+            Pre-save new
           </button>
           <button
             className="submit-btn"
             type="button"
             onClick={saveSpeciesToDb}
           >
-            Save species
+            Save species list
           </button>
         </div>
         {/* <button

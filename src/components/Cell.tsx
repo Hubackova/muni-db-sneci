@@ -185,6 +185,9 @@ export const EditableCell: React.FC<any> = ({
         return toast.error("Duplicate Field code - " + errValue);
       }
       if (
+        cell.column.id === "noteSpecies" ||
+        cell.column.id === "vouchers" ||
+        cell.column.id === "lot" ||
         cell.column.id === "undef" ||
         cell.column.id === "empty" ||
         cell.column.id === "live"
