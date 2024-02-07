@@ -17,15 +17,12 @@ import { ReactComponent as ExportIcon } from "../../images/export.svg";
 import ConfirmModal from "../ConfirmModal";
 import { GlobalFilter, Multi, multiSelectFilter } from "../Filter";
 import IndeterminateCheckbox from "../IndeterminateCheckbox";
-import { useNavigate } from "react-router-dom";
 import PaginationButtons from "../PaginationButtons";
 
 const SpeciesTable: React.FC<any> = ({ species }) => {
   const db = getDatabase();
   const [showModal, setShowModal] = useState(null);
-  const navigate = useNavigate();
-  const { currentLocality, setCurrentLocality, setLocalityData } =
-    useAppStateContext();
+  const { currentLocality } = useAppStateContext();
   const [currentPage, setCurrentPage] = useState(1);
   const removeItem = (id: string) => {
     setShowModal(id);
@@ -36,20 +33,6 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
       {
         Header: "Site ID",
         accessor: "siteId",
-        Cell: React.memo<React.FC<any>>(({ value, row }) => {
-          return (
-            <div
-              className="siteId"
-              onClick={() => {
-                setCurrentLocality(row.original.siteKey);
-                setLocalityData(row.original);
-                navigate("/");
-              }}
-            >
-              {value}
-            </div>
-          );
-        }),
         Filter: Multi,
         filter: multiSelectFilter,
       },
