@@ -111,8 +111,9 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     data.latitude =
       data.latitude === "na" ? "na" : parseFloat(data.latitude || 0);
     if (localityData) {
-      const { species, ...rest } = data;
-      update(ref(db, "localities/" + data.siteKey), {
+      const { species, all, ...rest } = data;
+      const siteIdKey = data.siteKey || data.key;
+      update(ref(db, "localities/" + siteIdKey), {
         ...rest,
       });
       toast.success("Locality was updated successfully");
