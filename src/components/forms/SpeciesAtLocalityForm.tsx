@@ -273,6 +273,7 @@ const SpeciesAtLocalityForm: React.FC = ({
             className="submit-btn"
             type="button"
             onClick={saveSpeciesToDb}
+            disabled={species.length === 0}
           >
             Save species list
           </button>
