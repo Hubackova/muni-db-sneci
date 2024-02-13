@@ -56,6 +56,9 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
     [navigate, setCurrentLocality, setLocalityData]
   );
 
+  const sortByStorage = sessionStorage.getItem("locandspec");
+  const sortByStorageData = JSON.parse(sortByStorage);
+
   const tableInstance = useTable(
     {
       columns,
@@ -63,7 +66,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
       defaultColumn: { Cell: DefaultCell, Filter: () => {} },
       autoResetFilters: false,
       initialState: {
-        sortBy: [
+        sortBy: sortByStorageData || [
           {
             id: "dateSampling",
             desc: true,
@@ -73,6 +76,16 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
             desc: true,
           },
         ],
+      },
+      stateReducer: (newState, action, prevState) => {
+        if (
+          JSON.stringify(newState.sortBy) !== JSON.stringify(prevState.sortBy)
+        ) {
+          sessionStorage.setItem(
+            "locandspec",
+            JSON.stringify(newState?.sortBy)
+          );
+        }
       },
     },
     useGlobalFilter,

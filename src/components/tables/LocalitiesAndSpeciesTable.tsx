@@ -259,6 +259,9 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
     [navigate, setCurrentLocality, setLocalityData]
   );
 
+  const sortByStorage = sessionStorage.getItem("locandspec");
+  const sortByStorageData = JSON.parse(sortByStorage);
+
   const tableInstance = useTable(
     {
       columns,
@@ -266,7 +269,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
       defaultColumn: { Cell: DefaultCell, Filter: () => {} },
       autoResetFilters: false,
       initialState: {
-        sortBy: [
+        sortBy: sortByStorageData || [
           {
             id: "dateSampling",
             desc: true,
@@ -281,11 +284,22 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
           },
         ],
       },
+      stateReducer: (newState, action, prevState) => {
+        if (
+          JSON.stringify(newState.sortBy) !== JSON.stringify(prevState.sortBy)
+        ) {
+          sessionStorage.setItem(
+            "locandspec",
+            JSON.stringify(newState?.sortBy)
+          );
+        }
+      },
     },
     useGlobalFilter,
     useFilters,
     useSortBy,
     useRowSelect,
+
     (hooks) => {
       hooks.visibleColumns.push((columns) => [
         // Let's make a column for selection
@@ -321,7 +335,6 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
     selectedFlatRows,
     prepareRow,
   } = tableInstance;
-
   const ITEMS_PER_PAGE = 500;
 
   // Výpočet indexu první a poslední položky na aktuální stránce
