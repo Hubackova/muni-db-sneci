@@ -5,7 +5,7 @@ import "./Filter.scss";
 import { arrayRemoveArr } from "../helpers/utils";
 
 const getFilterStatusByYear = (originalDates, filteredDates) => {
-  const years = {};
+  let years = {};
 
   // Rozdělení dat do skupin podle roku
   originalDates.forEach((date) => {
@@ -27,7 +27,7 @@ const getFilterStatusByYear = (originalDates, filteredDates) => {
   });
 
   // Porovnání a určení stavu pro každý rok
-  const result = {};
+  let result = {};
   Object.keys(years).forEach((year) => {
     const { total, filtered } = years[year];
     if (filtered === total) {
@@ -135,7 +135,14 @@ export const FilterDay: React.FC<any> = ({
             : selectedOptionsMonth
         );
   };
-
+  const handleNaClick = (active: boolean) => {
+    if (active) setFilter([...filterValue, "na"]);
+    if (!active) {
+      const newFilterValues = filterValue.filter((i) => i !== "na");
+      setFilter(newFilterValues);
+    }
+  };
+  const isCheckedNa = filterValue.find((i) => i === "na");
   return (
     <div>
       {yearsAll
@@ -248,6 +255,12 @@ export const FilterDay: React.FC<any> = ({
             </div>
           );
         })}
+      <div onClick={() => handleNaClick(!isCheckedNa)} className="filter-link">
+        <span>
+          {isCheckedNa ? "✅" : "⬜"}
+          na
+        </span>
+      </div>
     </div>
   );
 };
