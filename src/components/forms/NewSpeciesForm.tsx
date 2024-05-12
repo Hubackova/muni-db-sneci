@@ -3,11 +3,11 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useAppStateContext } from "../../AppStateContext";
-import { backup } from "../../content/speciesNames";
 import { writeSpeciesNameData } from "../../firebase/firebase";
 import SelectInput from "../SelectInput";
 import TextInput from "../TextInput";
 import "./NewForm.scss";
+
 const NewSpeciesForm: React.FC = ({ speciesNames }) => {
   const { setCurrentLocality } = useAppStateContext();
   const speciesNamesValues = speciesNames.map((i: any) => i.speciesName);
@@ -18,11 +18,6 @@ const NewSpeciesForm: React.FC = ({ speciesNames }) => {
     writeSpeciesNameData(checkedData);
     setCurrentLocality("");
     toast.success("Species was added successfully");
-  };
-
-  const addItemsBackup = () => {
-    backup.forEach((i: any) => writeSpeciesNameData(i));
-    toast.success("ok");
   };
 
   const {
@@ -115,14 +110,6 @@ const NewSpeciesForm: React.FC = ({ speciesNames }) => {
           Save
         </button>
       </div>
-
-      {/* <button
-        className="submit-btn"
-        type="button"
-        onClick={() => addItemsBackup()}
-      >
-        Backup
-      </button> */}
     </form>
   );
 };

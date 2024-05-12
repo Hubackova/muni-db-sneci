@@ -1,0 +1,81 @@
+const { data } = require("./species");
+const { initializeApp } = require("firebase/app");
+const { onValue, ref, getDatabase } = require("firebase/database");
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCzBphCVqHbMObpeq9PrQYfnoB4FCp8ggg",
+
+  authDomain: "mollusca-91521.firebaseapp.com",
+
+  databaseURL:
+    "https://mollusca-91521-default-rtdb.europe-west1.firebasedatabase.app",
+
+  projectId: "mollusca-91521",
+
+  storageBucket: "mollusca-91521.appspot.com",
+
+  messagingSenderId: "413904187659",
+
+  appId: "1:413904187659:web:1185b60cd9fc28f31c320e",
+
+  measurementId: "G-VDBLFE43C3",
+};
+
+initializeApp(firebaseConfig);
+
+const db = getDatabase();
+function fetchSpeciesNames() {
+  return new Promise((resolve) => {
+    const speciesNames = [];
+    onValue(ref(db, "species/"), (snapshot) => {
+      snapshot.forEach((child) => {
+        let childItem = child.val();
+        childItem.key = child.key;
+        speciesNames.push(childItem);
+      });
+      resolve(speciesNames);
+    });
+  });
+}
+
+function fetchLocalities() {
+  return new Promise((resolve) => {
+    const localities = [];
+    onValue(ref(db, "localities/"), (snapshot) => {
+      snapshot.forEach((child) => {
+        let childItem = child.val();
+        localities.push(childItem.siteId);
+      });
+      resolve(localities);
+    });
+  });
+}
+
+async function checkSpeciesNames() {
+  const speciesNames = await fetchSpeciesNames();
+  const names = speciesNames.map((i) => i.speciesName);
+  data.forEach((element) => {
+    if (!names.includes(element.speciesName))
+      console.log(
+        `Error: Tento druh není v seznamu druhů: ${element.speciesName}`
+      );
+  });
+}
+
+async function getLocalities() {
+  const siteIds = await fetchLocalities();
+  data.forEach((element) => {
+    if (!siteIds.includes(element.siteId))
+      console.log(
+        `Error: Lokalita s tímto siteID "${element.siteId}" neexistuje`
+      );
+  });
+}
+
+checkSpeciesNames().then(() => {
+  getLocalities().then(() => console.log("done"));
+});
+
+console.log("Note: celkem " + data.length + " druhů k importu");
+if (data.length > 500)
+  console.log("Warning: raději import rozdělit na části po max 500 položek");

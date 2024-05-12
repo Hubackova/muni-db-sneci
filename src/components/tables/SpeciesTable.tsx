@@ -187,12 +187,13 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
     const uniquePairs = new Set();
 
     for (const obj of array) {
-      const key = `${obj.siteId}-${obj.speciesName}`;
-
+      const key = `${obj.siteId}-${obj.speciesName}-${obj.specification}`;
       if (uniquePairs.has(key)) {
         duplicatePairs.push({
           siteId: obj.siteId,
           speciesName: obj.speciesName,
+          speciesKey: obj.speciesKey,
+          siteKey: obj.siteKey,
         });
       } else {
         uniquePairs.add(key);
@@ -200,15 +201,15 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
     }
 
     if (duplicatePairs.length > 0) {
-      console.log("Duplicity nalezeny:");
-      duplicatePairs.forEach((pair) => {
-        console.log(`SiteId: ${pair.siteId}, SpeciesName: ${pair.speciesName}`);
-      });
+      const duplicates = duplicatePairs.map(
+        (pair) => `SiteId: ${pair.siteId}, SpeciesName: ${pair.speciesName}`
+      );
+      alert(`Duplicity nalezeny:\n${duplicates.join("\n")}`);
     } else {
-      console.log("Žádné duplicity nenalezeny.");
+      alert("Žádné duplicity nenalezeny.");
     }
   }
-  findAndLogDuplicateSiteAndSpecies(species);
+
   const rowsForExport = selectedFlatRows.map((i) => {
     const {
       siteKey,
@@ -318,6 +319,9 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
             </div>
           </CSVLink>
         </div>
+        <button onClick={() => findAndLogDuplicateSiteAndSpecies(species)}>
+          Find duplicities
+        </button>
       </div>
       <PaginationButtons
         setCurrentPage={setCurrentPage}
