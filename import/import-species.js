@@ -30,14 +30,6 @@ initializeApp(firebaseConfig);
 
 const db = getDatabase();
 
-function chunk(array, size) {
-  const result = [];
-  for (let i = 0; i < array.length; i += size) {
-    result.push(array.slice(i, i + size));
-  }
-  return result;
-}
-
 function writeSpeciesToLocalityData(data, locKey) {
   const newSpeciesKey = push(ref(db, "species")).key;
   return set(ref(db, `localities/${locKey}/species/${newSpeciesKey}`), {
@@ -55,9 +47,10 @@ function fetchLocalities() {
         childItem.key = child.key;
         localities.push({
           ...childItem,
-          speciesNamesKeysinLocality: childItem.species?.length
-            ? childItem.species.map((i) => i.speciesNameKey)
-            : [],
+          speciesNamesKeysinLocality:
+            childItem.species && !!childItem.species.length
+              ? childItem.species.map((i) => i.speciesNameKey)
+              : [],
         });
       });
       resolve(localities);
@@ -81,31 +74,25 @@ function fetchSpeciesNames() {
 
 async function processItem(i, speciesNames, localities) {
   const { speciesName, siteId, ...data } = i;
-  data.speciesNameKey = speciesNames.find(
+  const species = speciesNames.find(
     (species) => species.speciesName === i.speciesName
-  )?.key;
-  const localityKey = localities.find((loc) => loc.siteId === i.siteId)?.key;
+  );
+  data.speciesNameKey = species && species.key;
+  const locality = localities.find((loc) => loc.siteId === i.siteId);
+  const localityKey = locality && locality.key;
   if (localityKey) {
     await writeSpeciesToLocalityData(data, localityKey);
-  }
-}
-
-async function processItemsSequentially(items, speciesNames, localities) {
-  for (const item of items) {
-    await processItem(item, speciesNames, localities);
   }
 }
 
 async function importData() {
   const speciesNames = await fetchSpeciesNames();
   const localities = await fetchLocalities();
-  const concurrencyLimit = 25;
-  const chunks = chunk(dataChunk, concurrencyLimit);
 
-  for (let i = 0; i < chunks.length; i++) {
-    const chunk = chunks[i];
-    await processItemsSequentially(chunk, speciesNames, localities);
+  for (const item of dataChunk) {
+    await processItem(item, speciesNames, localities);
   }
+
   console.log("done");
 }
 
