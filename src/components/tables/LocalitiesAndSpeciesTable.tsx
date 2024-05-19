@@ -164,7 +164,7 @@ export const localityColumns = [
   },
   {
     Header: "Note (site)",
-    accessor: "noteSite",
+    accessor: "note",
     Filter: Multi,
     filter: multiSelectFilter,
     width: "500px",

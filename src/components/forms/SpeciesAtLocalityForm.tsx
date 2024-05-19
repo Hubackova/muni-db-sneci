@@ -48,7 +48,7 @@ const SpeciesAtLocalityForm: React.FC = ({
     setValue("undef", "");
     setValue("lot", "");
     setValue("vouchers", "");
-    setValue("noteSpecies", "");
+    setValue("note", "");
     if (species.find((i) => i.speciesName === speciesName))
       return toast.error("This species is already on the list");
     setSpecies([...species, { ...data, speciesName, all }]);
@@ -117,7 +117,7 @@ const SpeciesAtLocalityForm: React.FC = ({
       },
       {
         Header: "Note",
-        accessor: "noteSpecies",
+        accessor: "note",
       },
     ],
     []
@@ -260,7 +260,7 @@ const SpeciesAtLocalityForm: React.FC = ({
           <TextInput
             className="double"
             label={withLabels && "Note (species)"}
-            name="noteSpecies"
+            name="note"
             register={register}
             disabled={disabled}
           />

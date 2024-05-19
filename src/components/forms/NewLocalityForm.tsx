@@ -39,7 +39,7 @@ const DEFAULT_DATA = {
   releveNumber: "",
   dataType: "",
   event: "",
-  noteSite: "",
+  note: "",
 };
 
 const NewLocalityForm: React.FC = ({ localities }) => {
@@ -102,7 +102,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     setValue("releveNumber", "");
     setValue("dataType", "");
     setValue("event", "");
-    setValue("noteSite", "");
+    setValue("note", "");
   };
 
   const addItem = (data: any) => {
@@ -227,7 +227,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
                         setValue("releveNumber", i.releveNumber);
                         setValue("dataType", i.dataType);
                         setValue("event", i.event);
-                        setValue("noteSite", i.noteSite);
+                        setValue("note", i.note);
 
                         setCurrentLocality(i.key);
                         setShowModalCode(false);
@@ -582,8 +582,8 @@ const NewLocalityForm: React.FC = ({ localities }) => {
         />
         <TextInput
           label="Note (site)"
-          name="noteSite"
-          error={errors.noteSite?.message}
+          name="note"
+          error={errors.note?.message}
           register={register}
         />
       </div>

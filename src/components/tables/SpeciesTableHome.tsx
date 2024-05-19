@@ -188,7 +188,7 @@ const SpeciesTableHome: React.FC<any> = ({ species, speciesNames }) => {
       },
       {
         Header: "Note",
-        accessor: "noteSpecies",
+        accessor: "note",
         Filter: Multi,
         filter: multiSelectFilter,
       },
