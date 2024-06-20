@@ -254,8 +254,6 @@ const NewLocalityForm: React.FC = ({ localities }) => {
                         setValue("dataType", i.dataType);
                         setValue("event", i.event);
                         setValue("note", i.note);
-
-                        setCurrentLocality(i.key);
                         setShowModalCode(false);
                       }}
                     >
