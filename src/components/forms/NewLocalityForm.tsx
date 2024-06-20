@@ -49,6 +49,27 @@ const NewLocalityForm: React.FC = ({ localities }) => {
   const [showModalCode, setShowModalCode] = useState(false);
   const [alternative, setAlternative] = useState("full");
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredLocalities, setFilteredLocalities] = useState([]);
+
+  useEffect(() => {
+    const sortedLocalities = localities.sort((a, b) =>
+      a.siteId.toString().localeCompare(b.siteId.toString())
+    );
+
+    if (searchQuery === "") {
+      setFilteredLocalities(sortedLocalities);
+    } else {
+      const filtered = sortedLocalities.filter((locality) =>
+        locality.siteId
+          .toString()
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase())
+      );
+      setFilteredLocalities(filtered);
+    }
+  }, [searchQuery, localities]);
+
   const getOptions = React.useCallback(
     (key: string) =>
       Object.values(
@@ -185,7 +206,6 @@ const NewLocalityForm: React.FC = ({ localities }) => {
               "Duplicate site ID"
             }
           />
-
           <button
             type="button"
             onClick={() => setShowModalCode(true)}
@@ -198,8 +218,14 @@ const NewLocalityForm: React.FC = ({ localities }) => {
             <div className="side-panel">
               <div className="body">
                 <h5>Site IDs</h5>
+                <input
+                  type="text"
+                  placeholder="Search localities"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
                 <div className="items">
-                  {localities.map((i) => (
+                  {filteredLocalities.map((i) => (
                     <div
                       className="item"
                       key={i.key}
