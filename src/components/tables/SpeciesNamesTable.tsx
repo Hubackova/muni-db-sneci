@@ -156,8 +156,8 @@ const SpeciesNamesTable: React.FC<any> = ({ species, localities }) => {
               row={row}
               cell={cell}
               options={[
-                { label: "aquatic", value: "aquatic" },
-                { label: "terrestrial", value: "terrestrial" },
+                { label: "Aquatic", value: "aquatic" },
+                { label: "Terrestrial", value: "terrestrial" },
               ]}
               saveLast={setLast}
               dbName="species/"

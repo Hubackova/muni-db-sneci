@@ -10,7 +10,7 @@ import "./NewForm.scss";
 
 const NewSpeciesForm: React.FC = ({ speciesNames }) => {
   const { setCurrentLocality } = useAppStateContext();
-  const speciesNamesValues = speciesNames.map((i: any) => i.speciesName);
+  const speciesNamesValues = speciesNames.map((i: any) => i.speciesName).sort();
   const addItem = (data: any) => {
     if (speciesNamesValues.includes(data.speciesName))
       return toast.error("Species already exists");
@@ -28,21 +28,12 @@ const NewSpeciesForm: React.FC = ({ speciesNames }) => {
     setValue,
   } = useForm<PrimersType>();
 
-  const speciesNamesOptions = speciesNames
-    .map((i: any) => ({
-      value: i.speciesName,
-      label: i.speciesName,
-    }))
-    .sort(function (a, b) {
-      if (a.label < b.label) {
-        return -1;
-      }
-      if (a.label > b.label) {
-        return 1;
-      }
-      return 0;
-    });
+  const speciesNamesOptions = speciesNamesValues.map((i: any) => ({
+    value: i,
+    label: i,
+  }));
 
+  console.log(speciesNamesOptions);
   return (
     <form className="form compact new-species" onSubmit={handleSubmit(addItem)}>
       <h5>Add new species:</h5>
@@ -78,8 +69,8 @@ const NewSpeciesForm: React.FC = ({ speciesNames }) => {
             return (
               <SelectInput
                 options={[
-                  { value: "terrestrial", label: "terrestrial" },
-                  { value: "aquatic", label: "aquatic" },
+                  { value: "terrestrial", label: "Terrestrial" },
+                  { value: "aquatic", label: "Aquatic" },
                 ]}
                 value={value ? { value, label: value } : null}
                 onChange={(e: any) => {
