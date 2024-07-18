@@ -6,7 +6,6 @@ import { useAppStateContext } from "../../AppStateContext";
 import { writeLocalityData } from "../../firebase/firebase";
 import { dataTypeOptions, samplingOptions } from "../../helpers/options";
 import CreatableSelectInput from "../CreatableSelectInput";
-import SelectInput from "../SelectInput";
 import TextArea from "../TextArea";
 import TextInput from "../TextInput";
 import "./NewForm.scss";
@@ -517,8 +516,8 @@ const NewLocalityForm: React.FC = ({ localities }) => {
         {localityData ? (
           <Controller
             render={({ field: { onChange, value } }) => (
-              <SelectInput
-                options={samplingOptions}
+              <CreatableSelectInput
+                options={getOptions("samplingMethod")}
                 value={value ? { value, label: value } : null}
                 onChange={(e: any) => onChange(e?.value)}
                 label="Sampling method *"
@@ -531,8 +530,8 @@ const NewLocalityForm: React.FC = ({ localities }) => {
         ) : (
           <Controller
             render={({ field: { onChange, value } }) => (
-              <SelectInput
-                options={samplingOptions}
+              <CreatableSelectInput
+                options={getOptions("samplingMethod")}
                 value={value ? { value, label: value } : null}
                 onChange={(e: any) => onChange(e?.value)}
                 label="Sampling method *"
