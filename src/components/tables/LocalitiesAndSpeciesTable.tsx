@@ -278,10 +278,6 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
             id: "siteId",
             desc: true,
           },
-          {
-            id: "speciesName",
-            desc: false,
-          },
         ],
       },
       stateReducer: (newState, action, prevState) => {
