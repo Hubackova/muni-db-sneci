@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useAppStateContext } from "../../AppStateContext";
 import { writeLocalityData } from "../../firebase/firebase";
-import { dataTypeOptions, samplingOptions } from "../../helpers/options";
+import { dataTypeOptions } from "../../helpers/options";
 import CreatableSelectInput from "../CreatableSelectInput";
 import TextArea from "../TextArea";
 import TextInput from "../TextInput";
@@ -52,20 +52,24 @@ const NewLocalityForm: React.FC = ({ localities }) => {
   const [filteredLocalities, setFilteredLocalities] = useState([]);
 
   useEffect(() => {
-    const sortedLocalities = localities.sort((a, b) =>
-      a.siteId.toString().localeCompare(b.siteId.toString())
-    );
-
-    if (searchQuery === "") {
-      setFilteredLocalities(sortedLocalities);
-    } else {
-      const filtered = sortedLocalities.filter((locality) =>
-        locality.siteId
-          .toString()
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase())
+    if (localities?.length) {
+      const sortedLocalities = localities.sort((a, b) =>
+        a.siteId && b.siteId
+          ? a.siteId.toString().localeCompare(b.siteId.toString())
+          : console.log(a, b)
       );
-      setFilteredLocalities(filtered);
+
+      if (searchQuery === "") {
+        setFilteredLocalities(sortedLocalities);
+      } else {
+        const filtered = sortedLocalities.filter((locality) =>
+          locality.siteId
+            .toString()
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+        );
+        setFilteredLocalities(filtered);
+      }
     }
   }, [searchQuery, localities]);
 
@@ -130,15 +134,18 @@ const NewLocalityForm: React.FC = ({ localities }) => {
       data.longitude === "na" ? "na" : parseFloat(data.longitude || 0);
     data.latitude =
       data.latitude === "na" ? "na" : parseFloat(data.latitude || 0);
+
     if (localityData) {
       const { species, all, ...rest } = data;
       const siteIdKey = data.siteKey || data.key;
+      console.log("siteIdKey", data, siteIdKey, rest);
       update(ref(db, "localities/" + siteIdKey), {
         ...rest,
       });
       toast.success("Locality was updated successfully");
     } else {
       const localityKey = writeLocalityData(data);
+      console.log("aaa", data, localityKey);
       sessionStorage.removeItem(FORM_DATA_KEY);
       toast.success("New locality was added successfully");
       setCurrentLocality(localityKey);

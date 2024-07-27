@@ -11,6 +11,7 @@ import "./NewForm.scss";
 const NewSpeciesForm: React.FC = ({ speciesNames }) => {
   const { setCurrentLocality } = useAppStateContext();
   const speciesNamesValues = speciesNames.map((i: any) => i.speciesName).sort();
+
   const addItem = (data: any) => {
     if (speciesNamesValues.includes(data.speciesName))
       return toast.error("Species already exists");
@@ -33,7 +34,6 @@ const NewSpeciesForm: React.FC = ({ speciesNames }) => {
     label: i,
   }));
 
-  console.log(speciesNamesOptions);
   return (
     <form className="form compact new-species" onSubmit={handleSubmit(addItem)}>
       <h5>Add new species:</h5>
