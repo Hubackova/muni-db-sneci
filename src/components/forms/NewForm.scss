@@ -3,6 +3,21 @@
   flex-direction: column;
   gap: 8px;
 
+  .newformMenu {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+
+    h5 {
+      .new {
+        color: blue;
+      }
+      .edit {
+        color: red;
+      }
+    }
+  }
+
   &.locality {
     max-width: 600px;
   }

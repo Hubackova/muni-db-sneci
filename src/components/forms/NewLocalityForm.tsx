@@ -43,7 +43,7 @@ const DEFAULT_DATA = {
 
 const NewLocalityForm: React.FC = ({ localities }) => {
   const db = getDatabase();
-  const { setCurrentLocality, localityData, setLocalityData } =
+  const { currentLocality, setCurrentLocality, localityData, setLocalityData } =
     useAppStateContext();
   const [showModalCode, setShowModalCode] = useState(false);
   const [alternative, setAlternative] = useState("full");
@@ -138,14 +138,12 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     if (localityData) {
       const { species, all, ...rest } = data;
       const siteIdKey = data.siteKey || data.key;
-      console.log("siteIdKey", data, siteIdKey, rest);
       update(ref(db, "localities/" + siteIdKey), {
         ...rest,
       });
       toast.success("Locality was updated successfully");
     } else {
       const localityKey = writeLocalityData(data);
-      console.log("aaa", data, localityKey);
       sessionStorage.removeItem(FORM_DATA_KEY);
       toast.success("New locality was added successfully");
       setCurrentLocality(localityKey);
@@ -187,17 +185,28 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     return () => subscription.unsubscribe();
   }, [watch]);
 
+  useEffect(() => {
+    if (currentLocality) watch(() => setCurrentLocality(""));
+  }, [currentLocality, setCurrentLocality, watch]);
+
   const siteIds = localities.map((locality) => locality.siteId);
   const fieldCodes = localities.map((locality) => locality.fieldCode);
 
   return (
     <form className="form locality" onSubmit={handleSubmit(addItem)}>
-      <button className="resetBtn" onClick={handleReset}>
-        reset form
-      </button>
-      <h5>
-        {localityData ? `Edit ${localityData.siteId}` : "Add new locality:"}
-      </h5>
+      <div className="newformMenu">
+        <h5>
+          {localityData ? (
+            <span className="edit">{`Edit ${localityData.siteId}`}</span>
+          ) : (
+            <span className="new">Add new locality:</span>
+          )}
+        </h5>
+        <button className="resetBtn" onClick={handleReset}>
+          reset form
+        </button>
+      </div>
+
       <div className="row">
         <div>
           <TextInput

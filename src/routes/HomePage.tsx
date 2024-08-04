@@ -94,7 +94,9 @@ const HomePage: React.FC = () => {
               <>
                 <h5>
                   Species at locality:{" "}
-                  {getLocalityName(localities, currentLocality)}
+                  <span className="red">
+                    {getLocalityName(localities, currentLocality)}
+                  </span>
                 </h5>
                 <br />
                 <SpeciesTableHome
