@@ -321,7 +321,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
           required="This field is required"
           validate={(value) =>
             localityData ||
-            /^(-?\d+\.?\d{0,5}|\.\d{1,5}|n\.a\.)$/.test(value) ||
+            /^-?\d*\.?\d{0,5}$/.test(value) ||
             value === "na" ||
             "Only numbers or dots or na + max 5 decimal places"
           }
@@ -336,7 +336,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
           required="This field is required"
           validate={(value) =>
             localityData ||
-            /^(-?\d+\.?\d{0,5}|\.\d{1,5}|n\.a\.)$/.test(value) ||
+            /^-?\d*\.?\d{0,5}$/.test(value) ||
             value === "na" ||
             "Only numbers or dots or na + max 5 decimal places"
           }
