@@ -56,7 +56,7 @@ const NewLocalityForm: React.FC = ({ localities }) => {
       const sortedLocalities = localities.sort((a, b) =>
         a.siteId && b.siteId
           ? a.siteId.toString().localeCompare(b.siteId.toString())
-          : console.log(a, b)
+          : console.log("sort", a, b)
       );
 
       if (searchQuery === "") {
