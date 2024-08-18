@@ -5,9 +5,12 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import routes from "../routes";
 import "./TopBar.scss";
+import { useAppStateContext } from "../AppStateContext";
 
 const TopBar: React.FC = () => {
   const db = getDatabase();
+  const { currentLocality, setCurrentLocality, setLocalityData } =
+    useAppStateContext();
 
   const handleDownload = () => {
     onValue(ref(db, "/"), (snapshot) => {
@@ -29,10 +32,19 @@ const TopBar: React.FC = () => {
     });
   };
 
+  const handleClick = () => {
+    if (currentLocality) {
+      window.sessionStorage.clear();
+      setCurrentLocality("");
+      setLocalityData(null);
+    }
+  };
+
   return (
     <div className="topbar">
       <NavLink
         to={routes.home}
+        onClick={handleClick}
         className={({ isActive }) =>
           isActive ? "topbar-item active" : "topbar-item"
         }
@@ -40,6 +52,7 @@ const TopBar: React.FC = () => {
         Add new
       </NavLink>
       <NavLink
+        onClick={handleClick}
         to={routes.localities}
         className={({ isActive }) =>
           isActive ? "topbar-item active" : "topbar-item"
@@ -48,6 +61,7 @@ const TopBar: React.FC = () => {
         Localities
       </NavLink>
       <NavLink
+        onClick={handleClick}
         to={routes.species}
         className={({ isActive }) =>
           isActive ? "topbar-item active" : "topbar-item"
@@ -56,6 +70,7 @@ const TopBar: React.FC = () => {
         Species
       </NavLink>
       <NavLink
+        onClick={handleClick}
         to={routes.localitiesAndSpecies}
         className={({ isActive }) =>
           isActive ? "topbar-item active" : "topbar-item"
@@ -64,6 +79,7 @@ const TopBar: React.FC = () => {
         Localities & Species
       </NavLink>
       <NavLink
+        onClick={handleClick}
         to={routes.speciesNames}
         className={({ isActive }) =>
           isActive ? "topbar-item active" : "topbar-item"

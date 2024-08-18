@@ -185,9 +185,10 @@ const NewLocalityForm: React.FC = ({ localities }) => {
     return () => subscription.unsubscribe();
   }, [watch]);
 
+  // pri jakekoliv zmene nuluje currentLocality, ale jen pokud to neni EDIT
   useEffect(() => {
-    if (currentLocality) watch(() => setCurrentLocality(""));
-  }, [currentLocality, setCurrentLocality, watch]);
+    if (currentLocality && !localityData) watch(() => setCurrentLocality(""));
+  }, [currentLocality, localityData, setCurrentLocality, watch]);
 
   const siteIds = localities.map((locality) => locality.siteId);
   const fieldCodes = localities.map((locality) => locality.fieldCode);
