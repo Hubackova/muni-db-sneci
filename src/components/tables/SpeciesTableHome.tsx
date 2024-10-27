@@ -80,7 +80,7 @@ const SpeciesTableHome: React.FC<any> = ({ species, speciesNames }) => {
   const columns = React.useMemo(
     () => [
       {
-        Header: "Species Name",
+        Header: "Species name",
         accessor: "speciesNameKey",
         Filter: Multi,
         filter: multiSelectFilter,

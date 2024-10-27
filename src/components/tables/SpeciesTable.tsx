@@ -37,7 +37,7 @@ const SpeciesTable: React.FC<any> = ({ species }) => {
         filter: multiSelectFilter,
       },
       {
-        Header: "Species Name",
+        Header: "Species name",
         accessor: "speciesName",
         Filter: Multi,
         filter: multiSelectFilter,

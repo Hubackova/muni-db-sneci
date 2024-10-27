@@ -84,7 +84,7 @@ const SpeciesAtLocalityForm: React.FC = ({
   const columns = React.useMemo(
     () => [
       {
-        Header: "Species Name",
+        Header: "Species name",
         accessor: "speciesName",
       },
       {

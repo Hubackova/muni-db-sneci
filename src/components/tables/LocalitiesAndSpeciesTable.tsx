@@ -109,7 +109,7 @@ export const localityColumns = [
     filter: multiSelectFilter,
   },
   {
-    Header: "Site / habitat description",
+    Header: "Site/Habitat description",
     accessor: "siteDescription",
     Filter: Multi,
     filter: multiSelectFilter,
@@ -235,7 +235,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
         }),
       },
       {
-        Header: "Species Name",
+        Header: "Species name",
         accessor: "speciesName",
         Filter: Multi,
         filter: multiSelectFilter,
