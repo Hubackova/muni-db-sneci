@@ -17,6 +17,42 @@ import IndeterminateCheckbox from "../IndeterminateCheckbox";
 import { useNavigate } from "react-router-dom";
 import PaginationButtons from "../PaginationButtons";
 
+const headers = [
+  { label: "Species name", key: "speciesName" },
+  { label: "Specification", key: "specification" },
+  { label: "Live", key: "live" },
+  { label: "Empty", key: "empty" },
+  { label: "All", key: "all" },
+  { label: "Vouchers", key: "vouchers" },
+  { label: "Latitude (°N)", key: "latitude" },
+  { label: "Longitude (°E)", key: "longitude" },
+  { label: "Country", key: "country" },
+  { label: "State/Province/Region", key: "state" },
+  { label: "Settlement", key: "settlement" },
+  { label: "Grid", key: "mapGrid" },
+  { label: "Site name", key: "siteName" },
+  { label: "Site/Habitat description", key: "siteDescription" },
+  { label: "m a.s.l.", key: "elevation" },
+  { label: "Date of sampling", key: "dateSampling" },
+  { label: "Collector", key: "collector" },
+  { label: "Field code", key: "fieldCode" },
+  { label: "PLA/Event", key: "event" },
+  { label: "Data type", key: "dataType" },
+  { label: "Sampling method", key: "samplingMethod" },
+  { label: "Note", key: "note" },
+  { label: "pH", key: "waterPH" },
+  { label: "Cond (μS/cm)", key: "waterConductivity" },
+  { label: "Lot no.", key: "lotNumber" },
+  { label: "Releve no.", key: "releveNumber" },
+  { label: "Note (site)", key: "noteSpecies" },
+  { label: "Plot (m2)", key: "plotSize" },
+  { label: "Undef.", key: "undef" },
+  { label: "Sample (L)", key: "sampleSize" },
+  { label: "Size (m2)", key: "habitatSize" },
+  { label: "Dist. (m)", key: "distanceForest" },
+  { label: "Site ID", key: "siteId" },
+];
+
 export const DefaultCell = React.memo<React.FC<any>>(({ value, cell }) => (
   <div className={cell.column.id} title={value}>
     {value}
@@ -346,16 +382,40 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
   }, [currentPage, rows.length]);
 
   const rowsForExport = selectedFlatRows.map((i) => {
-    const {
-      siteKey,
-      speciesKey,
-      speciesNameKey,
-      species,
-      speciesNamesKeysinLocality,
-      key,
-      ...rest
-    } = i.original;
-    return rest;
+    return {
+      speciesName: i.original.speciesName,
+      specification: i.original.specification,
+      live: i.original.live,
+      all: i.original.all,
+      vouchers: i.original.vouchers,
+      latitude: i.original.latitude,
+      longitude: i.original.longitude,
+      country: i.original.country,
+      state: i.original.state,
+      settlement: i.original.settlement,
+      mapGrid: i.original.mapGrid,
+      siteName: i.original.siteName,
+      siteDescription: i.original.siteDescription,
+      elevation: i.original.elevation,
+      dateSampling: i.original.dateSampling,
+      collector: i.original.collector,
+      fieldCode: i.original.fieldCode,
+      event: i.original.event,
+      dataType: i.original.dataType,
+      samplingMethod: i.original.samplingMethod,
+      note: i.original.note,
+      waterPH: i.original.waterPH,
+      waterConductivity: i.original.waterConductivity,
+      lotNumber: i.original.lotNumber,
+      releveNumber: i.original.releveNumber,
+      noteSpecies: i.original.noteSpecies,
+      plotSize: i.original.plotSize,
+      undef: i.original.undef,
+      sampleSize: i.original.sampleSize,
+      habitatSize: i.original.habitatSize,
+      distanceForest: i.original.distanceForest,
+      siteId: i.original.siteId,
+    };
   });
 
   return (
@@ -416,7 +476,11 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
           setGlobalFilter={setGlobalFilter}
         />
         <div className="download">
-          <CSVLink data={rowsForExport} filename="localities-species.csv">
+          <CSVLink
+            data={rowsForExport}
+            headers={headers}
+            filename="localities-species.csv"
+          >
             <div className="export">
               <ExportIcon />
               export CSV
