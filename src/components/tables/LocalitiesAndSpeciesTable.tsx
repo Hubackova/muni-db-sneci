@@ -387,6 +387,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
       specification: i.original.specification,
       live: i.original.live,
       all: i.original.all,
+      empty: i.original.empty,
       vouchers: i.original.vouchers,
       latitude: i.original.latitude,
       longitude: i.original.longitude,
