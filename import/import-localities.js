@@ -44,7 +44,7 @@ async function runScripts() {
     if (continueToNext) {
       console.log("Spouštím import lokalit...");
       console.log("Tohle je test, takže se nic nestane");
-      //   await runScript('import-localities-func.js');
+      //   await runScript('run-import-localities.js');
       //   console.log('Třetí skript byl úspěšně dokončen.');
     } else {
       console.log("Import byl zastaven.");

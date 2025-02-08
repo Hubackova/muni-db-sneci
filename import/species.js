@@ -8,7 +8,7 @@ const data = [
     undef: "",
     lot: "",
     vouchers: "",
-    note: "",
+    note: "test",
   },
 ];
 

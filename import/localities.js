@@ -1,8 +1,8 @@
 const data = [
   {
-    siteId: "BALK 78/21test",
-    fieldCode: "BALK 78/21",
-    siteName: "Bračak/Suvi Do",
+    siteId: "testBALK 78/21",
+    fieldCode: "testBALK 78/21",
+    siteName: "test",
     latitude: 43.0437778,
     longitude: 20.1500556,
     country: "Serbia",
