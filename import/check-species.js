@@ -24,6 +24,7 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 
 const db = getDatabase();
+
 function fetchSpeciesNames() {
   return new Promise((resolve) => {
     const speciesNames = [];
@@ -54,28 +55,51 @@ function fetchLocalities() {
 async function checkSpeciesNames() {
   const speciesNames = await fetchSpeciesNames();
   const names = speciesNames.map((i) => i.speciesName);
-  data.forEach((element) => {
-    if (!names.includes(element.speciesName))
-      console.log(
+
+  for (let element of data) {
+    if (!names.includes(element.speciesName)) {
+      throw new Error(
         `Error: Tento druh není v seznamu druhů: ${element.speciesName}`
       );
-  });
+    }
+  }
 }
 
 async function getLocalities() {
   const siteIds = await fetchLocalities();
-  data.forEach((element) => {
-    if (!siteIds.includes(element.siteId))
-      console.log(
+
+  for (let element of data) {
+    if (!siteIds.includes(element.siteId)) {
+      throw new Error(
         `Error: Lokalita s tímto siteID "${element.siteId}" neexistuje`
       );
-  });
+    }
+  }
 }
 
-checkSpeciesNames().then(() => {
-  getLocalities().then(() => console.log("done"));
-});
+async function validate() {
+  try {
+    // Nejprve zkontrolujeme jména druhů
+    await checkSpeciesNames();
 
-console.log("Note: celkem " + data.length + " druhů k importu");
-if (data.length > 500)
-  console.log("Warning: raději import rozdělit na části po max 500 položek");
+    // Poté zkontrolujeme lokalitu
+    await getLocalities();
+
+    // Pokud vše proběhlo úspěšně, vypíše se zpráva
+    console.log("Vše je v pořádku, celkem " + data.length + " druhů k importu");
+
+    // Kontrola, zda není překročen limit na 500 položek
+    if (data.length > 500) {
+      console.log(
+        "Warning: raději import rozdělit na části po max 500 položek"
+      );
+    }
+
+    process.exit(0);
+  } catch (error) {
+    console.error(error.message);
+    process.exit(1);
+  }
+}
+
+validate();

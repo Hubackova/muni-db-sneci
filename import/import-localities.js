@@ -1,40 +1,61 @@
-const { initializeApp } = require("firebase/app");
-const { child, getDatabase, push, ref, set } = require("firebase/database");
-const { data } = require("./localities");
+const { exec } = require("child_process");
+const readline = require("readline");
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCzBphCVqHbMObpeq9PrQYfnoB4FCp8ggg",
+function runScript(scriptName) {
+  return new Promise((resolve, reject) => {
+    exec(`node ${scriptName}`, (error, stdout, stderr) => {
+      if (error) {
+        reject(`Error executing script ${scriptName}: ${error.message}`);
+        return;
+      }
+      if (stderr) {
+        reject(`stderr: ${stderr}`);
+        return;
+      }
+      resolve(stdout);
+    });
+  });
+}
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
-  authDomain: "mollusca-91521.firebaseapp.com",
-
-  databaseURL:
-    "https://mollusca-91521-default-rtdb.europe-west1.firebasedatabase.app",
-
-  projectId: "mollusca-91521",
-
-  storageBucket: "mollusca-91521.appspot.com",
-
-  messagingSenderId: "413904187659",
-
-  appId: "1:413904187659:web:1185b60cd9fc28f31c320e",
-
-  measurementId: "G-VDBLFE43C3",
-};
-
-initializeApp(firebaseConfig);
-
-function writeLocalityData(data) {
-  const db = getDatabase();
-  const newKey = push(child(ref(db), "localities")).key;
-  set(ref(db, "localities/" + newKey), { ...data, key: newKey });
-  return newKey;
+function askToContinue() {
+  return new Promise((resolve) => {
+    rl.question("Chceš pokračovat a spustit import? (y/n): ", (answer) => {
+      if (answer.toLowerCase() === "y") {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    });
+  });
 }
 
-const importData = () => {
-  data.forEach((i) => {
-    writeLocalityData(i);
-  });
-  console.log("done", data.length);
-};
+async function runScripts() {
+  try {
+    console.log("Spouštím check-localities...");
+    await runScript("import/check-localities.js");
+    console.log("check-localities.js byl úspěšně dokončen.");
 
-importData();
+    const continueToNext = await askToContinue();
+
+    if (continueToNext) {
+      console.log("Spouštím import lokalit...");
+      console.log("Tohle je test, takže se nic nestane");
+      //   await runScript('import-localities-func.js');
+      //   console.log('Třetí skript byl úspěšně dokončen.');
+    } else {
+      console.log("Import byl zastaven.");
+      rl.close();
+    }
+
+    process.exit(0);
+  } catch (error) {
+    console.error("Chyba:", error);
+    process.exit(1);
+  }
+}
+
+runScripts();

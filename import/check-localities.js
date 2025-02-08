@@ -39,18 +39,37 @@ function fetchLocalities() {
 
 const siteIds = data.map((i) => i.siteId);
 
+// Zkontroluj duplicity až po validaci
 async function getLocalities() {
   const localities = await fetchLocalities();
   const commonElement = localities.find((element) => siteIds.includes(element));
 
-  if (commonElement) {
-    console.log(`Error: Duplicate SiteId: ${commonElement}`);
-  } else {
-    console.log("SiteIds jsou v pohode");
+  return commonElement; // Vracení duplicity pro kontrolu po validaci
+}
+
+async function validate() {
+  try {
+    // Nejprve prověř všechny objekty
+    data.forEach((i) => {
+      validateObject(i);
+    });
+
+    // Poté prověř duplicity
+    const commonElement = await getLocalities();
+
+    if (commonElement) {
+      throw new Error(`Error: Duplicate SiteId: ${commonElement}`);
+    } else {
+      console.log("Vsechno je to v pohode, celkem " + data.length + " lokalit");
+      process.exit(0);
+    }
+  } catch (error) {
+    console.error(error.message);
+    process.exit(1);
   }
 }
 
-getLocalities();
+validate();
 
 function validateObject(obj) {
   const {
@@ -175,12 +194,3 @@ function validateObject(obj) {
     );
   }
 }
-
-const validate = () => {
-  data.forEach((i) => {
-    validateObject(i);
-  });
-  console.log("Vsechno je to v pohode, celkem " + data.length + " lokalit");
-};
-
-validate();
