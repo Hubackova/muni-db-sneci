@@ -24,7 +24,7 @@ const data = [
     releveNumber: 77,
     dataType: "Fen",
     event: "",
-    note: "",
+    note: "test",
   },
 ];
 

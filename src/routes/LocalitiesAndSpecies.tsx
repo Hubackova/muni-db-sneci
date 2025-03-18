@@ -5,6 +5,7 @@ import LocalitiesAndSpeciesTable from "../components/tables/LocalitiesAndSpecies
 import { getAll } from "../helpers/utils";
 import "./HomePage.scss";
 import "./Table.scss";
+import { v4 as uuidv4 } from "uuid";
 
 const LocalitiesAndSpecies: React.FC = () => {
   const [localities, setLocalities] = useState<any[]>([]);
@@ -39,7 +40,7 @@ const LocalitiesAndSpecies: React.FC = () => {
                 ...childItem,
                 all: getAll(speciesData),
                 siteId: childItem.siteId,
-                key: childItem.key + speciesData.speciesNameKey,
+                key: uuidv4(),
                 noteSpecies: speciesData.note,
                 siteKey: childItem.key,
                 speciesNameKey: speciesData.speciesNameKey,
