@@ -67,6 +67,12 @@ export const localityColumns = [
     filter: multiSelectFilter,
   },
   {
+    Header: "Country",
+    accessor: "country",
+    Filter: Multi,
+    filter: multiSelectFilter,
+  },
+  {
     Header: "Site name",
     accessor: "siteName",
     Filter: Multi,
@@ -81,12 +87,6 @@ export const localityColumns = [
   {
     Header: "Longitude (°E)",
     accessor: "longitude",
-    Filter: Multi,
-    filter: multiSelectFilter,
-  },
-  {
-    Header: "Country",
-    accessor: "country",
     Filter: Multi,
     filter: multiSelectFilter,
   },
@@ -132,6 +132,12 @@ export const localityColumns = [
     Filter: Multi,
     filter: multiSelectFilter,
   },
+  ...(window.location.href.includes("localitiesAndSpecies") ? [{
+    Header: "Note",
+    accessor: "noteSpecies",
+    Filter: Multi,
+    filter: multiSelectFilter,
+  }] : []),
   {
     Header: () => <span title="Plot size (m2)">Plot (m2)</span>,
     accessor: "plotSize",
@@ -281,12 +287,6 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
       {
         Header: "Vouchers",
         accessor: "vouchers",
-        Filter: Multi,
-        filter: multiSelectFilter,
-      },
-      {
-        Header: "Note",
-        accessor: "noteSpecies",
         Filter: Multi,
         filter: multiSelectFilter,
       },
