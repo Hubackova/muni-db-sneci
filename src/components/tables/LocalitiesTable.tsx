@@ -51,7 +51,7 @@ const LocalitiesTable: React.FC<any> = ({ localities }) => {
           </div>
         )),
       },
-      ...localityColumns,
+      ...localityColumns(false),
     ],
     [navigate, setCurrentLocality, setLocalityData]
   );

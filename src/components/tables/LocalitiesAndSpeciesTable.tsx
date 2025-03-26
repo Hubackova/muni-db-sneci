@@ -59,7 +59,7 @@ export const DefaultCell = React.memo<React.FC<any>>(({ value, cell }) => (
   </div>
 ));
 
-export const localityColumns = [
+export const localityColumns = (showNote: boolean) => [
   {
     Header: "Field code",
     accessor: "fieldCode",
@@ -132,7 +132,7 @@ export const localityColumns = [
     Filter: Multi,
     filter: multiSelectFilter,
   },
-  ...(window.location.href.includes("localitiesAndSpecies") ? [{
+  ...(showNote ? [{
     Header: "Note",
     accessor: "noteSpecies",
     Filter: Multi,
@@ -290,7 +290,7 @@ const LocalitiesAndSpeciesTable: React.FC<any> = ({ localities }) => {
         Filter: Multi,
         filter: multiSelectFilter,
       },
-      ...localityColumns,
+      ...localityColumns(true),
     ],
     [navigate, setCurrentLocality, setLocalityData]
   );
