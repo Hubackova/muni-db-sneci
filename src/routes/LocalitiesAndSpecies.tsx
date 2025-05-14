@@ -36,8 +36,13 @@ const LocalitiesAndSpecies: React.FC = () => {
           if (speciesValues.length)
             speciesValues.forEach((speciesData) => {
               items.push({
-                ...speciesData,
                 ...childItem,
+                specification: speciesData.specification,
+                live: speciesData.live,
+                empty: speciesData.empty,
+                undef: speciesData.undef,
+                lot: speciesData.lot,
+                vouchers: speciesData.vouchers,
                 all: getAll(speciesData),
                 siteId: childItem.siteId,
                 key: uuidv4(),
