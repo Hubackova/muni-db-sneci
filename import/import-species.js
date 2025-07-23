@@ -43,7 +43,7 @@ async function runScripts() {
 
     if (continueToNext) {
       console.log("Spouštím import druhů...");
-      await runScript("run-import-species.js");
+      await runScript("import/run-import-species.js");
       console.log("Import druhů byl úspěšně dokončen.");
     } else {
       console.log("Import byl zastaven.");
