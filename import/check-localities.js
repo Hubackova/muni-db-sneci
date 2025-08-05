@@ -82,6 +82,7 @@ function validateObject(obj) {
     dateSampling,
     collector,
     distanceForest,
+    samplingMethod,
     sampleSize,
     habitatSize,
     plotSize,
@@ -141,6 +142,11 @@ function validateObject(obj) {
   if (!collector) {
     throw new Error(
       `collector  is required - check this object: ${stringifiedObj}}`
+    );
+  }
+  if (!samplingMethod) {
+    throw new Error(
+      `samplingMethod is required - check this object: ${stringifiedObj}}`
     );
   }
   if (plotSize && typeof plotSize !== "number") {
